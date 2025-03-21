@@ -477,6 +477,7 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    z-index: 1;
 }
 
 /* 黑洞核心样式 */
@@ -485,23 +486,70 @@ body {
     height: 100px;
     background-color: #000000;
     border-radius: 50%;
-    position: absolute;
+    position: relative;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    animation: blackhole-bounce 2s ease-in-out infinite;
-    transition: transform 0.3s ease;
+    animation-name: blackhole-bounce;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-play-state: running;
+    transition: all 0.3s ease;
+    will-change: transform;
+}
+
+/* 波纹效果 */
+.blackhole-core::before,
+.blackhole-core::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple-wave 3s ease-in-out infinite;
+}
+
+.blackhole-core::before {
+    width: 120%;
+    height: 120%;
+    border-width: 2px;
+}
+
+.blackhole-core::after {
+    width: 140%;
+    height: 140%;
+    border-width: 1.5px;
+    animation-delay: 1.5s;
 }
 
 /* 黑洞悬停效果 */
 .blackhole-container:hover .blackhole-core {
     transform: scale(1.1);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
 }
 
 /* 黑洞弹动动画 */
 @keyframes blackhole-bounce {
-    0%, 100% {
+    0% {
         transform: scale(1);
     }
     50% {
-        transform: scale(0.95);
+        transform: scale(0.92);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 波纹动画 */
+@keyframes ripple-wave {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0;
     }
 } 
