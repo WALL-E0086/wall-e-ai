@@ -6,84 +6,151 @@
 
 :root {
     --primary-color: #007AFF;
-    --text-color: #1D1D1F;
-    --background-color: #FFFFFF;
-    --secondary-background: #F5F5F7;
-    --text-secondary: #86868B;
+    --text-color: #333;
+    --text-secondary: #666;
+    --background: #fff;
+    --secondary-background: #f5f5f7;
+    --sidebar-width: 250px;
 }
 
 body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--background);
     color: var(--text-color);
     line-height: 1.6;
-    background-color: var(--background-color);
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
-/* 导航栏样式 */
-.nav-bar {
+/* 应用容器 */
+.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 侧边栏样式 */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--background);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    z-index: 1000;
+    height: 100vh;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 30px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.sidebar-header .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
 }
 
-.logo {
-    font-size: 1.2rem;
+.sidebar-header .logo:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
+}
+
+.sidebar-header h1 {
+    font-size: 1.5rem;
     font-weight: 600;
-    color: var(--text-color);
+}
+
+.nav-links {
+    list-style: none;
+    margin-top: 30px;
+}
+
+.nav-links li {
+    margin-bottom: 10px;
 }
 
 .nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
     color: var(--text-color);
     text-decoration: none;
-    margin-left: 30px;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-links a i {
+    transition: all 0.3s ease;
 }
 
 .nav-links a:hover {
-    opacity: 1;
+    background: var(--secondary-background);
 }
 
-/* 英雄区域样式 */
+.nav-links a:hover i {
+    transform: scale(1.2);
+    animation: wave 1s ease-in-out infinite;
+}
+
+.nav-links a:active {
+    animation: ripple 0.6s ease-out;
+}
+
+.nav-links a.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.nav-links i {
+    font-size: 1.2rem;
+}
+
+/* 主内容区域 */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    overflow-y: auto;
+    position: relative;
+}
+
+/* 页面部分 */
+.section {
+    display: none;
+    height: 100vh;
+    padding: 20px;
+}
+
+.section.active {
+    display: block;
+}
+
+/* 首页样式 */
 .hero {
-    min-height: 100vh;
+    height: 100%;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     text-align: center;
-    background: linear-gradient(135deg, #F5F5F7 0%, #FFFFFF 100%);
-    padding: 80px 20px 40px;
+    padding: 20px;
 }
 
-.hero-content {
-    max-width: 800px;
-    width: 100%;
-}
-
-.hero h1 {
+.gradient-text {
     font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 600;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    font-weight: 700;
+    background: linear-gradient(135deg, #007AFF, #00C6FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
 }
 
 .subtitle {
@@ -100,45 +167,29 @@ body {
     text-decoration: none;
     border-radius: 30px;
     font-weight: 500;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .cta-button:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 122, 255, 0.3);
+}
+
+.cta-button:active {
+    animation: ripple 0.6s ease-out;
 }
 
 /* 聊天区域样式 */
-.chat-section {
-    padding: 80px 0;
-    background: var(--secondary-background);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-}
-
-.section-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    width: 100%;
-}
-
-.section-container h2 {
-    font-size: clamp(2rem, 3vw, 2.5rem);
-    text-align: center;
-    margin-bottom: 40px;
-}
-
 .chat-container {
-    max-width: 800px;
-    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     background: white;
     border-radius: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    height: 80vh;
-    display: flex;
-    flex-direction: column;
 }
 
 .chat-messages {
@@ -147,14 +198,13 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    gap: 20px;
 }
 
 .message {
-    margin-bottom: 20px;
+    max-width: 80%;
     display: flex;
     flex-direction: column;
-    max-width: 80%;
 }
 
 .message.wall-e {
@@ -187,36 +237,62 @@ body {
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-input[type="text"] {
-    flex-grow: 1;
+.chat-input input {
+    flex: 1;
     padding: 15px 20px;
-    border: none;
-    border-radius: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
     font-size: 1rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transition: all 0.3s ease;
 }
 
-button {
-    padding: 15px 30px;
+.chat-input input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.send-button {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 25px;
     background: var(--primary-color);
     color: white;
-    border: none;
-    border-radius: 30px;
-    font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.3s ease;
-    white-space: nowrap;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
 
-button:hover {
-    transform: scale(1.05);
+.send-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 122, 255, 0.3);
+}
+
+.send-button:active {
+    animation: ripple 0.6s ease-out;
+}
+
+.send-button i {
+    transition: all 0.3s ease;
+}
+
+.send-button:hover i {
+    transform: scale(1.2);
+    animation: wave 1s ease-in-out infinite;
 }
 
 /* 关于区域样式 */
-.about-section {
-    padding: 80px 0;
-    background: white;
+.about-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
 .profile-grid {
@@ -224,6 +300,8 @@ button:hover {
     grid-template-columns: 1fr 1fr;
     gap: 60px;
     align-items: center;
+    max-width: 1000px;
+    width: 100%;
 }
 
 .profile-content h2 {
@@ -269,6 +347,12 @@ button:hover {
     display: flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.social-icon i {
+    transition: all 0.3s ease;
 }
 
 .social-icon:hover {
@@ -277,18 +361,20 @@ button:hover {
     transform: translateY(-2px);
 }
 
-/* 页脚样式 */
-footer {
-    background: var(--secondary-background);
-    padding: 40px 0;
-    text-align: center;
-    color: var(--text-secondary);
+.social-icon:hover i {
+    transform: scale(1.2);
+    animation: wave 1s ease-in-out infinite;
 }
 
+.social-icon:active {
+    animation: ripple 0.6s ease-out;
+}
+
+/* 动画 */
 @keyframes messageAppear {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -296,10 +382,61 @@ footer {
     }
 }
 
+/* 动画关键帧 */
+@keyframes ripple {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.4);
+    }
+    70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 10px rgba(0, 122, 255, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 122, 255, 0);
+    }
+}
+
+@keyframes wave {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
-    .hero {
-        padding-top: 60px;
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
     }
 
     .profile-grid {

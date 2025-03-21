@@ -94,6 +94,32 @@ document.getElementById('user-input').addEventListener('keypress', (e) => {
     }
 });
 
+// 页面切换功能
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有导航链接
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const sections = document.querySelectorAll('.section');
+
+    // 处理导航点击
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 移除所有活动状态
+            navLinks.forEach(l => l.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active'));
+            
+            // 添加当前活动状态
+            this.classList.add('active');
+            const targetId = this.getAttribute('href').substring(1);
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+
+    // 默认显示首页
+    document.getElementById('home').classList.add('active');
+});
+
 // ChatGLM API配置
 const API_KEY = 'eed9af215d47fc16afefcd223710e28e.XKe7PGy7dHEeaQaX';
 const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';

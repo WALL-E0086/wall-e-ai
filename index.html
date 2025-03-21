@@ -5,81 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap">
 </head>
 <body>
-    <nav class="nav-bar">
-        <div class="nav-container">
-            <div class="logo">瓦力AI</div>
-            <div class="nav-links">
-                <a href="#home">首页</a>
-                <a href="#chat">对话</a>
-                <a href="#about">关于</a>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="wall-e.png" alt="WALL-E" class="logo">
+                <h1>瓦力AI</h1>
             </div>
-        </div>
-    </nav>
+            <ul class="nav-links">
+                <li><a href="#home" class="active"><i class="fas fa-home"></i>首页</a></li>
+                <li><a href="#chat"><i class="fas fa-comments"></i>对话</a></li>
+                <li><a href="#about"><i class="fas fa-user"></i>关于</a></li>
+            </ul>
+        </nav>
 
-    <header class="hero">
-        <div class="hero-content">
-            <h1>瓦力AI初号机</h1>
-            <p class="subtitle">探索AI的无限可能</p>
-            <a href="#chat" class="cta-button">开始对话</a>
-        </div>
-    </header>
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 首页部分 -->
+            <section id="home" class="section active">
+                <div class="hero">
+                    <h2 class="gradient-text">瓦力AI初号机</h2>
+                    <p class="subtitle">你的智能AI助手</p>
+                    <a href="#chat" class="cta-button">开始对话</a>
+                </div>
+            </section>
 
-    <main>
-        <section id="chat" class="chat-section">
-            <div class="section-container">
-                <h2>与AI对话</h2>
+            <!-- 对话部分 -->
+            <section id="chat" class="section">
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages">
                         <div class="message wall-e">
                             <div class="message-content">
-                                你好！我是瓦力AI初号机 *beep* 
-                                很高兴见到你！ *whirr* 
+                                你好！我是瓦力AI，很高兴为你服务。
                             </div>
                         </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="user-input" placeholder="输入消息...">
-                        <button id="send-button">发送</button>
+                        <input type="text" id="user-input" placeholder="输入你的问题...">
+                        <button id="send-button" class="send-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="about" class="about-section">
-            <div class="section-container">
-                <div class="profile-grid">
-                    <div class="profile-content">
-                        <h2>关于我</h2>
-                        <p>一个充满好奇心的AI助手，致力于为您提供最贴心的服务。</p>
-                        <div class="social-links">
-                            <a href="https://www.xiaohongshu.com" class="social-icon" target="_blank">
-                                <i class="fab fa-weixin"></i> 小红书
-                            </a>
-                            <a href="https://www.bilibili.com" class="social-icon" target="_blank">
-                                <i class="fab fa-youtube"></i> B站
-                            </a>
-                            <a href="https://www.douyin.com" class="social-icon" target="_blank">
-                                <i class="fas fa-video"></i> 抖音
-                            </a>
+            <!-- 关于部分 -->
+            <section id="about" class="section">
+                <div class="about-container">
+                    <div class="profile-grid">
+                        <div class="profile-content">
+                            <h2>关于我</h2>
+                            <p>一个充满好奇心的AI助手，致力于为您提供最贴心的服务。</p>
+                            <div class="social-links">
+                                <a href="https://www.xiaohongshu.com/user/profile/664eb31b000000001b018a3a" class="social-icon" target="_blank">
+                                    <i class="fas fa-book"></i> 小红书
+                                </a>
+                                <a href="https://space.bilibili.com/18368535" class="social-icon" target="_blank">
+                                    <i class="fas fa-play-circle"></i> B站
+                                </a>
+                                <a href="https://v.douyin.com/US8BiUV4K64/" class="social-icon" target="_blank">
+                                    <i class="fas fa-video"></i> 抖音
+                                </a>
+                            </div>
+                        </div>
+                        <div class="profile-image">
+                            <img src="wall-e.png" alt="WALL-E">
                         </div>
                     </div>
-                    <div class="profile-image">
-                        <img src="profile.jpg" alt="个人照片" id="profile-img">
-                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <p>© 2024 瓦力AI初号机. All rights reserved.</p>
-        </div>
-    </footer>
-
+            </section>
+        </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html> 
