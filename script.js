@@ -66,58 +66,66 @@ function addMessage(content, type) {
     return messageDiv;
 }
 
-// 处理用户输入
-function handleUserInput() {
-    const input = document.getElementById('user-input');
-    const userMessage = input.value.trim();
+// 导航处理函数
+function handleNavigation(element) {
+    // 获取所有导航链接和部分
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const sections = document.querySelectorAll('.section');
     
-    if (userMessage) {
-        // 添加用户消息
-        addMessage(userMessage, 'user');
-        
-        // 清空输入框
-        input.value = '';
-        
-        // 延迟显示Wall-E的回复
-        setTimeout(() => {
-            const response = generateWallEResponse(userMessage);
-            addMessage(response, 'wall-e');
-        }, 1000);
-    }
+    // 移除所有活动状态
+    navLinks.forEach(l => l.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    
+    // 添加当前活动状态
+    element.classList.add('active');
+    const targetId = element.getAttribute('href').substring(1);
+    document.getElementById(targetId).classList.add('active');
 }
-
-// 事件监听
-document.getElementById('send-button').addEventListener('click', handleUserInput);
-document.getElementById('user-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        handleUserInput();
-    }
-});
 
 // 页面切换功能
 document.addEventListener('DOMContentLoaded', function() {
     // 获取所有导航链接
     const navLinks = document.querySelectorAll('.nav-links a');
-    const sections = document.querySelectorAll('.section');
+    const startChatButton = document.getElementById('start-chat');
 
     // 处理导航点击
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // 移除所有活动状态
-            navLinks.forEach(l => l.classList.remove('active'));
-            sections.forEach(s => s.classList.remove('active'));
-            
-            // 添加当前活动状态
-            this.classList.add('active');
-            const targetId = this.getAttribute('href').substring(1);
-            document.getElementById(targetId).classList.add('active');
+            handleNavigation(this);
+            window.location.hash = this.getAttribute('href');
         });
     });
 
-    // 默认显示首页
-    document.getElementById('home').classList.add('active');
+    // 处理开始对话按钮点击
+    if (startChatButton) {
+        startChatButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const chatLink = document.querySelector('a[href="#chat"]');
+            if (chatLink) {
+                handleNavigation(chatLink);
+                window.location.hash = '#chat';
+            }
+        });
+    }
+
+    // 初始化页面状态
+    const hash = window.location.hash || '#home';
+    const element = document.querySelector(`a[href="${hash}"]`);
+    if (element) {
+        handleNavigation(element);
+    } else {
+        document.getElementById('home').classList.add('active');
+    }
+});
+
+// 监听URL hash变化
+window.addEventListener('hashchange', function() {
+    const hash = window.location.hash || '#home';
+    const element = document.querySelector(`a[href="${hash}"]`);
+    if (element) {
+        handleNavigation(element);
+    }
 });
 
 // ChatGLM API配置
