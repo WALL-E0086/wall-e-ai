@@ -465,4 +465,43 @@ body {
     button {
         width: 100%;
     }
+}
+
+/* 黑洞容器样式 */
+.blackhole-container {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 30px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* 黑洞核心样式 */
+.blackhole-core {
+    width: 100px;
+    height: 100px;
+    background-color: #000000;
+    border-radius: 50%;
+    position: absolute;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    animation: blackhole-bounce 2s ease-in-out infinite;
+    transition: transform 0.3s ease;
+}
+
+/* 黑洞悬停效果 */
+.blackhole-container:hover .blackhole-core {
+    transform: scale(1.1);
+}
+
+/* 黑洞弹动动画 */
+@keyframes blackhole-bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
 } 
