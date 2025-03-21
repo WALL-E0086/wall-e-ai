@@ -79,7 +79,13 @@ function handleNavigation(element) {
     // 添加当前活动状态
     element.classList.add('active');
     const targetId = element.getAttribute('href').substring(1);
-    document.getElementById(targetId).classList.add('active');
+    const targetSection = document.getElementById(targetId);
+    
+    if (targetSection) {
+        targetSection.classList.add('active');
+        // 确保滚动到顶部
+        targetSection.scrollTop = 0;
+    }
 }
 
 // 页面切换功能
@@ -101,9 +107,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (startChatButton) {
         startChatButton.addEventListener('click', function(e) {
             e.preventDefault();
+            // 直接切换到对话页面
+            const chatSection = document.getElementById('chat');
             const chatLink = document.querySelector('a[href="#chat"]');
-            if (chatLink) {
-                handleNavigation(chatLink);
+            
+            if (chatSection && chatLink) {
+                // 移除所有活动状态
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+                
+                // 添加活动状态
+                chatSection.classList.add('active');
+                chatLink.classList.add('active');
+                
+                // 更新URL
                 window.location.hash = '#chat';
             }
         });
