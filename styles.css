@@ -484,12 +484,12 @@ body {
 .blackhole-core {
     width: 100px;
     height: 100px;
-    background: #000;
+    background: #FDB827;
     border-radius: 50%;
     position: relative;
     box-shadow: 
-        0 0 30px rgba(0, 0, 0, 0.5),
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
+        0 0 30px rgba(253, 184, 39, 0.5),
+        inset 0 0 20px rgba(253, 184, 39, 0.3);
     animation: blackhole-bounce 2s ease-in-out infinite;
 }
 
@@ -505,48 +505,45 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 24px;
-    animation: face-bounce 2s ease-in-out infinite;
+    color: rgba(0, 0, 0, 0.8);
 }
 
 /* 眼睛样式 */
 .eyes {
     position: relative;
-    width: 60%;
-    height: 30px;
+    width: 70%;
+    height: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-top: -10px;
+    gap: 15px;
+    margin-top: -5px;
 }
 
 .eyes::before,
 .eyes::after {
     content: '';
-    width: 20px;
+    width: 15px;
     height: 2px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 2px;
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    transform: rotate(-10deg);
 }
 
 /* 鼻子样式 */
 .nose {
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 8px solid rgba(255, 255, 255, 0.8);
-    margin-top: 5px;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+    width: 8px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    margin-top: 8px;
 }
 
 /* ZZZ容器样式 */
 .zzz-container {
     position: absolute;
-    top: -20px;
-    right: -20px;
+    top: -10px;
+    right: -15px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -557,10 +554,8 @@ body {
 /* 单个Z样式 */
 .zzz {
     font-family: 'Comic Sans MS', cursive;
-    font-size: 14px;
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0, 0.8);
     opacity: 0;
     animation: zzz-fade 2s ease-in-out infinite;
 }
