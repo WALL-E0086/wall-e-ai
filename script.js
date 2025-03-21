@@ -127,12 +127,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 初始化页面状态
-    const hash = window.location.hash || '#home';
-    const element = document.querySelector(`a[href="${hash}"]`);
-    if (element) {
-        handleNavigation(element);
-    } else {
+    // 如果是直接访问（没有hash）或刷新页面，显示首页
+    if (!window.location.hash || window.location.hash === '#') {
         document.getElementById('home').classList.add('active');
+        document.querySelector('a[href="#home"]').classList.add('active');
+    } else {
+        // 如果有hash值，则显示对应页面
+        const element = document.querySelector(`a[href="${window.location.hash}"]`);
+        if (element) {
+            handleNavigation(element);
+        } else {
+            document.getElementById('home').classList.add('active');
+            document.querySelector('a[href="#home"]').classList.add('active');
+        }
     }
 });
 
