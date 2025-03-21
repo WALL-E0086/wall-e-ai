@@ -506,68 +506,88 @@ body {
     align-items: center;
     justify-content: center;
     color: rgba(255, 255, 255, 0.8);
-    font-family: 'Comic Sans MS', cursive;
     font-size: 24px;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     animation: face-bounce 2s ease-in-out infinite;
 }
 
 /* 眼睛样式 */
 .eyes {
-    margin-bottom: 10px;
-    letter-spacing: 5px;
+    position: relative;
+    width: 60%;
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -10px;
 }
 
-/* 鼻涕泡样式 */
-.bubble {
+.eyes::before,
+.eyes::after {
+    content: '';
     width: 20px;
-    height: 20px;
+    height: 2px;
     background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: bubble-bounce 2s ease-in-out infinite;
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* 鼻子样式 */
+.nose {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid rgba(255, 255, 255, 0.8);
+    margin-top: 5px;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
 }
 
 /* ZZZ容器样式 */
 .zzz-container {
     position: absolute;
-    top: 20%;
-    right: 20%;
+    top: -20px;
+    right: -20px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    align-items: flex-end;
+    gap: 2px;
+    transform: rotate(-10deg);
 }
 
 /* 单个Z样式 */
 .zzz {
-    font-size: 16px;
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
     opacity: 0;
     animation: zzz-fade 2s ease-in-out infinite;
 }
 
-.zzz:nth-child(1) { animation-delay: 0s; }
-.zzz:nth-child(2) { animation-delay: 0.5s; }
-.zzz:nth-child(3) { animation-delay: 1s; }
-
-/* 表情弹跳动画 */
-@keyframes face-bounce {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.1); }
+.zzz:nth-child(1) { 
+    font-size: 12px;
+    animation-delay: 0s; 
 }
-
-/* 鼻涕泡弹跳动画 */
-@keyframes bubble-bounce {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.2); }
+.zzz:nth-child(2) { 
+    font-size: 16px;
+    animation-delay: 0.5s; 
+}
+.zzz:nth-child(3) { 
+    font-size: 20px;
+    animation-delay: 1s; 
 }
 
 /* ZZZ淡入淡出动画 */
 @keyframes zzz-fade {
-    0%, 100% { opacity: 0; transform: translateY(0); }
-    50% { opacity: 1; transform: translateY(-5px); }
+    0%, 100% { 
+        opacity: 0; 
+        transform: translate(0, 0) scale(0.8); 
+    }
+    50% { 
+        opacity: 1; 
+        transform: translate(-5px, -5px) scale(1); 
+    }
 }
 
 /* 黑洞悬停效果 */
