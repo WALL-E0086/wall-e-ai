@@ -48,20 +48,22 @@ function generateWallEResponse(userInput) {
 }
 
 // 添加消息到聊天界面
-function addMessage(content, isUser = false) {
-    const messagesContainer = document.getElementById('chat-messages');
+function addMessage(content, type) {
+    const messages = document.querySelector('.chat-messages');
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user' : 'wall-e'}`;
+    messageDiv.className = `message ${type}`;
     
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
     messageContent.textContent = content;
     
     messageDiv.appendChild(messageContent);
-    messagesContainer.appendChild(messageDiv);
+    messages.appendChild(messageDiv);
     
     // 滚动到底部
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    messages.scrollTop = messages.scrollHeight;
+    
+    return messageDiv;
 }
 
 // 处理用户输入
@@ -71,7 +73,7 @@ function handleUserInput() {
     
     if (userMessage) {
         // 添加用户消息
-        addMessage(userMessage, true);
+        addMessage(userMessage, 'user');
         
         // 清空输入框
         input.value = '';
@@ -79,7 +81,7 @@ function handleUserInput() {
         // 延迟显示Wall-E的回复
         setTimeout(() => {
             const response = generateWallEResponse(userMessage);
-            addMessage(response);
+            addMessage(response, 'wall-e');
         }, 1000);
     }
 }
@@ -90,4 +92,85 @@ document.getElementById('user-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         handleUserInput();
     }
-}); 
+});
+
+// ChatGLM API配置
+const API_KEY = 'eed9af215d47fc16afefcd223710e28e.XKe7PGy7dHEeaQaX';
+const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+
+// 发送消息到ChatGLM API
+async function sendToChatGLM(message) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: "glm-4",
+                messages: [
+                    {
+                        role: "user",
+                        content: message
+                    }
+                ],
+                temperature: 0.7,
+                top_p: 0.9,
+                stream: false
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('API请求失败');
+        }
+
+        const data = await response.json();
+        return data.choices[0].message.content;
+    } catch (error) {
+        console.error('API调用错误:', error);
+        return '抱歉，我现在遇到了一些问题，请稍后再试。';
+    }
+}
+
+// 发送消息
+async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    
+    if (!message) return;
+
+    // 添加用户消息
+    addMessage(message, 'user');
+    input.value = '';
+
+    // 显示加载动画
+    const loadingMessage = addMessage('正在思考...', 'wall-e');
+
+    try {
+        // 调用ChatGLM API
+        const response = await sendToChatGLM(message);
+        
+        // 移除加载消息
+        loadingMessage.remove();
+        
+        // 添加AI回复
+        addMessage(response, 'wall-e');
+    } catch (error) {
+        // 移除加载消息
+        loadingMessage.remove();
+        // 显示错误消息
+        addMessage('抱歉，我现在遇到了一些问题，请稍后再试。', 'wall-e');
+    }
+}
+
+// 监听回车键
+document.getElementById('user-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// 监听发送按钮点击
+document.getElementById('send-button').addEventListener('click', sendMessage); 
