@@ -4,116 +4,138 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'ZCOOL KuaiLe', cursive;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    color: #333;
-    line-height: 1.6;
+:root {
+    --primary-color: #007AFF;
+    --text-color: #1D1D1F;
+    --background-color: #FFFFFF;
+    --secondary-background: #F5F5F7;
+    --text-secondary: #86868B;
 }
 
-.container {
+body {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    background-color: var(--background-color);
+}
+
+/* 导航栏样式 */
+.nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-}
-
-header {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-h1 {
-    color: #ff6b6b;
-    font-size: 2.5em;
-    margin-bottom: 15px;
-}
-
-nav a {
-    color: #4a90e2;
-    text-decoration: none;
-    margin: 0 15px;
-    font-size: 1.2em;
-    transition: color 0.3s ease;
-}
-
-nav a:hover {
-    color: #ff6b6b;
-}
-
-main {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 30px;
-}
-
-.profile-section {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.profile-image {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto 20px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 5px solid #ff6b6b;
-}
-
-.profile-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.social-links {
-    text-align: center;
-}
-
-.social-icons {
+    padding: 0 20px;
+    height: 44px;
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 15px;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.social-icon {
-    background: #4a90e2;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 20px;
+.logo {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.nav-links a {
+    color: var(--text-color);
     text-decoration: none;
+    margin-left: 30px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+    opacity: 1;
+}
+
+/* 英雄区域样式 */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(135deg, #F5F5F7 0%, #FFFFFF 100%);
+    padding: 0 20px;
+}
+
+.hero-content {
+    max-width: 800px;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 500;
     transition: transform 0.3s ease;
 }
 
-.social-icon:hover {
-    transform: translateY(-3px);
+.cta-button:hover {
+    transform: scale(1.05);
 }
 
+/* 聊天区域样式 */
 .chat-section {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 100px 0;
+    background: var(--secondary-background);
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-container h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 40px;
 }
 
 .chat-container {
-    height: 600px;
-    display: flex;
-    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .chat-messages {
-    flex-grow: 1;
-    overflow-y: auto;
+    height: 500px;
     padding: 20px;
-    margin-bottom: 20px;
+    overflow-y: auto;
 }
 
 .message {
@@ -132,45 +154,112 @@ main {
 
 .message-content {
     max-width: 70%;
-    padding: 15px;
+    padding: 15px 20px;
     border-radius: 20px;
-    background: #4a90e2;
+    background: var(--primary-color);
     color: white;
     position: relative;
     animation: messageAppear 0.5s ease;
 }
 
 .message.user .message-content {
-    background: #ff6b6b;
+    background: var(--text-color);
 }
 
 .chat-input {
     display: flex;
     gap: 10px;
+    padding: 20px;
+    background: var(--secondary-background);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 input[type="text"] {
     flex-grow: 1;
-    padding: 15px;
-    border: 2px solid #4a90e2;
-    border-radius: 25px;
-    font-size: 1em;
-    outline: none;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button {
-    background: #4a90e2;
+    padding: 15px 30px;
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 25px;
+    border-radius: 30px;
+    font-size: 1rem;
     cursor: pointer;
-    font-size: 1em;
     transition: transform 0.3s ease;
 }
 
 button:hover {
     transform: scale(1.05);
+}
+
+/* 关于区域样式 */
+.about-section {
+    padding: 100px 0;
+    background: white;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.profile-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.profile-content p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.profile-image {
+    position: relative;
+}
+
+.profile-image img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.social-links {
+    display: flex;
+    gap: 20px;
+}
+
+.social-icon {
+    padding: 10px 20px;
+    background: var(--secondary-background);
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 页脚样式 */
+footer {
+    background: var(--secondary-background);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-secondary);
 }
 
 @keyframes messageAppear {
@@ -184,16 +273,22 @@ button:hover {
     }
 }
 
+/* 响应式设计 */
 @media (max-width: 768px) {
-    main {
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    .profile-grid {
         grid-template-columns: 1fr;
+        text-align: center;
     }
-    
-    .profile-section {
-        order: 2;
+
+    .profile-image {
+        order: -1;
     }
-    
-    .chat-section {
-        order: 1;
+
+    .social-links {
+        justify-content: center;
     }
 } 
