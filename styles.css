@@ -670,11 +670,11 @@ body {
 /* 眼睛容器 */
 .eye-container {
     position: relative;
-    width: 40px;
-    height: 20px;
+    width: 30px;
+    height: 15px;
     background: transparent;
     border-top: 4px solid rgba(255, 255, 255, 0.8);
-    border-radius: 20px 20px 0 0;
+    border-radius: 15px 15px 0 0;
     transform: rotate(-5deg);
     transition: all 0.5s ease-in-out;
 }
@@ -757,6 +757,18 @@ body {
     transform: translateX(-50%);
     box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.2);
     pointer-events: none;
+    animation: nose-bubble 3s ease-in-out infinite;
+}
+
+@keyframes nose-bubble {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+        box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.2);
+        box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.3);
+    }
 }
 
 /* ZZZ容器样式 */
@@ -779,21 +791,25 @@ body {
     opacity: 0;
     animation: zzz-fade 2s ease-in-out infinite;
     text-shadow: 
-        0 0 5px rgba(255, 255, 255, 0.5),
-        0 0 10px rgba(255, 255, 255, 0.3),
-        0 0 15px rgba(255, 255, 255, 0.2);
+        0 0 5px rgba(255, 255, 255, 0.8),
+        0 0 10px rgba(255, 255, 255, 0.5),
+        0 0 15px rgba(255, 255, 255, 0.3),
+        -1px -1px 0 rgba(0, 0, 0, 0.3),
+        1px -1px 0 rgba(0, 0, 0, 0.3),
+        -1px 1px 0 rgba(0, 0, 0, 0.3),
+        1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .zzz:nth-child(1) { 
-    font-size: 14px;
+    font-size: 16px;
     animation-delay: 0s; 
 }
 .zzz:nth-child(2) { 
-    font-size: 18px;
+    font-size: 20px;
     animation-delay: 0.5s; 
 }
 .zzz:nth-child(3) { 
-    font-size: 22px;
+    font-size: 24px;
     animation-delay: 1s; 
 }
 
@@ -802,16 +818,18 @@ body {
     0%, 100% { 
         opacity: 0; 
         transform: translate(0, 0) scale(0.8);
-        text-shadow: none;
     }
     50% { 
         opacity: 1; 
-        transform: translate(-5px, -5px) scale(1);
-        text-shadow: 
-            0 0 5px rgba(255, 255, 255, 0.5),
-            0 0 10px rgba(255, 255, 255, 0.3),
-            0 0 15px rgba(255, 255, 255, 0.2);
+        transform: translate(-5px, -5px) scale(1.2);
     }
+}
+
+/* 状态转换时隐藏ZZZ */
+.blackhole-container.awake .zzz-container,
+.blackhole-container.happy .zzz-container,
+.blackhole-container.angry .zzz-container {
+    display: none;
 }
 
 /* 黑洞弹跳动画 */
@@ -919,5 +937,178 @@ body {
 
     button {
         width: 100%;
+    }
+}
+
+/* 柜me天气模块样式 */
+.weather-container {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    height: 100%;
+}
+
+.weather-animation {
+    background: var(--secondary-background);
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+}
+
+.weather-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.current-weather,
+.weather-forecast,
+.clothing-advice {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 时绾回忆录模块样式 */
+.memoir-container {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    height: 100%;
+}
+
+.memoir-intro {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.memoir-interview {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.interview-chat {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.interview-input {
+    display: flex;
+    gap: 10px;
+}
+
+.style-selector {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.style-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: var(--secondary-background);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.style-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 云锦织机照片处理模块样式 */
+.photo-container {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    height: 100%;
+}
+
+.photo-upload {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upload-area {
+    border: 2px dashed var(--primary-color);
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    background: var(--secondary-background);
+}
+
+.processing-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.process-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.process-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 122, 255, 0.3);
+}
+
+.preview-area {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 400px;
+}
+
+.before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    height: 100%;
+}
+
+/* 响应式设计补充 */
+@media (max-width: 768px) {
+    .weather-container,
+    .memoir-container,
+    .photo-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .weather-animation {
+        min-height: 300px;
+    }
+    
+    .preview-area {
+        min-height: 300px;
+    }
+    
+    .before-after {
+        grid-template-columns: 1fr;
     }
 } 

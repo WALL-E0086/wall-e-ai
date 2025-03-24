@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
-    <link rel="stylesheet" href="styles.css?v=3.0">
+    <link rel="stylesheet" href="styles.css?v=3.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -22,6 +22,9 @@
             </div>
             <ul class="nav-links">
                 <li><a href="#home" class="active"><i class="fas fa-home"></i>首页</a></li>
+                <li><a href="#weather" class="weather-link"><i class="fas fa-cloud-sun"></i>柜me</a></li>
+                <li><a href="#memoir" class="memoir-link"><i class="fas fa-book"></i>时绾</a></li>
+                <li><a href="#photo" class="photo-link"><i class="fas fa-camera-retro"></i>云锦织机</a></li>
                 <li><a href="#chat"><i class="fas fa-comments"></i>对话</a></li>
                 <li><a href="#about"><i class="fas fa-info-circle"></i>关于</a></li>
             </ul>
@@ -77,11 +80,88 @@
                     <!-- 文字内容 -->
                     <div class="text-content">
                         <h2 class="gradient-text">瓦力AI初号机</h2>
-                        <p class="subtitle">你的AI助手，为你解答任何问题</p>
+                        <p class="subtitle">你的智能生活管家</p>
                         <a href="#chat" class="cta-button">开始对话</a>
                     </div>
                 </div>
             </div>
+
+            <!-- 柜me天气模块 -->
+            <section id="weather" class="section">
+                <div class="weather-container">
+                    <div class="weather-animation">
+                        <!-- 天气动画将在这里 -->
+                        <div class="walle-weather-character"></div>
+                        <div class="weather-effects"></div>
+                    </div>
+                    <div class="weather-info">
+                        <div class="current-weather">
+                            <h3>今日天气</h3>
+                            <div class="temperature"></div>
+                            <div class="humidity"></div>
+                        </div>
+                        <div class="weather-forecast">
+                            <h3>天气预报</h3>
+                            <div class="forecast-list"></div>
+                        </div>
+                        <div class="clothing-advice">
+                            <h3>穿衣建议</h3>
+                            <div class="advice-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 时绾回忆录模块 -->
+            <section id="memoir" class="section">
+                <div class="memoir-container">
+                    <div class="memoir-intro">
+                        <h2>时光织造师</h2>
+                        <p>让AI为您编织独特的人生回忆录</p>
+                    </div>
+                    <div class="memoir-interview">
+                        <div class="interview-chat"></div>
+                        <div class="interview-input">
+                            <input type="text" placeholder="分享您的故事...">
+                            <button class="send-story"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                    <div class="memoir-preview">
+                        <h3>您的回忆录</h3>
+                        <div class="memoir-content"></div>
+                        <div class="style-selector">
+                            <button class="style-btn" data-style="poetic">诗意</button>
+                            <button class="style-btn" data-style="narrative">叙事</button>
+                            <button class="style-btn" data-style="emotional">感性</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 云锦织机照片处理模块 -->
+            <section id="photo" class="section">
+                <div class="photo-container">
+                    <div class="photo-upload">
+                        <div class="upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽照片至此处</p>
+                            <input type="file" accept="image/*" hidden>
+                        </div>
+                    </div>
+                    <div class="photo-processing">
+                        <div class="processing-options">
+                            <button class="process-btn" data-type="restore">照片修复</button>
+                            <button class="process-btn" data-type="animate">照片动画</button>
+                        </div>
+                        <div class="preview-area">
+                            <div class="before-after">
+                                <div class="before"></div>
+                                <div class="after"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- 对话部分 -->
             <section id="chat" class="section">
@@ -89,7 +169,7 @@
                     <div class="chat-messages" id="chat-messages">
                         <div class="message wall-e">
                             <div class="message-content">
-                                你好！我是瓦力AI，很高兴为你服务。
+                                我是瓦力哔哔机（声卡版）
                             </div>
                         </div>
                     </div>
