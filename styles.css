@@ -525,11 +525,110 @@ body {
     pointer-events: none;
 }
 
+/* 吸积盘容器 */
+.accretion-disk {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    animation: rotate 8s linear infinite;
+    pointer-events: none;
+}
+
+/* 外部吸积盘 */
+.accretion-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.accretion-ring:nth-child(1) {
+    border-top: 2px solid rgba(0, 150, 255, 0.8);
+    transform: rotate(30deg);
+}
+
+.accretion-ring:nth-child(2) {
+    border-bottom: 2px solid rgba(0, 150, 255, 0.6);
+    transform: rotate(-30deg);
+}
+
+.accretion-ring:nth-child(3) {
+    border-left: 2px solid rgba(255, 100, 100, 0.7);
+    transform: rotate(60deg);
+}
+
+/* 引力折射光环 */
+.gravitational-lens {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    top: -10%;
+    left: -10%;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    border-top: 2px solid rgba(255, 255, 255, 0.4);
+    animation: lens-rotate 4s linear infinite;
+    pointer-events: none;
+}
+
 .awake .blackhole-core {
     width: 200px;
     height: 200px;
     animation: none;
     transform: scale(1) !important;
+}
+
+/* 醒来状态的吸积盘 */
+.awake .accretion-disk {
+    width: 300%;
+    height: 300%;
+    top: -100%;
+    left: -100%;
+}
+
+.awake .gravitational-lens {
+    width: 180%;
+    height: 180%;
+    top: -40%;
+    left: -40%;
+    border-top: 3px solid rgba(255, 255, 255, 0.6);
+}
+
+/* 吸积盘旋转动画 */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 引力折射光环旋转动画 */
+@keyframes lens-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+/* 吸积盘脉冲动画 */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+        box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
+    }
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 30px rgba(0, 150, 255, 0.5);
+    }
 }
 
 /* 眼睛样式 */
