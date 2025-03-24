@@ -144,8 +144,40 @@ body {
     align-items: center;
     text-align: center;
     padding: 20px;
+    position: relative;
 }
 
+/* 黑洞容器样式 */
+.blackhole-container {
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(-100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+    transition: all 0.5s ease-in-out;
+}
+
+/* 醒来状态 */
+.blackhole-container.awake {
+    transform: translate(-50%, -50%) translateY(-100px) scale(2);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* 文字内容容器 */
+.text-content {
+    position: relative;
+    z-index: 2;
+    margin-top: 200px;
+}
+
+/* 文字层级样式 */
 .gradient-text {
     font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 700;
@@ -153,16 +185,12 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 20px;
-    position: relative;
-    z-index: 2;
 }
 
 .subtitle {
     font-size: clamp(1.2rem, 2vw, 1.5rem);
     color: var(--text-secondary);
     margin-bottom: 40px;
-    position: relative;
-    z-index: 2;
 }
 
 .cta-button {
@@ -177,7 +205,6 @@ body {
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    z-index: 2;
 }
 
 .cta-button:hover {
@@ -472,27 +499,6 @@ body {
     button {
         width: 100%;
     }
-}
-
-/* 黑洞容器样式 */
-.blackhole-container {
-    width: 300px;
-    height: 300px;
-    margin: 0 auto 30px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1;
-    transition: all 0.5s ease-in-out;
-}
-
-/* 醒来状态 */
-.blackhole-container.awake {
-    transform: scale(2);
-    z-index: 1;
-    pointer-events: none;
 }
 
 /* 占位容器，用于保持布局稳定 */
