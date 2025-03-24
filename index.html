@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
-    <link rel="stylesheet" href="styles.css?v=2.8">
+    <link rel="stylesheet" href="styles.css?v=2.9">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="overlay"></div>
+    <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </div>
     <div class="app-container">
         <!-- 侧边栏 -->
         <div class="sidebar">
@@ -59,6 +62,10 @@
                                     </div>
                                 </div>
                                 <div class="nose"></div>
+                                <div class="cheeks">
+                                    <div class="cheek"></div>
+                                    <div class="cheek"></div>
+                                </div>
                                 <div class="zzz-container">
                                     <span class="zzz">z</span>
                                     <span class="zzz">z</span>
@@ -130,6 +137,9 @@
         const eyes = document.querySelector('.eyes');
         const ctaButton = document.querySelector('.cta-button');
         const pupils = document.querySelectorAll('.pupil');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
 
         // 状态变量
         let touchStartTime = 0;
@@ -229,7 +239,18 @@
             });
         }
 
-        // 切换页面的函数
+        // 移动设备菜单处理
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // 在切换页面时关闭侧边栏
         function switchToPage(pageId) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
@@ -240,6 +261,10 @@
             
             document.querySelector(pageId).classList.add('active');
             document.querySelector(`.nav-links a[href="${pageId}"]`).classList.add('active');
+            
+            // 关闭侧边栏
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
             
             resetState();
         }
