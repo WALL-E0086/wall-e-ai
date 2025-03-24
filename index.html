@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
-    <link rel="stylesheet" href="styles.css?v=2.4">
+    <link rel="stylesheet" href="styles.css?v=2.5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -156,16 +156,20 @@
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
             
-            // 计算鼠标相对于中心点的角度
-            const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
-            const distance = Math.min(10, Math.sqrt(Math.pow(event.clientX - centerX, 2) + Math.pow(event.clientY - centerY, 2)) / 20);
-            
-            // 移动眼球
-            const eyeX = Math.cos(angle) * distance;
-            const eyeY = Math.sin(angle) * distance;
-            
             pupils.forEach(pupil => {
-                pupil.style.transform = `translate(${eyeX}px, ${eyeY}px)`;
+                const eyeRect = pupil.parentElement.getBoundingClientRect();
+                const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+                const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+                
+                // 计算鼠标相对于眼睛中心的角度和距离
+                const angle = Math.atan2(event.clientY - eyeCenterY, event.clientX - eyeCenterX);
+                const distance = Math.min(8, Math.sqrt(Math.pow(event.clientX - eyeCenterX, 2) + Math.pow(event.clientY - eyeCenterY, 2)) / 15);
+                
+                // 移动眼球，限制移动范围
+                const eyeX = Math.cos(angle) * distance;
+                const eyeY = Math.sin(angle) * distance;
+                
+                pupil.style.transform = `translate(calc(-50% + ${eyeX}px), calc(-50% + ${eyeY}px))`;
             });
         }
 

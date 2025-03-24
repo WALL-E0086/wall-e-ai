@@ -551,20 +551,18 @@ body {
     width: 80%;
 }
 
-.eyes::before,
-.eyes::after {
-    content: '';
+/* 眼睛容器 */
+.eye-container {
+    position: relative;
     width: 15px;
     height: 2px;
     background: rgba(255, 255, 255, 0.8);
     border-radius: 2px;
     transform: rotate(-10deg);
     transition: all 0.5s ease-in-out;
-    position: relative;
 }
 
-.awake .eyes::before,
-.awake .eyes::after {
+.awake .eye-container {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -626,21 +624,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/* 眼睛容器 */
-.eye-container {
-    position: relative;
-    width: 40px;
-    height: 40px;
-}
-
-.eye-container:first-child .pupil {
-    left: 50%;
-}
-
-.eye-container:last-child .pupil {
-    left: 50%;
 }
 
 /* 鼻子样式 */
