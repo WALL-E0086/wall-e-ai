@@ -493,6 +493,46 @@ body {
     animation: blackhole-bounce 2s ease-in-out infinite;
 }
 
+/* 波纹效果 */
+.blackhole-core::before,
+.blackhole-core::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple-wave 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.blackhole-core::before {
+    width: 120%;
+    height: 120%;
+}
+
+.blackhole-core::after {
+    width: 140%;
+    height: 140%;
+    border-width: 1.5px;
+    animation-delay: 1.5s;
+}
+
+/* 波纹动画 */
+@keyframes ripple-wave {
+    0% {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+    }
+}
+
 /* 睡觉表情样式 */
 .sleeping-face {
     position: absolute;
@@ -506,6 +546,7 @@ body {
     align-items: center;
     justify-content: center;
     color: rgba(255, 255, 255, 0.8);
+    pointer-events: none;
 }
 
 /* 眼睛样式 */
@@ -585,33 +626,14 @@ body {
     }
 }
 
+/* 黑洞弹跳动画 */
+@keyframes blackhole-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 /* 黑洞悬停效果 */
 .blackhole-container:hover .blackhole-core {
     transform: scale(1.1);
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
-}
-
-/* 黑洞弹动动画 */
-@keyframes blackhole-bounce {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(0.92);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* 波纹动画 */
-@keyframes ripple-wave {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.5;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 0;
-    }
 } 
