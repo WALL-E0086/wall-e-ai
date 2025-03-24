@@ -104,7 +104,6 @@
     <script>
         // 获取DOM元素
         const blackholeContainer = document.querySelector('.blackhole-container');
-        const overlay = document.querySelector('.overlay');
         const eyes = document.querySelector('.eyes');
         const ctaButton = document.querySelector('.cta-button');
         const pupils = document.querySelectorAll('.pupil');
@@ -112,7 +111,6 @@
         // 点击黑洞或开始对话按钮时的处理函数
         function handleWakeUp(event) {
             blackholeContainer.classList.add('awake');
-            overlay.classList.add('active');
             
             // 如果是通过开始对话按钮触发
             if (event.target === ctaButton) {
@@ -125,7 +123,6 @@
                     
                     // 恢复黑洞状态
                     blackholeContainer.classList.remove('awake');
-                    overlay.classList.remove('active');
                 }, 2000);
             }
         }
@@ -155,6 +152,16 @@
         blackholeContainer.addEventListener('click', handleWakeUp);
         ctaButton.addEventListener('click', handleWakeUp);
         document.addEventListener('mousemove', handleMouseMove);
+
+        // 添加导航链接点击处理
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                // 如果黑洞处于醒来状态，恢复原状
+                if (blackholeContainer.classList.contains('awake')) {
+                    blackholeContainer.classList.remove('awake');
+                }
+            });
+        });
     </script>
 </body>
 </html> 

@@ -38,6 +38,7 @@ body {
     flex-direction: column;
     position: fixed;
     height: 100vh;
+    z-index: 10;
 }
 
 .sidebar-header {
@@ -120,6 +121,7 @@ body {
     margin-left: var(--sidebar-width);
     overflow-y: auto;
     position: relative;
+    z-index: 2;
 }
 
 /* 页面部分 */
@@ -151,12 +153,16 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .subtitle {
     font-size: clamp(1.2rem, 2vw, 1.5rem);
     color: var(--text-secondary);
     margin-bottom: 40px;
+    position: relative;
+    z-index: 2;
 }
 
 .cta-button {
@@ -171,6 +177,8 @@ body {
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    position: relative;
+    z-index: 2;
 }
 
 .cta-button:hover {
@@ -489,8 +497,9 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;
+    z-index: -1;
     margin: 0;
+    pointer-events: none;
 }
 
 /* 黑洞核心样式 */
@@ -622,19 +631,7 @@ body {
 
 /* 遮罩层 */
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0);
-    pointer-events: none;
-    transition: all 0.5s ease-in-out;
-    z-index: 999;
-}
-
-.overlay.active {
-    background: rgba(0, 0, 0, 0.8);
+    display: none;
 }
 
 /* 鼻子样式 */
