@@ -47,6 +47,8 @@
                             </div>
                         </div>
                     </div>
+                    <!-- 占位容器 -->
+                    <div class="blackhole-placeholder"></div>
                     <h2 class="gradient-text">瓦力AI初号机</h2>
                     <p class="subtitle">你的AI助手，为你解答任何问题</p>
                     <a href="#chat" class="cta-button">开始对话</a>
@@ -108,6 +110,27 @@
         const ctaButton = document.querySelector('.cta-button');
         const pupils = document.querySelectorAll('.pupil');
 
+        // 切换页面的函数
+        function switchToPage(pageId) {
+            // 移除所有页面的active类
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // 移除所有导航链接的active类
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 添加active类到目标页面和对应的导航链接
+            document.querySelector(pageId).classList.add('active');
+            document.querySelector(`.nav-links a[href="${pageId}"]`).classList.add('active');
+            
+            // 如果黑洞处于醒来状态，恢复原状
+            if (blackholeContainer.classList.contains('awake')) {
+                blackholeContainer.classList.remove('awake');
+            }
+        }
+
         // 点击黑洞或开始对话按钮时的处理函数
         function handleWakeUp(event) {
             blackholeContainer.classList.add('awake');
@@ -115,14 +138,7 @@
             // 如果是通过开始对话按钮触发
             if (event.target === ctaButton) {
                 setTimeout(() => {
-                    // 切换到对话页面
-                    document.querySelector('#home').classList.remove('active');
-                    document.querySelector('#chat').classList.add('active');
-                    document.querySelector('.nav-links a.active').classList.remove('active');
-                    document.querySelector('.nav-links a[href="#chat"]').classList.add('active');
-                    
-                    // 恢复黑洞状态
-                    blackholeContainer.classList.remove('awake');
+                    switchToPage('#chat');
                 }, 2000);
             }
         }
@@ -155,11 +171,10 @@
 
         // 添加导航链接点击处理
         document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                // 如果黑洞处于醒来状态，恢复原状
-                if (blackholeContainer.classList.contains('awake')) {
-                    blackholeContainer.classList.remove('awake');
-                }
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                switchToPage(targetId);
             });
         });
     </script>

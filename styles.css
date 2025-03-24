@@ -502,6 +502,14 @@ body {
     pointer-events: none;
 }
 
+/* 占位容器，用于保持布局稳定 */
+.blackhole-placeholder {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 30px;
+    visibility: hidden;
+}
+
 /* 黑洞核心样式 */
 .blackhole-core {
     width: 100px;
