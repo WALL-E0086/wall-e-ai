@@ -177,7 +177,6 @@ body {
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    position: relative;
     z-index: 2;
 }
 
@@ -492,7 +491,7 @@ body {
 /* 醒来状态 */
 .blackhole-container.awake {
     transform: scale(2);
-    z-index: -1;
+    z-index: 1;
     pointer-events: none;
 }
 
