@@ -1,0 +1,104 @@
+<view class="container">
+  <!-- 顶部介绍 -->
+  <view class="intro">
+    <view class="intro-title">照片修复</view>
+    <view class="intro-desc">AI技术让旧照片焕发新生</view>
+  </view>
+
+  <!-- 上传区域 -->
+  <view class="upload-section">
+    <view class="upload-area" bindtap="chooseImage" wx:if="{{!tempImage}}">
+      <image class="upload-icon" src="/assets/icons/upload.png"></image>
+      <text>点击上传照片</text>
+      <text class="upload-tip">支持jpg、png格式</text>
+    </view>
+    <view class="image-preview" wx:else>
+      <image class="preview-image" src="{{tempImage}}" mode="aspectFit"></image>
+      <view class="preview-actions">
+        <view class="action-btn" bindtap="chooseImage">
+          <image class="action-icon" src="/assets/icons/reupload.png"></image>
+          <text>重新上传</text>
+        </view>
+        <view class="action-btn" bindtap="clearImage">
+          <image class="action-icon" src="/assets/icons/delete.png"></image>
+          <text>清除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 修复选项 -->
+  <view class="repair-options" wx:if="{{tempImage}}">
+    <view class="section-title">修复选项</view>
+    <view class="options-list">
+      <view 
+        class="option-item {{selectedOptions.colorize ? 'selected' : ''}}"
+        bindtap="toggleOption"
+        data-option="colorize"
+      >
+        <image class="option-icon" src="/assets/icons/colorize.png"></image>
+        <text>黑白上色</text>
+      </view>
+      <view 
+        class="option-item {{selectedOptions.enhance ? 'selected' : ''}}"
+        bindtap="toggleOption"
+        data-option="enhance"
+      >
+        <image class="option-icon" src="/assets/icons/enhance.png"></image>
+        <text>画质增强</text>
+      </view>
+      <view 
+        class="option-item {{selectedOptions.repair ? 'selected' : ''}}"
+        bindtap="toggleOption"
+        data-option="repair"
+      >
+        <image class="option-icon" src="/assets/icons/repair.png"></image>
+        <text>破损修复</text>
+      </view>
+      <view 
+        class="option-item {{selectedOptions.animate ? 'selected' : ''}}"
+        bindtap="toggleOption"
+        data-option="animate"
+      >
+        <image class="option-icon" src="/assets/icons/animate.png"></image>
+        <text>照片动画</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开始修复按钮 -->
+  <button 
+    class="repair-btn {{canRepair ? '' : 'disabled'}}"
+    bindtap="startRepair"
+    disabled="{{!canRepair}}"
+  >
+    开始修复
+  </button>
+
+  <!-- 修复结果 -->
+  <view class="result-section" wx:if="{{resultImage}}">
+    <view class="section-title">修复效果</view>
+    <view class="result-preview">
+      <image class="result-image" src="{{resultImage}}" mode="aspectFit"></image>
+    </view>
+    <view class="result-actions">
+      <button class="action-btn" bindtap="saveImage">
+        <image class="action-icon" src="/assets/icons/save.png"></image>
+        <text>保存到相册</text>
+      </button>
+      <button class="action-btn" bindtap="shareImage">
+        <image class="action-icon" src="/assets/icons/share.png"></image>
+        <text>分享</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-mask" wx:if="{{loading}}">
+    <view class="loading-content">
+      <image class="loading-icon" src="/assets/icons/loading.png"></image>
+      <text>正在修复中...</text>
+      <text class="loading-tip">{{loadingTip}}</text>
+    </view>
+  </view>
+</view> 

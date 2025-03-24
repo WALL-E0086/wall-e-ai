@@ -1,0 +1,53 @@
+<view class="container">
+  <!-- 天气动画容器 -->
+  <view class="weather-animation {{weatherType}}">
+    <!-- 天气动画元素 -->
+    <block wx:if="{{weatherType === 'sunny'}}">
+      <view class="sun"></view>
+      <view class="rays"></view>
+    </block>
+    <block wx:elif="{{weatherType === 'cloudy'}}">
+      <view class="cloud"></view>
+      <view class="cloud-shadow"></view>
+    </block>
+    <block wx:elif="{{weatherType === 'rainy'}}">
+      <view class="cloud"></view>
+      <view class="rain"></view>
+    </block>
+    <block wx:elif="{{weatherType === 'snowy'}}">
+      <view class="cloud"></view>
+      <view class="snow"></view>
+    </block>
+  </view>
+
+  <!-- 当前天气信息 -->
+  <view class="current-weather">
+    <view class="location">{{location}}</view>
+    <view class="temperature">{{temperature}}°C</view>
+    <view class="humidity">湿度: {{humidity}}%</view>
+    <view class="description">{{weatherDescription}}</view>
+  </view>
+
+  <!-- 天气预报 -->
+  <view class="weather-forecast">
+    <view class="forecast-title">未来天气预报</view>
+    <scroll-view scroll-x="true" class="forecast-scroll">
+      <view class="forecast-item" wx:for="{{forecast}}" wx:key="date">
+        <view class="forecast-date">{{item.date}}</view>
+        <view class="forecast-icon {{item.type}}"></view>
+        <view class="forecast-temp">{{item.temp}}°C</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 穿衣建议 -->
+  <view class="clothing-advice">
+    <view class="advice-title">穿衣建议</view>
+    <view class="advice-content">{{clothingAdvice}}</view>
+  </view>
+
+  <!-- 刷新按钮 -->
+  <view class="refresh-button" bindtap="refreshWeather">
+    <image class="refresh-icon" src="/assets/icons/refresh.png"></image>
+  </view>
+</view> 

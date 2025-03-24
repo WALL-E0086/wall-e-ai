@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/weather/weather",
+    "pages/memoir/memoir",
+    "pages/photo/photo",
+    "pages/chat/chat",
+    "pages/about/about"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#007AFF",
+    "navigationBarTitleText": "瓦力AI初号机",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#007AFF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/home.png",
+        "selectedIconPath": "assets/home-active.png"
+      },
+      {
+        "pagePath": "pages/weather/weather",
+        "text": "柜me",
+        "iconPath": "assets/weather.png",
+        "selectedIconPath": "assets/weather-active.png"
+      },
+      {
+        "pagePath": "pages/memoir/memoir",
+        "text": "时绾",
+        "iconPath": "assets/memoir.png",
+        "selectedIconPath": "assets/memoir-active.png"
+      },
+      {
+        "pagePath": "pages/chat/chat",
+        "text": "对话",
+        "iconPath": "assets/chat.png",
+        "selectedIconPath": "assets/chat-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "useExtendedLib": {
+    "weui": true
+  }
+} 

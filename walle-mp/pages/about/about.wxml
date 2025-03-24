@@ -1,0 +1,101 @@
+<view class="container">
+  <!-- 顶部介绍 -->
+  <view class="header">
+    <image class="logo" src="/assets/images/logo.png"></image>
+    <view class="title">瓦力AI初号机</view>
+    <view class="version">Version 1.0.0</view>
+  </view>
+
+  <!-- 功能介绍 -->
+  <view class="section">
+    <view class="section-title">功能介绍</view>
+    <view class="feature-list">
+      <view class="feature-item">
+        <image class="feature-icon" src="/assets/icons/weather.png"></image>
+        <view class="feature-info">
+          <text class="feature-name">天气预报</text>
+          <text class="feature-desc">实时天气信息，精准穿衣建议</text>
+        </view>
+      </view>
+      <view class="feature-item">
+        <image class="feature-icon" src="/assets/icons/memoir.png"></image>
+        <view class="feature-info">
+          <text class="feature-name">生活回忆录</text>
+          <text class="feature-desc">AI辅助创作，记录精彩人生</text>
+        </view>
+      </view>
+      <view class="feature-item">
+        <image class="feature-icon" src="/assets/icons/photo.png"></image>
+        <view class="feature-info">
+          <text class="feature-name">照片修复</text>
+          <text class="feature-desc">AI修复增强，老照片焕新</text>
+        </view>
+      </view>
+      <view class="feature-item">
+        <image class="feature-icon" src="/assets/icons/chat.png"></image>
+        <view class="feature-info">
+          <text class="feature-name">智能对话</text>
+          <text class="feature-desc">多模态交互，智能生活助手</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开发团队 -->
+  <view class="section">
+    <view class="section-title">开发团队</view>
+    <view class="team-list">
+      <view class="team-item">
+        <image class="avatar" src="/assets/images/avatar1.png"></image>
+        <view class="member-info">
+          <text class="member-name">王钰浩</text>
+          <text class="member-role">产品设计 & 开发</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 技术支持 -->
+  <view class="section">
+    <view class="section-title">技术支持</view>
+    <view class="tech-list">
+      <view class="tech-item">
+        <image class="tech-icon" src="/assets/icons/openai.png"></image>
+        <text>OpenAI</text>
+      </view>
+      <view class="tech-item">
+        <image class="tech-icon" src="/assets/icons/cloud.png"></image>
+        <text>微信云开发</text>
+      </view>
+      <view class="tech-item">
+        <image class="tech-icon" src="/assets/icons/api.png"></image>
+        <text>OpenWeather</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系我们 -->
+  <view class="section">
+    <view class="section-title">联系我们</view>
+    <view class="contact-list">
+      <button class="contact-item" open-type="contact">
+        <image class="contact-icon" src="/assets/icons/service.png"></image>
+        <text>在线客服</text>
+      </button>
+      <button class="contact-item" bindtap="copyEmail">
+        <image class="contact-icon" src="/assets/icons/email.png"></image>
+        <text>电子邮件</text>
+      </button>
+      <button class="contact-item" bindtap="showQRCode">
+        <image class="contact-icon" src="/assets/icons/wechat.png"></image>
+        <text>微信公众号</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 版权信息 -->
+  <view class="footer">
+    <text>Copyright © 2024 瓦力AI初号机</text>
+    <text>All Rights Reserved</text>
+  </view>
+</view> 

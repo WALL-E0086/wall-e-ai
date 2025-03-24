@@ -1,0 +1,47 @@
+<view class="container">
+  <view class="blackhole-container {{awake ? 'awake' : ''}} {{happy ? 'happy' : ''}} {{angry ? 'angry' : ''}}">
+    <view class="blackhole-core">
+      <!-- 吸积盘 -->
+      <view class="accretion-disk">
+        <view class="accretion-ring"></view>
+        <view class="accretion-ring"></view>
+        <view class="accretion-ring"></view>
+      </view>
+      <!-- 波纹线条 -->
+      <view class="wave-lines">
+        <view class="wave-line"></view>
+        <view class="wave-line"></view>
+        <view class="wave-line"></view>
+        <view class="wave-line"></view>
+        <view class="wave-line"></view>
+      </view>
+      <!-- 睡觉表情 -->
+      <view class="sleeping-face">
+        <view class="eyes">
+          <view class="eye-container">
+            <view class="pupil"></view>
+          </view>
+          <view class="eye-container">
+            <view class="pupil"></view>
+          </view>
+        </view>
+        <view class="nose"></view>
+        <view class="cheeks">
+          <view class="cheek"></view>
+          <view class="cheek"></view>
+        </view>
+        <view class="zzz-container">
+          <text class="zzz">z</text>
+          <text class="zzz">z</text>
+          <text class="zzz">z</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="text-content">
+    <text class="gradient-text">瓦力AI初号机</text>
+    <text class="subtitle">你的智能生活管家</text>
+    <button class="cta-button" bindtap="startChat">开始对话</button>
+  </view>
+</view> 

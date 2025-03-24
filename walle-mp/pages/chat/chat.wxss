@@ -1,0 +1,278 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f1f1f1;
+}
+
+/* 聊天列表 */
+.chat-list {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* 加载更多 */
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.loading-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  animation: rotate 1s linear infinite;
+}
+
+/* 消息项 */
+.message-item {
+  display: flex;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.message-item.user {
+  flex-direction: row-reverse;
+}
+
+/* 头像 */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  margin: 0 10px;
+}
+
+/* 消息内容 */
+.message-content {
+  max-width: 70%;
+  position: relative;
+}
+
+/* 文本消息 */
+.text-content {
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.ai .text-content {
+  background: #fff;
+  color: #333;
+  border-top-left-radius: 4px;
+}
+
+.user .text-content {
+  background: #007AFF;
+  color: #fff;
+  border-top-right-radius: 4px;
+}
+
+/* 图片消息 */
+.image-content {
+  max-width: 200px;
+  border-radius: 8px;
+}
+
+/* 语音消息 */
+.voice-content {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 16px;
+  min-width: 60px;
+}
+
+.ai .voice-content {
+  background: #fff;
+  border-top-left-radius: 4px;
+}
+
+.user .voice-content {
+  background: #007AFF;
+  border-top-right-radius: 4px;
+  flex-direction: row-reverse;
+}
+
+.voice-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0 5px;
+}
+
+.voice-content text {
+  font-size: 12px;
+  color: #666;
+}
+
+.user .voice-content text {
+  color: #fff;
+}
+
+/* 表情动画 */
+.emoji-container {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.emoji {
+  width: 24px;
+  height: 24px;
+}
+
+/* 消息状态 */
+.message-status {
+  position: absolute;
+  bottom: 0;
+}
+
+.ai .message-status {
+  right: -24px;
+}
+
+.user .message-status {
+  left: -24px;
+}
+
+.status-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 输入区域 */
+.input-area {
+  background: #fff;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #eee;
+}
+
+/* 输入模式切换按钮 */
+.mode-switch {
+  width: 28px;
+  height: 28px;
+  padding: 5px;
+}
+
+/* 文本输入框 */
+.text-input {
+  flex: 1;
+  height: 36px;
+  background: #f8f8f8;
+  border-radius: 18px;
+  padding: 0 15px;
+  margin: 0 10px;
+  font-size: 14px;
+}
+
+/* 语音输入按钮 */
+.voice-button {
+  flex: 1;
+  height: 36px;
+  background: #f8f8f8;
+  border-radius: 18px;
+  margin: 0 10px;
+  font-size: 14px;
+  color: #333;
+  line-height: 36px;
+  text-align: center;
+}
+
+.voice-button::after {
+  display: none;
+}
+
+/* 表情按钮 */
+.emoji-button {
+  width: 28px;
+  height: 28px;
+  padding: 5px;
+}
+
+/* 发送按钮 */
+.send-button {
+  width: 60px;
+  height: 36px;
+  background: #007AFF;
+  color: #fff;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 36px;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.send-button::after {
+  display: none;
+}
+
+.send-button.disabled {
+  background: #ccc;
+}
+
+/* 表情面板 */
+.emoji-panel {
+  height: 200px;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+
+.emoji-list {
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.emoji-item {
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  display: inline-block;
+}
+
+/* 录音提示 */
+.recording-tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recording-content {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.recording-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+.recording-content text {
+  font-size: 14px;
+  color: #333;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+} 

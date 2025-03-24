@@ -1,0 +1,90 @@
+<view class="container">
+  <!-- 顶部介绍 -->
+  <view class="intro">
+    <view class="intro-title">生活回忆录</view>
+    <view class="intro-desc">让AI帮你记录生活中的每一个精彩瞬间</view>
+  </view>
+
+  <!-- 故事输入区域 -->
+  <view class="story-input">
+    <textarea 
+      class="input-area" 
+      placeholder="分享你的故事..." 
+      value="{{storyContent}}"
+      bindinput="onStoryInput"
+      maxlength="1000"
+    ></textarea>
+    <view class="word-count">{{storyContent.length}}/1000</view>
+  </view>
+
+  <!-- 写作风格选择 -->
+  <view class="style-selector">
+    <view class="section-title">选择写作风格</view>
+    <view class="style-list">
+      <view 
+        class="style-item {{selectedStyle === 'narrative' ? 'selected' : ''}}"
+        data-style="narrative"
+        bindtap="selectStyle"
+      >
+        <image class="style-icon" src="/assets/icons/narrative.png"></image>
+        <text>叙事文</text>
+      </view>
+      <view 
+        class="style-item {{selectedStyle === 'prose' ? 'selected' : ''}}"
+        data-style="prose"
+        bindtap="selectStyle"
+      >
+        <image class="style-icon" src="/assets/icons/prose.png"></image>
+        <text>散文</text>
+      </view>
+      <view 
+        class="style-item {{selectedStyle === 'poem' ? 'selected' : ''}}"
+        data-style="poem"
+        bindtap="selectStyle"
+      >
+        <image class="style-icon" src="/assets/icons/poem.png"></image>
+        <text>诗歌</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生成按钮 -->
+  <button 
+    class="generate-btn {{canGenerate ? '' : 'disabled'}}"
+    bindtap="generateMemoir"
+    disabled="{{!canGenerate}}"
+  >
+    <text>生成回忆录</text>
+    <image class="btn-icon" src="/assets/icons/generate.png"></image>
+  </button>
+
+  <!-- 生成结果 -->
+  <view class="result-section" wx:if="{{memoirContent}}">
+    <view class="section-title">你的回忆录</view>
+    <view class="memoir-content">{{memoirContent}}</view>
+    
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <button class="action-btn" bindtap="copyMemoir">
+        <image class="btn-icon" src="/assets/icons/copy.png"></image>
+        <text>复制</text>
+      </button>
+      <button class="action-btn" bindtap="shareMemoir">
+        <image class="btn-icon" src="/assets/icons/share.png"></image>
+        <text>分享</text>
+      </button>
+      <button class="action-btn" bindtap="saveMemoir">
+        <image class="btn-icon" src="/assets/icons/save.png"></image>
+        <text>保存</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-mask" wx:if="{{loading}}">
+    <view class="loading-content">
+      <image class="loading-icon" src="/assets/icons/loading.png"></image>
+      <text>正在创作中...</text>
+    </view>
+  </view>
+</view> 

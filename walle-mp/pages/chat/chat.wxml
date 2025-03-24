@@ -1,0 +1,154 @@
+<view class="container">
+  <!-- 聊天消息列表 -->
+  <scroll-view 
+    class="chat-list" 
+    scroll-y="true" 
+    scroll-into-view="{{scrollToMessage}}"
+    bindscrolltoupper="loadMoreMessages"
+  >
+    <!-- 加载更多 -->
+    <view class="loading-more" wx:if="{{isLoadingMore}}">
+      <image class="loading-icon" src="/assets/icons/loading.png"></image>
+      <text>加载更多消息...</text>
+    </view>
+
+    <!-- 消息列表 -->
+    <view 
+      class="message-item {{item.type === 'user' ? 'user' : 'ai'}}"
+      wx:for="{{messages}}"
+      wx:key="id"
+      id="msg-{{item.id}}"
+    >
+      <!-- 头像 -->
+      <image 
+        class="avatar"
+        src="{{item.type === 'user' ? userAvatar : aiAvatar}}"
+      ></image>
+
+      <!-- 消息内容 -->
+      <view class="message-content">
+        <!-- 文本消息 -->
+        <view class="text-content" wx:if="{{item.contentType === 'text'}}">
+          {{item.content}}
+        </view>
+
+        <!-- 图片消息 -->
+        <image 
+          class="image-content" 
+          wx:elif="{{item.contentType === 'image'}}"
+          src="{{item.content}}"
+          mode="widthFix"
+          bindtap="previewImage"
+          data-url="{{item.content}}"
+        ></image>
+
+        <!-- 语音消息 -->
+        <view 
+          class="voice-content"
+          wx:elif="{{item.contentType === 'voice'}}"
+          bindtap="playVoice"
+          data-url="{{item.content}}"
+        >
+          <image 
+            class="voice-icon"
+            src="/assets/icons/{{isPlaying && currentVoiceId === item.id ? 'pause' : 'play'}}.png"
+          ></image>
+          <text>{{item.duration}}″</text>
+        </view>
+
+        <!-- 表情动画 -->
+        <view class="emoji-container" wx:if="{{item.emoji}}">
+          <image 
+            class="emoji {{item.emoji}}"
+            src="/assets/emojis/{{item.emoji}}.png"
+          ></image>
+        </view>
+      </view>
+
+      <!-- 消息状态 -->
+      <view class="message-status" wx:if="{{item.status === 'sending'}}">
+        <image class="status-icon" src="/assets/icons/sending.png"></image>
+      </view>
+      <view class="message-status" wx:elif="{{item.status === 'failed'}}">
+        <image 
+          class="status-icon"
+          src="/assets/icons/failed.png"
+          bindtap="resendMessage"
+          data-id="{{item.id}}"
+        ></image>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区域 -->
+  <view class="input-area">
+    <!-- 语音/键盘切换按钮 -->
+    <image 
+      class="mode-switch"
+      src="/assets/icons/{{isVoiceMode ? 'keyboard' : 'voice'}}.png"
+      bindtap="switchInputMode"
+    ></image>
+
+    <!-- 文本输入框 -->
+    <input
+      class="text-input"
+      wx:if="{{!isVoiceMode}}"
+      value="{{inputContent}}"
+      bindinput="onInput"
+      bindconfirm="sendMessage"
+      placeholder="说点什么吧..."
+      confirm-type="send"
+      cursor-spacing="10"
+    ></input>
+
+    <!-- 语音输入按钮 -->
+    <button
+      class="voice-button"
+      wx:else
+      bindtouchstart="startRecording"
+      bindtouchend="stopRecording"
+      bindtouchmove="cancelRecording"
+    >
+      按住说话
+    </button>
+
+    <!-- 表情按钮 -->
+    <image 
+      class="emoji-button"
+      src="/assets/icons/emoji.png"
+      bindtap="toggleEmojiPanel"
+    ></image>
+
+    <!-- 发送按钮 -->
+    <button 
+      class="send-button {{canSend ? '' : 'disabled'}}"
+      bindtap="sendMessage"
+      disabled="{{!canSend}}"
+    >发送</button>
+  </view>
+
+  <!-- 表情面板 -->
+  <view class="emoji-panel" wx:if="{{showEmojiPanel}}">
+    <scroll-view class="emoji-list" scroll-y="true">
+      <image 
+        class="emoji-item"
+        wx:for="{{emojis}}"
+        wx:key="name"
+        src="/assets/emojis/{{item.name}}.png"
+        bindtap="selectEmoji"
+        data-emoji="{{item.name}}"
+      ></image>
+    </scroll-view>
+  </view>
+
+  <!-- 录音提示 -->
+  <view class="recording-tip" wx:if="{{isRecording}}">
+    <view class="recording-content">
+      <image 
+        class="recording-icon"
+        src="/assets/icons/{{isRecordingCanceled ? 'cancel' : 'recording'}}.png"
+      ></image>
+      <text>{{isRecordingCanceled ? '松开手指，取消发送' : '上滑取消，松开发送'}}</text>
+    </view>
+  </view>
+</view> 
