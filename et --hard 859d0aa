@@ -1,0 +1,37 @@
+[33m37ca204[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: commit: 优化黑洞效果：增加球体面数量到50个，改进渐变和波纹效果
+[33m960b5da[m HEAD@{1}: commit: 优化黑洞效果：增加球体面数量到37个，改进渐变和3D效果
+[33mec9abfc[m HEAD@{2}: commit: 优化黑洞效果：增加球体面数量，改进3D效果
+[33m82ab871[m HEAD@{3}: commit: 将黑洞改为真正的3D球体：使用多个面构建球体
+[33md91b6d1[m HEAD@{4}: commit: 增强黑洞3D效果：添加前后表面和深度感
+[33m917c5b2[m HEAD@{5}: commit: 将黑洞改为3D球体效果：添加旋转线条和3D变换
+[33m859d0aa[m HEAD@{6}: commit: 优化黑洞效果：移除颤抖动画，增强波纹效果
+[33m17098c8[m HEAD@{7}: reset: moving to HEAD~2
+[33m5d6049f[m HEAD@{8}: reset: moving to HEAD~1
+[33me753306[m HEAD@{9}: commit: 优化黑洞效果：增强3D效果，改进线条动画，恢复波纹效果
+[33m5d6049f[m HEAD@{10}: commit: 将黑洞改为3D球体效果：添加旋转线条和3D变换
+[33m4a6efef[m HEAD@{11}: commit: 增强黑洞效果：添加多层波纹和旋转动画
+[33m17098c8[m HEAD@{12}: commit: 添加基础黑洞效果：创建带有弹动动画的黑色圆形
+[33mffacec0[m HEAD@{13}: reset: moving to ffacec0
+[33ma94f6ce[m HEAD@{14}: commit: 添加简单的黑洞效果：创建基础的黑色圆形
+[33m1acc34f[m HEAD@{15}: commit: 强制浏览器刷新缓存：添加缓存控制头，更新所有静态资源版本号
+[33mfca4e1e[m HEAD@{16}: commit: 完全移除黑洞相关代码：删除Three.js引用和黑洞容器，更新CSS版本号
+[33m96a8818[m HEAD@{17}: commit: 清理黑洞相关代码：移除所有黑洞动画相关的CSS和JavaScript代码
+[33mcfc3157[m HEAD@{18}: commit: 添加调试边框并优化吸积盘效果：更鲜艳的颜色和更明显的缩放动画
+[33m1e243f0[m HEAD@{19}: commit: 优化黑洞效果：调整层级结构，改进吸积盘渐变，增强动画效果
+[33m9d4f913[m HEAD@{20}: commit: 添加黑洞交互效果：悬停加速旋转，点击产生引力波动画
+[33m1803af7[m HEAD@{21}: commit: 重新设计黑洞效果：使用纯CSS实现，添加双层吸积盘动画
+[33m3184da4[m HEAD@{22}: commit: 使用Canvas重新实现黑洞效果，添加渐变色吸积盘和阴影效果
+[33m3cf4e8f[m HEAD@{23}: commit: 重新设计黑洞效果：简化设计，实现静止的黑洞和旋转的吸积盘
+[33mbdc065f[m HEAD@{24}: commit: 使用SVG重新实现黑洞logo，更精确的图形和动画效果
+[33m86b7bfe[m HEAD@{25}: commit: 重新设计黑洞logo：参考Gork3的设计风格，简化视觉效果
+[33mf10ca8c[m HEAD@{26}: commit: 简化黑洞logo实现：使用边框动画创建吸积盘效果
+[33mf905899[m HEAD@{27}: commit: 增强黑洞logo效果：添加3D效果，优化吸积盘动画
+[33m982be4e[m HEAD@{28}: commit: 优化黑洞logo效果：修复吸积盘显示，增强望远镜视觉效果
+[33mb200a68[m HEAD@{29}: commit: 重新设计黑洞logo：添加吸积盘效果，将眼睛改为望远镜样式，增大整体尺寸
+[33me876031[m HEAD@{30}: commit: 优化黑洞logo样式，修复CSS组织结构
+[33mc3a12f9[m HEAD@{31}: commit: 添加黑洞风格的瓦力AI logo，包含旋转动画效果
+[33mffacec0[m HEAD@{32}: commit: 修复头像图片显示问题，使用profile.jpg替换wall-e.png
+[33m0ecbb82[m HEAD@{33}: commit: 修改页面初始化逻辑，确保刷新时默认显示首页
+[33mdbe75c8[m HEAD@{34}: commit: 优化页面切换逻辑，使用更直接的方式处理导航
+[33mfa3ce16[m HEAD@{35}: commit: 修复页面切换功能，优化导航逻辑
+[33m68dafe0[m HEAD@{36}: clone: from https://github.com/WALL-E0086/wall-e-ai.git

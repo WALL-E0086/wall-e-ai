@@ -154,7 +154,7 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) translateY(-100px);
+    transform: translate(-50%, -50%) translateY(-180px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -166,7 +166,7 @@ body {
 
 /* 醒来状态 */
 .blackhole-container.awake {
-    transform: translate(-50%, -50%) translateY(-100px) scale(2);
+    transform: translate(-50%, -50%) translateY(-180px) scale(2);
     z-index: 1;
     pointer-events: none;
 }
