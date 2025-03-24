@@ -491,14 +491,8 @@ body {
 
 /* 醒来状态 */
 .blackhole-container.awake {
-    width: 600px;
-    height: 600px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    transform: scale(2);
     z-index: -1;
-    margin: 0;
     pointer-events: none;
 }
 
@@ -525,71 +519,29 @@ body {
 }
 
 .awake .blackhole-core {
-    width: 400px;
-    height: 400px;
+    width: 200px;
+    height: 200px;
     animation: none;
     transform: scale(1) !important;
 }
 
-/* 波纹效果 */
-.blackhole-core::before,
-.blackhole-core::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: ripple-wave 3s ease-in-out infinite;
-    pointer-events: none;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-.blackhole-core::before {
-    width: 120%;
-    height: 120%;
-}
-
-.blackhole-core::after {
-    width: 140%;
-    height: 140%;
-    border-width: 2px;
-    animation-delay: 1.5s;
-}
-
-/* 波纹动画 */
-@keyframes ripple-wave {
-    0% {
-        width: 100%;
-        height: 100%;
-        opacity: 1;
-        border-color: rgba(255, 255, 255, 0.6);
-    }
-    100% {
-        width: 200%;
-        height: 200%;
-        opacity: 0;
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-}
-
 /* 眼睛样式 */
 .eyes {
-    position: relative;
+    position: absolute;
     width: 70%;
     height: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
-    margin-top: -5px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     transition: all 0.5s ease-in-out;
 }
 
 .awake .eyes {
-    gap: 80px;
-    margin-top: -20px;
+    gap: 40px;
 }
 
 .eyes::before,
@@ -616,46 +568,45 @@ body {
 }
 
 /* 眼球样式 */
-.awake .eyes::before::after,
-.awake .eyes::after::after {
-    content: '';
+.pupil {
     position: absolute;
     width: 20px;
     height: 20px;
     background: #000;
     border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.1s ease-out;
-}
-
-/* 醒来时隐藏鼻子和ZZZ */
-.awake .nose,
-.awake .zzz-container {
     opacity: 0;
-    visibility: hidden;
+    transition: opacity 0.5s ease-in-out;
 }
 
-/* 遮罩层 */
-.overlay {
-    display: none;
+.awake .pupil {
+    opacity: 1;
+}
+
+.pupil:first-child {
+    left: calc(50% - 20px);
+}
+
+.pupil:last-child {
+    right: calc(50% - 20px);
 }
 
 /* 鼻子样式 */
 .nose {
+    position: absolute;
     width: 8px;
     height: 8px;
     background: rgba(255, 255, 255, 0.8);
     border-radius: 50%;
-    margin-top: 8px;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* ZZZ容器样式 */
 .zzz-container {
     position: absolute;
-    top: -10px;
-    right: -15px;
+    top: -20px;
+    right: -30px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -706,6 +657,49 @@ body {
     }
 }
 
+/* 波纹效果 */
+.blackhole-core::before,
+.blackhole-core::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple-wave 3s ease-in-out infinite;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.blackhole-core::before {
+    width: 120%;
+    height: 120%;
+}
+
+.blackhole-core::after {
+    width: 140%;
+    height: 140%;
+    border-width: 2px;
+    animation-delay: 1.5s;
+}
+
+/* 波纹动画 */
+@keyframes ripple-wave {
+    0% {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+}
+
 /* 黑洞弹跳动画 */
 @keyframes blackhole-bounce {
     0%, 100% { transform: scale(1); }
@@ -716,4 +710,9 @@ body {
 .blackhole-container:hover .blackhole-core {
     transform: scale(1.1);
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
+}
+
+/* 遮罩层 */
+.overlay {
+    display: none;
 } 
