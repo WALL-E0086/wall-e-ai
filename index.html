@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
-    <link rel="stylesheet" href="styles.css?v=3.1">
+    <link rel="stylesheet" href="styles.css?v=3.2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -172,6 +172,7 @@
                                 我是瓦力哔哔机（声卡版）
                             </div>
                         </div>
+                        <!-- 消息列表将在这里动态添加 -->
                     </div>
                     <div class="chat-input">
                         <input type="text" id="user-input" placeholder="输入你的问题...">
@@ -220,6 +221,9 @@
         const menuToggle = document.querySelector('.menu-toggle');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
 
         // 状态变量
         let touchStartTime = 0;
@@ -370,6 +374,200 @@
                 const targetId = link.getAttribute('href');
                 switchToPage(targetId);
             });
+        });
+
+        // 天气功能相关代码
+        async function getLocation() {
+            try {
+                const response = await fetch('https://api.ipapi.com/api/check?access_key=2fc47227ca87d54d3922f141649837f4');
+                const data = await response.json();
+                return {
+                    city: data.city,
+                    latitude: data.latitude,
+                    longitude: data.longitude
+                };
+            } catch (error) {
+                console.error('获取位置信息失败:', error);
+                return null;
+            }
+        }
+
+        async function getWeather(lat, lon) {
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=e7912f1a0e0b0097453f01b2ae4842e6&units=metric&lang=zh_cn`);
+                const data = await response.json();
+                return {
+                    temp: Math.round(data.main.temp),
+                    humidity: data.main.humidity,
+                    weather: data.weather[0].main,
+                    description: data.weather[0].description
+                };
+            } catch (error) {
+                console.error('获取天气信息失败:', error);
+                return null;
+            }
+        }
+
+        function generateWeatherAnimation(weatherData) {
+            const animationContainer = document.querySelector('.weather-animation');
+            const walleCharacter = document.querySelector('.walle-weather-character');
+            const effects = document.querySelector('.weather-effects');
+            
+            // 清除现有动画
+            effects.innerHTML = '';
+            
+            // 创建瓦力天气形象
+            walleCharacter.innerHTML = `
+                <div class="weather-walle">
+                    <div class="weather-blackhole">
+                        <div class="weather-core"></div>
+                        <div class="weather-eyes">
+                            <div class="weather-eye"></div>
+                            <div class="weather-eye"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 根据天气类型添加效果
+            switch(weatherData.weather.toLowerCase()) {
+                case 'rain':
+                    effects.innerHTML = generateRainEffect();
+                    break;
+                case 'snow':
+                    effects.innerHTML = generateSnowEffect();
+                    break;
+                case 'clouds':
+                    effects.innerHTML = generateCloudEffect();
+                    break;
+                case 'clear':
+                    effects.innerHTML = generateSunEffect();
+                    break;
+                // 添加更多天气类型...
+            }
+            
+            // 更新温度和湿度显示
+            document.querySelector('.temperature').textContent = `${weatherData.temp}°C`;
+            document.querySelector('.humidity').textContent = `湿度: ${weatherData.humidity}%`;
+            
+            // 生成穿衣建议
+            generateClothingAdvice(weatherData.temp);
+        }
+
+        function generateRainEffect() {
+            return `
+                <div class="rain-container">
+                    ${Array(20).fill().map(() => '<div class="raindrop"></div>').join('')}
+                </div>
+            `;
+        }
+
+        function generateSnowEffect() {
+            return `
+                <div class="snow-container">
+                    ${Array(20).fill().map(() => '<div class="snowflake"></div>').join('')}
+                </div>
+            `;
+        }
+
+        function generateCloudEffect() {
+            return `
+                <div class="cloud-container">
+                    <div class="cloud"></div>
+                    <div class="cloud"></div>
+                </div>
+            `;
+        }
+
+        function generateSunEffect() {
+            return `
+                <div class="sun-container">
+                    <div class="sun"></div>
+                    <div class="sun-rays"></div>
+                </div>
+            `;
+        }
+
+        function generateClothingAdvice(temperature) {
+            const adviceElement = document.querySelector('.advice-content');
+            let advice = '';
+            
+            if (temperature <= 5) {
+                advice = '建议穿羽绒服、围巾、帽子等保暖衣物';
+            } else if (temperature <= 15) {
+                advice = '建议穿厚外套、毛衣等保暖装扮';
+            } else if (temperature <= 25) {
+                advice = '建议穿薄外套或长袖衬衫';
+            } else {
+                advice = '建议穿轻薄、透气的夏季服装';
+            }
+            
+            adviceElement.textContent = advice;
+        }
+
+        // 页面加载时自动初始化天气功能
+        window.addEventListener('DOMContentLoaded', async () => {
+            const location = await getLocation();
+            if (location) {
+                const weather = await getWeather(location.latitude, location.longitude);
+                if (weather) {
+                    generateWeatherAnimation(weather);
+                }
+            }
+        });
+
+        // 每30分钟更新一次天气信息
+        setInterval(async () => {
+            const location = await getLocation();
+            if (location) {
+                const weather = await getWeather(location.latitude, location.longitude);
+                if (weather) {
+                    generateWeatherAnimation(weather);
+                }
+            }
+        }, 30 * 60 * 1000);
+
+        // 发送消息
+        function sendMessage() {
+            const content = userInput.value.trim();
+            if (!content) return;
+
+            // 添加用户消息
+            addMessage(content, 'user');
+            userInput.value = '';
+
+            // 模拟AI回复
+            setTimeout(() => {
+                const responses = [
+                    '我明白了，让我想想...',
+                    '这是一个很有趣的问题！',
+                    '我可以帮你解决这个问题。',
+                    '让我为你详细解释一下。'
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, 'wall-e');
+            }, 1000);
+        }
+
+        // 添加消息到聊天框
+        function addMessage(content, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ${content}
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 添加事件监听器
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
         });
     </script>
 </body>
