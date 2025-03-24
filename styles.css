@@ -538,9 +538,8 @@ body {
     width: 70%;
     height: 20px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 15px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -549,7 +548,7 @@ body {
 }
 
 .awake .eyes {
-    gap: 40px;
+    width: 80%;
 }
 
 .eyes::before,
@@ -561,6 +560,7 @@ body {
     border-radius: 2px;
     transform: rotate(-10deg);
     transition: all 0.5s ease-in-out;
+    position: relative;
 }
 
 .awake .eyes::before,
@@ -597,7 +597,8 @@ body {
     transition: all 0.5s ease-in-out;
     pointer-events: none;
     top: 50%;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .awake .pupil {
@@ -617,14 +618,6 @@ body {
     opacity: 0.8;
 }
 
-.pupil:first-child {
-    left: 8px;
-}
-
-.pupil:last-child {
-    right: 8px;
-}
-
 /* 睡觉表情容器 */
 .sleeping-face {
     position: relative;
@@ -633,6 +626,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* 眼睛容器 */
+.eye-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.eye-container:first-child .pupil {
+    left: 50%;
+}
+
+.eye-container:last-child .pupil {
+    left: 50%;
 }
 
 /* 鼻子样式 */
