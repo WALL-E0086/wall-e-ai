@@ -523,17 +523,19 @@ body {
     animation: blackhole-bounce 2s ease-in-out infinite;
     transition: all 0.5s ease-in-out;
     pointer-events: none;
+    transform-origin: center center;
 }
 
 /* 吸积盘容器 */
 .accretion-disk {
     position: absolute;
-    width: 200%;
-    height: 200%;
-    top: -50%;
-    left: -50%;
+    width: 140%;
+    height: 140%;
+    top: -20%;
+    left: -20%;
     animation: rotate 8s linear infinite;
     pointer-events: none;
+    transform-origin: center center;
 }
 
 /* 外部吸积盘 */
@@ -545,89 +547,148 @@ body {
     border-radius: 50%;
     box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
     animation: pulse 3s ease-in-out infinite;
+    transform-origin: center center;
 }
 
 .accretion-ring:nth-child(1) {
     border-top: 2px solid rgba(0, 150, 255, 0.8);
-    transform: rotate(30deg);
+    transform: rotate(30deg) scale(0.9);
 }
 
 .accretion-ring:nth-child(2) {
     border-bottom: 2px solid rgba(0, 150, 255, 0.6);
-    transform: rotate(-30deg);
+    transform: rotate(-30deg) scale(0.95);
 }
 
 .accretion-ring:nth-child(3) {
     border-left: 2px solid rgba(255, 100, 100, 0.7);
-    transform: rotate(60deg);
+    transform: rotate(60deg) scale(1);
 }
 
-/* 引力折射光环 */
-.gravitational-lens {
+/* 动态波纹线条 */
+.wave-lines {
     position: absolute;
     width: 120%;
     height: 120%;
     top: -10%;
     left: -10%;
-    border: 2px solid transparent;
     border-radius: 50%;
-    border-top: 2px solid rgba(255, 255, 255, 0.4);
-    animation: lens-rotate 4s linear infinite;
     pointer-events: none;
+    overflow: hidden;
 }
 
-.awake .blackhole-core {
-    width: 200px;
-    height: 200px;
+.wave-line {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 40%;
+    animation: wave-rotate 3s linear infinite;
+}
+
+.wave-line:nth-child(1) { animation-duration: 3s; border-color: rgba(0, 150, 255, 0.3); }
+.wave-line:nth-child(2) { animation-duration: 4s; border-color: rgba(0, 200, 255, 0.2); }
+.wave-line:nth-child(3) { animation-duration: 5s; border-color: rgba(100, 200, 255, 0.1); }
+.wave-line:nth-child(4) { animation-duration: 6s; border-color: rgba(255, 100, 100, 0.2); }
+.wave-line:nth-child(5) { animation-duration: 7s; border-color: rgba(255, 150, 50, 0.1); }
+
+/* 状态类 */
+.blackhole-container.happy .eye-container {
+    height: 2px !important;
+    background: rgba(255, 255, 255, 0.8);
     animation: none;
-    transform: scale(1) !important;
 }
 
-/* 醒来状态的吸积盘 */
+.blackhole-container.angry .eye-container {
+    transform: rotate(-20deg) !important;
+    height: 40px !important;
+    width: 40px !important;
+    background: rgba(255, 0, 0, 0.3);
+}
+
+.blackhole-container.angry .pupil {
+    background: #ff0000;
+    width: 28px;
+    height: 28px;
+}
+
+.blackhole-container.angry .nose {
+    width: 16px;
+    height: 16px;
+    background: #ff4444;
+}
+
+/* 波纹效果增强 */
+.blackhole-core::before,
+.blackhole-core::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple-wave 2s ease-out infinite;
+    pointer-events: none;
+    box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.4),
+        inset 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.blackhole-core::before {
+    width: 130%;
+    height: 130%;
+    animation-delay: 0s;
+}
+
+.blackhole-core::after {
+    width: 160%;
+    height: 160%;
+    animation-delay: 0.5s;
+}
+
+/* 醒来状态调整 */
+.awake .blackhole-core {
+    width: 160px;
+    height: 160px;
+    animation: none;
+}
+
 .awake .accretion-disk {
-    width: 300%;
-    height: 300%;
-    top: -100%;
-    left: -100%;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
 }
 
-.awake .gravitational-lens {
-    width: 180%;
-    height: 180%;
-    top: -40%;
-    left: -40%;
-    border-top: 3px solid rgba(255, 255, 255, 0.6);
+/* 波纹动画增强 */
+@keyframes ripple-wave {
+    0% {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+        border-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 
+            0 0 30px rgba(255, 255, 255, 0.6),
+            inset 0 0 40px rgba(255, 255, 255, 0.3);
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: none;
+    }
 }
 
-/* 吸积盘旋转动画 */
-@keyframes rotate {
+@keyframes wave-rotate {
     from {
         transform: rotate(0deg);
     }
     to {
         transform: rotate(360deg);
-    }
-}
-
-/* 引力折射光环旋转动画 */
-@keyframes lens-rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(-360deg);
-    }
-}
-
-/* 吸积盘脉冲动画 */
-@keyframes pulse {
-    0%, 100% {
-        opacity: 0.6;
-        box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
-    }
-    50% {
-        opacity: 1;
-        box-shadow: 0 0 30px rgba(0, 150, 255, 0.5);
     }
 }
 
@@ -791,49 +852,6 @@ body {
             0 0 5px rgba(255, 255, 255, 0.5),
             0 0 10px rgba(255, 255, 255, 0.3),
             0 0 15px rgba(255, 255, 255, 0.2);
-    }
-}
-
-/* 波纹效果 */
-.blackhole-core::before,
-.blackhole-core::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: ripple-wave 3s ease-in-out infinite;
-    pointer-events: none;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-.blackhole-core::before {
-    width: 120%;
-    height: 120%;
-}
-
-.blackhole-core::after {
-    width: 140%;
-    height: 140%;
-    border-width: 2px;
-    animation-delay: 1.5s;
-}
-
-/* 波纹动画 */
-@keyframes ripple-wave {
-    0% {
-        width: 100%;
-        height: 100%;
-        opacity: 1;
-        border-color: rgba(255, 255, 255, 0.6);
-    }
-    100% {
-        width: 200%;
-        height: 200%;
-        opacity: 0;
-        border-color: rgba(255, 255, 255, 0.2);
     }
 }
 

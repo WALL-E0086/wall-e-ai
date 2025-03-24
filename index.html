@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
-    <link rel="stylesheet" href="styles.css?v=2.7">
+    <link rel="stylesheet" href="styles.css?v=2.8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -37,6 +37,14 @@
                                 <div class="accretion-ring"></div>
                                 <div class="accretion-ring"></div>
                                 <div class="accretion-ring"></div>
+                            </div>
+                            <!-- 波纹线条 -->
+                            <div class="wave-lines">
+                                <div class="wave-line"></div>
+                                <div class="wave-line"></div>
+                                <div class="wave-line"></div>
+                                <div class="wave-line"></div>
+                                <div class="wave-line"></div>
                             </div>
                             <!-- 引力折射光环 -->
                             <div class="gravitational-lens"></div>
@@ -123,42 +131,84 @@
         const ctaButton = document.querySelector('.cta-button');
         const pupils = document.querySelectorAll('.pupil');
 
-        // 切换页面的函数
-        function switchToPage(pageId) {
-            // 移除所有页面的active类
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            // 移除所有导航链接的active类
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // 添加active类到目标页面和对应的导航链接
-            document.querySelector(pageId).classList.add('active');
-            document.querySelector(`.nav-links a[href="${pageId}"]`).classList.add('active');
-            
-            // 如果黑洞处于醒来状态，恢复原状
-            if (blackholeContainer.classList.contains('awake')) {
-                blackholeContainer.classList.remove('awake');
-            }
+        // 状态变量
+        let touchStartTime = 0;
+        let touchCount = 0;
+        let touchTimeout = null;
+        let resetTimeout = null;
+        let isAngry = false;
+        let lastTouchTime = 0;
+
+        // 重置状态
+        function resetState() {
+            blackholeContainer.classList.remove('awake', 'happy', 'angry');
+            touchCount = 0;
+            isAngry = false;
+            clearTimeout(touchTimeout);
+            clearTimeout(resetTimeout);
         }
 
-        // 点击黑洞或开始对话按钮时的处理函数
-        function handleWakeUp(event) {
+        // 处理触摸/点击开始
+        function handleTouchStart(event) {
+            if (isAngry) return; // 如果正在生气，忽略触摸
+
+            touchStartTime = Date.now();
+            const currentTime = Date.now();
+            
+            // 检测快速点击
+            if (currentTime - lastTouchTime < 300) {
+                touchCount++;
+                if (touchCount > 3) {
+                    // 变成生气状态
+                    isAngry = true;
+                    blackholeContainer.classList.add('angry');
+                    setTimeout(() => {
+                        resetState();
+                    }, 10000);
+                    return;
+                }
+            } else {
+                touchCount = 1;
+            }
+            
+            lastTouchTime = currentTime;
+            
+            // 清除之前的定时器
+            clearTimeout(touchTimeout);
+            clearTimeout(resetTimeout);
+            
+            // 唤醒黑洞
             blackholeContainer.classList.add('awake');
             
-            // 如果是通过开始对话按钮触发
-            if (event.target === ctaButton) {
-                setTimeout(() => {
-                    switchToPage('#chat');
-                }, 2000);
-            }
+            // 设置自动重置定时器
+            resetTimeout = setTimeout(() => {
+                resetState();
+            }, 10000);
         }
 
-        // 处理眼睛跟踪鼠标
+        // 处理触摸/点击结束
+        function handleTouchEnd() {
+            if (isAngry) return;
+
+            const touchDuration = Date.now() - touchStartTime;
+            
+            // 如果触摸时间超过5秒
+            if (touchDuration > 5000) {
+                resetState();
+                return;
+            }
+            
+            // 设置触摸超时
+            touchTimeout = setTimeout(() => {
+                if (!isAngry) {
+                    blackholeContainer.classList.add('happy');
+                }
+            }, 500);
+        }
+
+        // 处理鼠标移动
         function handleMouseMove(event) {
-            if (!blackholeContainer.classList.contains('awake')) return;
+            if (!blackholeContainer.classList.contains('awake') || isAngry) return;
 
             const rect = blackholeContainer.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
@@ -169,11 +219,9 @@
                 const eyeCenterX = eyeRect.left + eyeRect.width / 2;
                 const eyeCenterY = eyeRect.top + eyeRect.height / 2;
                 
-                // 计算鼠标相对于眼睛中心的角度和距离
                 const angle = Math.atan2(event.clientY - eyeCenterY, event.clientX - eyeCenterX);
                 const distance = Math.min(8, Math.sqrt(Math.pow(event.clientX - eyeCenterX, 2) + Math.pow(event.clientY - eyeCenterY, 2)) / 15);
                 
-                // 移动眼球，限制移动范围
                 const eyeX = Math.cos(angle) * distance;
                 const eyeY = Math.sin(angle) * distance;
                 
@@ -181,10 +229,34 @@
             });
         }
 
+        // 切换页面的函数
+        function switchToPage(pageId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            document.querySelector(pageId).classList.add('active');
+            document.querySelector(`.nav-links a[href="${pageId}"]`).classList.add('active');
+            
+            resetState();
+        }
+
         // 添加事件监听器
-        blackholeContainer.addEventListener('click', handleWakeUp);
-        ctaButton.addEventListener('click', handleWakeUp);
+        blackholeContainer.addEventListener('mousedown', handleTouchStart);
+        blackholeContainer.addEventListener('touchstart', handleTouchStart);
+        blackholeContainer.addEventListener('mouseup', handleTouchEnd);
+        blackholeContainer.addEventListener('touchend', handleTouchEnd);
         document.addEventListener('mousemove', handleMouseMove);
+        
+        ctaButton.addEventListener('click', (event) => {
+            handleTouchStart(event);
+            setTimeout(() => {
+                switchToPage('#chat');
+            }, 2000);
+        });
 
         // 添加导航链接点击处理
         document.querySelectorAll('.nav-links a').forEach(link => {
