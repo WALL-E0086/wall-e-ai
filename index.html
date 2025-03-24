@@ -4,36 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
-    <link rel="stylesheet" href="styles.css?v=1.7">
+    <link rel="stylesheet" href="styles.css?v=1.8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="overlay"></div>
     <div class="app-container">
         <!-- 侧边栏 -->
-        <nav class="sidebar">
+        <div class="sidebar">
             <div class="sidebar-header">
-                <img src="profile.jpg" alt="WALL-E" class="logo">
+                <img src="logo.png" alt="Logo" class="logo">
                 <h1>瓦力AI</h1>
             </div>
             <ul class="nav-links">
                 <li><a href="#home" class="active"><i class="fas fa-home"></i>首页</a></li>
                 <li><a href="#chat"><i class="fas fa-comments"></i>对话</a></li>
-                <li><a href="#about"><i class="fas fa-user"></i>关于</a></li>
+                <li><a href="#about"><i class="fas fa-info-circle"></i>关于</a></li>
             </ul>
-        </nav>
+        </div>
 
-        <!-- 主内容区 -->
-        <main class="main-content">
-            <!-- 首页部分 -->
-            <section id="home" class="section active">
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 首页 -->
+            <div id="home" class="section active">
                 <div class="hero">
                     <!-- 黑洞容器 -->
                     <div class="blackhole-container">
                         <div class="blackhole-core">
                             <!-- 睡觉表情 -->
                             <div class="sleeping-face">
-                                <div class="eyes"></div>
+                                <div class="eyes">
+                                    <div class="pupil"></div>
+                                    <div class="pupil"></div>
+                                </div>
                                 <div class="nose"></div>
                                 <div class="zzz-container">
                                     <span class="zzz">z</span>
@@ -44,10 +48,10 @@
                         </div>
                     </div>
                     <h2 class="gradient-text">瓦力AI初号机</h2>
-                    <p class="subtitle">你的智能AI助手</p>
-                    <a href="#chat" class="cta-button" id="start-chat">开始对话</a>
+                    <p class="subtitle">你的AI助手，为你解答任何问题</p>
+                    <a href="#chat" class="cta-button">开始对话</a>
                 </div>
-            </section>
+            </div>
 
             <!-- 对话部分 -->
             <section id="chat" class="section">
@@ -93,8 +97,64 @@
                     </div>
                 </div>
             </section>
-        </main>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <!-- 添加JavaScript -->
+    <script>
+        // 获取DOM元素
+        const blackholeContainer = document.querySelector('.blackhole-container');
+        const overlay = document.querySelector('.overlay');
+        const eyes = document.querySelector('.eyes');
+        const ctaButton = document.querySelector('.cta-button');
+        const pupils = document.querySelectorAll('.pupil');
+
+        // 点击黑洞或开始对话按钮时的处理函数
+        function handleWakeUp(event) {
+            blackholeContainer.classList.add('awake');
+            overlay.classList.add('active');
+            
+            // 如果是通过开始对话按钮触发
+            if (event.target === ctaButton) {
+                setTimeout(() => {
+                    // 切换到对话页面
+                    document.querySelector('#home').classList.remove('active');
+                    document.querySelector('#chat').classList.add('active');
+                    document.querySelector('.nav-links a.active').classList.remove('active');
+                    document.querySelector('.nav-links a[href="#chat"]').classList.add('active');
+                    
+                    // 恢复黑洞状态
+                    blackholeContainer.classList.remove('awake');
+                    overlay.classList.remove('active');
+                }, 2000);
+            }
+        }
+
+        // 处理眼睛跟踪鼠标
+        function handleMouseMove(event) {
+            if (!blackholeContainer.classList.contains('awake')) return;
+
+            const rect = blackholeContainer.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // 计算鼠标相对于中心点的角度
+            const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+            const distance = Math.min(10, Math.sqrt(Math.pow(event.clientX - centerX, 2) + Math.pow(event.clientY - centerY, 2)) / 20);
+            
+            // 移动眼球
+            const eyeX = Math.cos(angle) * distance;
+            const eyeY = Math.sin(angle) * distance;
+            
+            pupils.forEach(pupil => {
+                pupil.style.transform = `translate(${eyeX}px, ${eyeY}px)`;
+            });
+        }
+
+        // 添加事件监听器
+        blackholeContainer.addEventListener('click', handleWakeUp);
+        ctaButton.addEventListener('click', handleWakeUp);
+        document.addEventListener('mousemove', handleMouseMove);
+    </script>
 </body>
 </html> 
