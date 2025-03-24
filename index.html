@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瓦力的智能助手</title>
+    <style>
+        /* 基础样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 导航栏样式 */
+        .nav-bar {
+            background-color: #333;
+            padding: 1rem;
+        }
+
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a.active {
+            background-color: #555;
+        }
+
+        /* 页面容器样式 */
+        .page {
+            display: none;
+            padding: 2rem;
+        }
+
+        /* 天气页面样式 */
+        #weather {
+            text-align: center;
+        }
+
+        .weather-animation {
+            position: relative;
+            height: 300px;
+            margin: 2rem 0;
+        }
+
+        .walle-weather-character {
+            position: relative;
+            z-index: 2;
+        }
+
+        .weather-effects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* 天气效果样式 */
+        .raindrop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(transparent, #00f);
+            animation: rain linear infinite;
+        }
+
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: snow linear infinite;
+        }
+
+        .cloud {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            background: #ccc;
+            border-radius: 20px;
+            animation: float 6s ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+
+        .sun {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        .sun-core {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ffdb4d;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .sun-ray {
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            background: #ffdb4d;
+            left: 50%;
+            transform-origin: bottom center;
+            animation: rotate 10s linear infinite;
+        }
+
+        /* 动画关键帧 */
+        @keyframes rain {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+
+        @keyframes snow {
+            0% { transform: translateY(-100%) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100%) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%); }
+            50% { transform: translateX(50%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 添加对话界面样式 */
+        #chat {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chat-container {
+            height: 400px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow-y: auto;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin: 0 10px;
+        }
+
+        .user .message-content {
+            background: #007bff;
+            color: white;
+        }
+
+        .assistant .message-content {
+            background: #e9ecef;
+            color: black;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .chat-input button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .chat-input button:hover {
+            background: #0056b3;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-size: cover;
+        }
+
+        .user .avatar {
+            background-image: url('https://api.dicebear.com/6.x/bottts/svg?seed=user');
+        }
+
+        .assistant .avatar {
+            background-image: url('https://api.dicebear.com/6.x/bottts/svg?seed=walle');
+        }
+
+        /* 添加新的样式 */
+        .forecast {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .forecast-day {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .wardrobe-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .upload-container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            max-width: 500px;
+        }
+
+        .preview-image {
+            max-width: 300px;
+            margin: 10px auto;
+            display: none;
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .recommendation-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .walle-character {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .walle-avatar {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background-image: url('https://api.dicebear.com/6.x/bottts/svg?seed=walle');
+            background-size: cover;
+        }
+
+        /* 聊天界面改进 */
+        .chat-container {
+            background: white;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .message {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <ul class="nav-links">
+            <li><a href="#home" class="active">首页</a></li>
+            <li><a href="#weather">天气</a></li>
+            <li><a href="#chat">对话</a></li>
+            <li><a href="#about">关于</a></li>
+        </ul>
+    </nav>
+
+    <!-- 页面内容 -->
+    <div id="home" class="page" style="display: block;">
+        <div class="about-content">
+            <div class="walle-character">
+                <div class="walle-avatar"></div>
+                <h1>你好！我是瓦力AI</h1>
+                <p>我是一款具身变形智能服务机器人，致力于成为你的智能生活管家！</p>
+            </div>
+            
+            <div class="feature-card">
+                <h2>🌟 柜me - 智能穿搭美妆助手</h2>
+                <p>根据天气和个人特征，为你推荐完美的穿搭和妆容！</p>
+            </div>
+            
+            <div class="feature-card">
+                <h2>📖 时绾 - 人生故事回忆录</h2>
+                <p>记录和传承你的精彩人生故事。</p>
+            </div>
+            
+            <div class="feature-card">
+                <h2>🎞️ 云锦织机 - 家庭影像珍藏</h2>
+                <p>修复老照片，创建数字家族相册。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="weather" class="page">
+        <h1>实时天气</h1>
+        <div class="weather-animation">
+            <div class="walle-weather-character"></div>
+            <div class="weather-effects"></div>
+        </div>
+        <div class="weather-info">
+            <h2 class="temperature">获取中...</h2>
+            <p class="humidity">获取中...</p>
+            <p class="clothing-advice"></p>
+        </div>
+        <div class="forecast">
+            <div class="forecast-day" id="tomorrow">
+                <h3>明天</h3>
+                <div class="forecast-content">获取中...</div>
+            </div>
+            <div class="forecast-day" id="dayAfter">
+                <h3>后天</h3>
+                <div class="forecast-content">获取中...</div>
+            </div>
+        </div>
+        
+        <div class="wardrobe-section">
+            <h2>个性化穿搭推荐</h2>
+            <div class="upload-container">
+                <input type="file" id="photoUpload" accept="image/*" onchange="handlePhotoUpload(event)">
+                <p>上传你的照片，获取个性化穿搭建议</p>
+                <img id="previewImage" class="preview-image" alt="预览">
+            </div>
+            <div class="recommendations">
+                <div class="recommendation-card" id="styleRecommendation">
+                    <h3>穿搭建议</h3>
+                    <p>上传照片后获取建议</p>
+                </div>
+                <div class="recommendation-card" id="hairRecommendation">
+                    <h3>发型建议</h3>
+                    <p>上传照片后获取建议</p>
+                </div>
+                <div class="recommendation-card" id="makeupRecommendation">
+                    <h3>妆容建议</h3>
+                    <p>上传照片后获取建议</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat" class="page">
+        <div class="about-content">
+            <h1>与瓦力对话</h1>
+            <p>我是瓦力AI，很高兴能和你聊天！我可以帮你：</p>
+            <ul>
+                <li>提供天气和穿搭建议</li>
+                <li>记录你的生活故事</li>
+                <li>解答关于我的各种问题</li>
+            </ul>
+        </div>
+        <div class="chat-container" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="输入你的问题..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">发送</button>
+        </div>
+    </div>
+
+    <div id="about" class="page">
+        <div class="about-content">
+            <div class="walle-character">
+                <div class="walle-avatar"></div>
+                <h1>关于瓦力AI</h1>
+            </div>
+            
+            <div class="feature-card">
+                <h2>我的使命</h2>
+                <p>作为一款具身变形智能服务机器人，我的使命是成为你的智能生活管家，为家庭、办公室和公共场所提供高效、便捷的服务。</p>
+            </div>
+
+            <div class="feature-card">
+                <h2>核心功能</h2>
+                <h3>1. 柜me——穿衣美妆建议</h3>
+                <p>通过实时天气数据和用户照片，为你提供个性化的着装和美妆建议。</p>
+                
+                <h3>2. 时绾——人生故事回忆录</h3>
+                <p>采集并记录你的生活故事，生成动人的回忆录。</p>
+                
+                <h3>3. 云锦织机——家庭影像数字珍藏</h3>
+                <p>修复老照片，创建数字家族相册，让珍贵记忆永久保存。</p>
+            </div>
+
+            <div class="feature-card">
+                <h2>未来展望</h2>
+                <p>我将不断进化，融合更多先进技术，为你提供更全面的智能服务。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 代码 -->
+    <script>
+// 天气功能相关代码
+async function getLocation() {
+    try {
+        const response = await fetch('https://api.ipapi.com/api/check?access_key=2fc47227ca87d54d3922f141649837f4');
+        const data = await response.json();
+        console.log('Location data:', data); // 添加调试日志
+        return {
+            city: data.city,
+            latitude: data.latitude,
+            longitude: data.longitude
+        };
+    } catch (error) {
+        console.error('获取位置信息失败:', error);
+        return null;
+    }
+}
+
+async function getWeather(lat, lon) {
+    try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=e7912f1a0e0b0097453f01b2ae4842e6&units=metric&lang=zh_cn`;
+        console.log('Weather API URL:', url); // 添加调试日志
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log('Weather data:', data); // 添加调试日志
+        return {
+            temp: Math.round(data.main.temp),
+            humidity: data.main.humidity,
+            weather: data.weather[0].main,
+            description: data.weather[0].description
+        };
+    } catch (error) {
+        console.error('获取天气信息失败:', error);
+        return null;
+    }
+}
+
+function generateWeatherAnimation(weatherData) {
+    console.log('Generating weather animation with data:', weatherData); // 添加调试日志
+    
+    const weatherSection = document.querySelector('#weather');
+    const animationContainer = weatherSection.querySelector('.weather-animation');
+    const walleCharacter = weatherSection.querySelector('.walle-weather-character');
+    const effects = weatherSection.querySelector('.weather-effects');
+    
+    if (!animationContainer || !walleCharacter || !effects) {
+        console.error('Weather DOM elements not found');
+        return;
+    }
+    
+    // 清除现有动画
+    effects.innerHTML = '';
+    
+    // 创建瓦力天气形象
+    walleCharacter.innerHTML = `
+        <div class="weather-walle">
+            <div class="weather-blackhole">
+                <div class="weather-core"></div>
+                <div class="weather-eyes">
+                    <div class="weather-eye"></div>
+                    <div class="weather-eye"></div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 根据天气类型添加效果
+    switch(weatherData.weather.toLowerCase()) {
+        case 'rain':
+            effects.innerHTML = generateRainEffect();
+            break;
+        case 'snow':
+            effects.innerHTML = generateSnowEffect();
+            break;
+        case 'clouds':
+            effects.innerHTML = generateCloudEffect();
+            break;
+        case 'clear':
+            effects.innerHTML = generateSunEffect();
+            break;
+        default:
+            console.log('Unknown weather type:', weatherData.weather);
+            effects.innerHTML = generateSunEffect();
+    }
+    
+    // 更新温度和湿度显示
+    const tempElement = weatherSection.querySelector('.temperature');
+    const humidityElement = weatherSection.querySelector('.humidity');
+    
+    if (tempElement && humidityElement) {
+        tempElement.textContent = `${weatherData.temp}°C`;
+        humidityElement.textContent = `湿度: ${weatherData.humidity}%`;
+    }
+    
+    // 生成穿衣建议
+    generateClothingAdvice(weatherData.temp);
+}
+
+function generateRainEffect() {
+    let raindrops = '';
+    for (let i = 0; i < 50; i++) {
+        const left = Math.random() * 100;
+        const animationDuration = 0.5 + Math.random() * 0.5;
+        const delay = Math.random() * 2;
+        raindrops += `<div class="raindrop" style="left: ${left}%; animation-duration: ${animationDuration}s; animation-delay: ${delay}s;"></div>`;
+    }
+    return raindrops;
+}
+
+function generateSnowEffect() {
+    let snowflakes = '';
+    for (let i = 0; i < 30; i++) {
+        const left = Math.random() * 100;
+        const size = 3 + Math.random() * 4;
+        const animationDuration = 3 + Math.random() * 2;
+        const delay = Math.random() * 2;
+        snowflakes += `<div class="snowflake" style="left: ${left}%; width: ${size}px; height: ${size}px; animation-duration: ${animationDuration}s; animation-delay: ${delay}s;"></div>`;
+    }
+    return snowflakes;
+}
+
+function generateCloudEffect() {
+    return `
+        <div class="cloud" style="--delay: 0s;"></div>
+        <div class="cloud" style="--delay: 2s;"></div>
+        <div class="cloud" style="--delay: 4s;"></div>
+    `;
+}
+
+function generateSunEffect() {
+    return `
+        <div class="sun">
+            <div class="sun-core"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+        </div>
+    `;
+}
+
+function generateClothingAdvice(temperature) {
+    const weatherSection = document.querySelector('#weather');
+    const adviceElement = weatherSection.querySelector('.clothing-advice');
+    
+    if (!adviceElement) return;
+    
+    let advice = '';
+    if (temperature <= 5) {
+        advice = '天气寒冷，建议穿厚羽绒服、围巾、帽子等保暖衣物';
+    } else if (temperature <= 15) {
+        advice = '天气较凉，建议穿夹克衫或毛衣等保暖衣物';
+    } else if (temperature <= 25) {
+        advice = '天气舒适，建议穿长袖衬衫或薄外套';
+    } else {
+        advice = '天气炎热，建议穿轻薄透气的衣物';
+    }
+    
+    adviceElement.textContent = advice;
+}
+
+// 页面切换功能
+function switchPage(pageId) {
+    // 隐藏所有页面
+    document.querySelectorAll('.page').forEach(page => {
+        page.style.display = 'none';
+    });
+    
+    // 显示目标页面
+    const targetPage = document.querySelector(pageId);
+    if (targetPage) {
+        targetPage.style.display = 'block';
+        
+        // 如果切换到天气页面，初始化天气功能
+        if (pageId === '#weather') {
+            initializeWeather();
+        }
+    }
+    
+    // 更新导航栏激活状态
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === pageId) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// 初始化天气功能
+async function initializeWeather() {
+    console.log('Initializing weather functionality');
+    const location = await getLocation();
+    if (location) {
+        const weather = await getWeather(location.latitude, location.longitude);
+        if (weather) {
+            generateWeatherAnimation(weather);
+            // 获取天气预报
+            await getWeatherForecast(location.latitude, location.longitude);
+        }
+    }
+}
+
+// 天气预报功能
+async function getWeatherForecast(lat, lon) {
+    try {
+        const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=e7912f1a0e0b0097453f01b2ae4842e6&units=metric&lang=zh_cn`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        // 处理预报数据
+        const tomorrow = data.list.find(item => {
+            const date = new Date(item.dt * 1000);
+            return date.getHours() === 12 && date.getDate() === new Date().getDate() + 1;
+        });
+        
+        const dayAfter = data.list.find(item => {
+            const date = new Date(item.dt * 1000);
+            return date.getHours() === 12 && date.getDate() === new Date().getDate() + 2;
+        });
+        
+        updateForecast('tomorrow', tomorrow);
+        updateForecast('dayAfter', dayAfter);
+    } catch (error) {
+        console.error('获取天气预报失败:', error);
+    }
+}
+
+function updateForecast(elementId, forecast) {
+    const element = document.getElementById(elementId);
+    if (element && forecast) {
+        element.querySelector('.forecast-content').innerHTML = `
+            <p>温度: ${Math.round(forecast.main.temp)}°C</p>
+            <p>天气: ${forecast.weather[0].description}</p>
+            <p>湿度: ${forecast.main.humidity}%</p>
+        `;
+    }
+}
+
+// 照片上传和分析功能
+function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('previewImage');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            
+            // 调用智谱AI进行分析
+            analyzePhoto(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+async function analyzePhoto(imageData) {
+    try {
+        // 准备分析请求
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+        };
+        
+        const requestBody = {
+            messages: [{
+                role: "user",
+                content: [
+                    {
+                        type: "text",
+                        text: "请分析这张照片中的人物特征，并给出穿衣风格、发型和妆容建议。考虑以下方面：1. 身材特点 2. 肤色 3. 脸型 4. 个人气质"
+                    },
+                    {
+                        type: "image",
+                        image_url: imageData
+                    }
+                ]
+            }],
+            temperature: 0.7
+        };
+        
+        // 发送分析请求
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(requestBody)
+        });
+        
+        const data = await response.json();
+        
+        // 更新推荐内容
+        if (data.choices && data.choices[0]) {
+            const analysis = parseAnalysis(data.choices[0].content);
+            updateRecommendations(analysis);
+        }
+    } catch (error) {
+        console.error('照片分析失败:', error);
+    }
+}
+
+function parseAnalysis(content) {
+    // 解析AI返回的建议
+    const sections = {
+        style: '',
+        hair: '',
+        makeup: ''
+    };
+    
+    const lines = content.split('\n');
+    let currentSection = '';
+    
+    for (const line of lines) {
+        if (line.includes('穿搭建议') || line.includes('着装建议')) {
+            currentSection = 'style';
+            continue;
+        } else if (line.includes('发型建议')) {
+            currentSection = 'hair';
+            continue;
+        } else if (line.includes('妆容建议')) {
+            currentSection = 'makeup';
+            continue;
+        }
+        
+        if (currentSection && line.trim()) {
+            sections[currentSection] += line + '\n';
+        }
+    }
+    
+    return sections;
+}
+
+function updateRecommendations(analysis) {
+    document.getElementById('styleRecommendation').innerHTML = `
+        <h3>穿搭建议</h3>
+        <p>${analysis.style || '暂无建议'}</p>
+    `;
+    
+    document.getElementById('hairRecommendation').innerHTML = `
+        <h3>发型建议</h3>
+        <p>${analysis.hair || '暂无建议'}</p>
+    `;
+    
+    document.getElementById('makeupRecommendation').innerHTML = `
+        <h3>妆容建议</h3>
+        <p>${analysis.makeup || '暂无建议'}</p>
+    `;
+}
+
+// 智谱AI聊天功能
+const API_KEY = 'eed9af215d47fc16afefcd223710e28e.XKe7PGy7dHEeaQaX';
+const API_URL = 'https://open.bigmodel.cn/api/paas/v3/model-api/chatglm_turbo/invoke';
+
+async function sendMessage() {
+    const userInput = document.getElementById('userInput');
+    const message = userInput.value.trim();
+    
+    if (!message) return;
+    
+    appendMessage('user', message);
+    userInput.value = '';
+    
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+        };
+        
+        const requestBody = {
+            messages: [{
+                role: "user",
+                content: message
+            }],
+            temperature: 0.7
+        };
+        
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(requestBody)
+        });
+        
+        const data = await response.json();
+        
+        if (data.choices && data.choices[0]) {
+            let reply = data.choices[0].content;
+            // 添加瓦力特色的回复风格
+            reply = `${getWallePrefix()} ${reply}`;
+            appendMessage('assistant', reply);
+        } else {
+            appendMessage('assistant', '哔哔...抱歉，我现在有点混乱。');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        appendMessage('assistant', '哔哔...我好像遇到了一些技术故障。');
+    }
+}
+
+function getWallePrefix() {
+    const prefixes = [
+        '滴滴！',
+        '哔哔~',
+        'WALL-E: ',
+        '叮咚！',
+        '滴滴答答~'
+    ];
+    return prefixes[Math.floor(Math.random() * prefixes.length)];
+}
+
+function appendMessage(role, content) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}`;
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+    messageContent.textContent = content;
+    
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(messageContent);
+    chatMessages.appendChild(messageDiv);
+    
+    // 滚动到底部
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+// 页面加载时的事件监听
+document.addEventListener('DOMContentLoaded', () => {
+    // 为导航链接添加点击事件
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const pageId = link.getAttribute('href');
+            switchPage(pageId);
+            // 更新URL hash但不触发hashchange事件
+            history.pushState(null, '', pageId);
+        });
+    });
+    
+    // 根据当前URL hash切换到对应页面
+    const currentHash = window.location.hash || '#home';
+    switchPage(currentHash);
+    
+    // 监听浏览器后退/前进按钮
+    window.addEventListener('popstate', () => {
+        const currentHash = window.location.hash || '#home';
+        switchPage(currentHash);
+    });
+});
+    </script>
+</body>
+</html>
