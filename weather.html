@@ -6,99 +6,146 @@
     <title>柜me - 瓦力AI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap">
 </head>
 <body>
-    <div class="weather-page">
-        <div class="weather-container">
-            <!-- 天气信息部分 -->
-            <div class="weather-section">
-                <div class="current-weather">
-                    <h3>今日天气</h3>
-                    <div class="weather-main">
-                        <div class="temperature"></div>
-                        <div class="weather-desc"></div>
-                        <div class="humidity"></div>
-                    </div>
-                    <div class="weather-indices"></div>
-                </div>
-                <div class="weather-forecast">
-                    <h3>未来天气</h3>
-                    <div class="forecast-list"></div>
-                </div>
-                <div class="clothing-advice">
-                    <h3>穿衣建议</h3>
-                    <div class="advice-content"></div>
-                </div>
+    <div class="app-container">
+        <!-- 导航栏 -->
+        <nav class="nav-bar">
+            <div class="nav-logo">
+                <img src="wall-e.png" alt="WALL-E" class="logo">
+                <h1>瓦力AI</h1>
             </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    首页
+                </a>
+                <a href="weather.html" class="nav-link active">
+                    <i class="fas fa-cloud-sun"></i>
+                    柜me
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    时绾
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-camera"></i>
+                    云锦
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    关于
+                </a>
+            </div>
+        </nav>
 
-            <!-- 自拍分析部分 -->
-            <div class="selfie-section">
-                <h3>个人形象分析</h3>
-                <div class="selfie-upload">
-                    <div class="upload-area" id="upload-area">
-                        <i class="fas fa-camera"></i>
-                        <p>点击上传自拍照片</p>
-                        <input type="file" id="selfie-upload" accept="image/*" hidden>
+        <main class="main-content weather-page">
+            <div class="weather-container">
+                <!-- 天气部分 -->
+                <section class="weather-section">
+                    <div class="current-weather">
+                        <h3>今日天气</h3>
+                        <div class="weather-main">
+                            <div class="temperature">25°C</div>
+                            <div class="weather-desc">晴朗</div>
+                            <div class="humidity">湿度: 65%</div>
+                        </div>
+                        <div class="weather-indices">
+                            <div class="index-item">
+                                <i class="fas fa-tshirt"></i>
+                                <span>穿衣指数</span>
+                            </div>
+                            <div class="index-item">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>化妆指数</span>
+                            </div>
+                            <div class="index-item">
+                                <i class="fas fa-head-side-cough"></i>
+                                <span>感冒指数</span>
+                            </div>
+                            <div class="index-item">
+                                <i class="fas fa-car"></i>
+                                <span>洗车指数</span>
+                            </div>
+                            <div class="index-item">
+                                <i class="fas fa-running"></i>
+                                <span>运动指数</span>
+                            </div>
+                            <div class="index-item">
+                                <i class="fas fa-sun"></i>
+                                <span>紫外线指数</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="preview-area">
-                        <img id="selfie-preview" src="" alt="自拍预览" style="display: none;">
+
+                    <div class="weather-forecast">
+                        <h3>未来天气</h3>
+                        <div class="forecast-list">
+                            <!-- 未来天气预报将通过JavaScript动态添加 -->
+                        </div>
                     </div>
-                </div>
-                <form id="analysis-form" class="analysis-form">
-                    <div class="form-group">
-                        <label for="height">身高 (cm)</label>
-                        <input type="number" id="height" name="height" required>
+
+                    <div class="clothing-advice">
+                        <h3>穿衣建议</h3>
+                        <div class="advice-section">
+                            <!-- 穿衣建议将通过JavaScript动态添加 -->
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="bodyType">体型</label>
-                        <select id="bodyType" name="bodyType" required>
-                            <option value="">请选择</option>
-                            <option value="slim">偏瘦</option>
-                            <option value="normal">标准</option>
-                            <option value="curvy">丰满</option>
-                            <option value="athletic">运动型</option>
-                        </select>
+                </section>
+
+                <!-- 自拍分析部分 -->
+                <section class="selfie-section">
+                    <h3>个性化穿搭建议</h3>
+                    <div class="selfie-upload">
+                        <div class="upload-area" id="upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽上传自拍照片</p>
+                        </div>
+                        <input type="file" id="selfie-input" accept="image/*" style="display: none;">
+                        <div class="preview-area">
+                            <img id="selfie-preview" style="display: none;">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="skinTone">肤色</label>
-                        <select id="skinTone" name="skinTone" required>
-                            <option value="">请选择</option>
-                            <option value="fair">白皙</option>
-                            <option value="medium">自然</option>
-                            <option value="olive">小麦色</option>
-                            <option value="dark">深色</option>
-                        </select>
+
+                    <form class="analysis-form">
+                        <div class="form-group">
+                            <label for="height">身高 (cm)</label>
+                            <input type="number" id="height" name="height" placeholder="请输入身高">
+                        </div>
+                        <div class="form-group">
+                            <label for="body-type">体型</label>
+                            <select id="body-type" name="body-type">
+                                <option value="">请选择体型</option>
+                                <option value="slim">偏瘦</option>
+                                <option value="normal">标准</option>
+                                <option value="athletic">运动型</option>
+                                <option value="curvy">丰满</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="skin-tone">肤色</label>
+                            <select id="skin-tone" name="skin-tone">
+                                <option value="">请选择肤色</option>
+                                <option value="fair">白皙</option>
+                                <option value="medium">自然</option>
+                                <option value="tan">小麦色</option>
+                                <option value="dark">深色</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="analyze-btn">
+                            <i class="fas fa-magic"></i>
+                            获取个性化建议
+                        </button>
+                    </form>
+
+                    <div class="analysis-result" style="display: none;">
+                        <!-- 分析结果将通过JavaScript动态添加 -->
                     </div>
-                    <div class="form-group">
-                        <label for="hairStyle">发型</label>
-                        <select id="hairStyle" name="hairStyle" required>
-                            <option value="">请选择</option>
-                            <option value="short">短发</option>
-                            <option value="medium">中发</option>
-                            <option value="long">长发</option>
-                            <option value="curly">卷发</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="facialFeatures">五官特点</label>
-                        <select id="facialFeatures" name="facialFeatures" required>
-                            <option value="">请选择</option>
-                            <option value="delicate">精致</option>
-                            <option value="natural">自然</option>
-                            <option value="prominent">立体</option>
-                            <option value="soft">柔和</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="analyze-btn">
-                        <i class="fas fa-magic"></i> 开始分析
-                    </button>
-                </form>
-                <div id="analysis-result" class="analysis-result" style="display: none;"></div>
+                </section>
             </div>
-        </div>
+        </main>
     </div>
-
     <script src="weather.js"></script>
 </body>
 </html> 

@@ -10,6 +10,7 @@
     --text-secondary: #666;
     --background: #fff;
     --secondary-background: #f5f5f7;
+    --nav-height: 70px;
 }
 
 body {
@@ -19,6 +20,83 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
+}
+
+/* 导航栏样式 */
+.nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--nav-height);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-logo .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.nav-logo h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #007AFF, #00C6FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.nav-link i {
+    font-size: 1.1rem;
+}
+
+.nav-link:hover {
+    background: var(--secondary-background);
+    color: var(--primary-color);
+}
+
+.nav-link.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 应用容器 */
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top: calc(var(--nav-height) + 20px);
 }
 
 /* 黑洞动画 */
@@ -49,43 +127,6 @@ body {
         transform: translate(-50%, -50%) scale(1.2);
         opacity: 0.8;
     }
-}
-
-/* 应用容器 */
-.app-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* 头部样式 */
-.header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 20px 0;
-    margin-bottom: 40px;
-}
-
-.header .logo {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    animation: float 3s ease-in-out infinite;
-}
-
-.header .logo:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
-}
-
-.header h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    background: linear-gradient(135deg, #007AFF, #00C6FF);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 /* 主内容区域 */
