@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>柜me - 瓦力AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="weather-page">
+        <div class="weather-container">
+            <!-- 天气信息部分 -->
+            <div class="weather-section">
+                <div class="current-weather">
+                    <h3>今日天气</h3>
+                    <div class="weather-main">
+                        <div class="temperature"></div>
+                        <div class="weather-desc"></div>
+                        <div class="humidity"></div>
+                    </div>
+                    <div class="weather-indices"></div>
+                </div>
+                <div class="weather-forecast">
+                    <h3>未来天气</h3>
+                    <div class="forecast-list"></div>
+                </div>
+                <div class="clothing-advice">
+                    <h3>穿衣建议</h3>
+                    <div class="advice-content"></div>
+                </div>
+            </div>
+
+            <!-- 自拍分析部分 -->
+            <div class="selfie-section">
+                <h3>个人形象分析</h3>
+                <div class="selfie-upload">
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-camera"></i>
+                        <p>点击上传自拍照片</p>
+                        <input type="file" id="selfie-upload" accept="image/*" hidden>
+                    </div>
+                    <div class="preview-area">
+                        <img id="selfie-preview" src="" alt="自拍预览" style="display: none;">
+                    </div>
+                </div>
+                <form id="analysis-form" class="analysis-form">
+                    <div class="form-group">
+                        <label for="height">身高 (cm)</label>
+                        <input type="number" id="height" name="height" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bodyType">体型</label>
+                        <select id="bodyType" name="bodyType" required>
+                            <option value="">请选择</option>
+                            <option value="slim">偏瘦</option>
+                            <option value="normal">标准</option>
+                            <option value="curvy">丰满</option>
+                            <option value="athletic">运动型</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="skinTone">肤色</label>
+                        <select id="skinTone" name="skinTone" required>
+                            <option value="">请选择</option>
+                            <option value="fair">白皙</option>
+                            <option value="medium">自然</option>
+                            <option value="olive">小麦色</option>
+                            <option value="dark">深色</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hairStyle">发型</label>
+                        <select id="hairStyle" name="hairStyle" required>
+                            <option value="">请选择</option>
+                            <option value="short">短发</option>
+                            <option value="medium">中发</option>
+                            <option value="long">长发</option>
+                            <option value="curly">卷发</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="facialFeatures">五官特点</label>
+                        <select id="facialFeatures" name="facialFeatures" required>
+                            <option value="">请选择</option>
+                            <option value="delicate">精致</option>
+                            <option value="natural">自然</option>
+                            <option value="prominent">立体</option>
+                            <option value="soft">柔和</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="analyze-btn">
+                        <i class="fas fa-magic"></i> 开始分析
+                    </button>
+                </form>
+                <div id="analysis-result" class="analysis-result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="weather.js"></script>
+</body>
+</html> 
