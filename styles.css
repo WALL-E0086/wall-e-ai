@@ -11,6 +11,7 @@
     --background: #fff;
     --secondary-background: #f5f5f7;
     --sidebar-width: 250px;
+    --blackhole-offset: 120px;
 }
 
 body {
@@ -142,9 +143,9 @@ body {
     align-items: center;
     text-align: center;
     padding: 20px;
-    padding-top: 180px;
+    padding-top: calc(var(--blackhole-offset) + 60px);
     position: relative;
-    transform: translateY(60px);
+    transform: translateY(calc(var(--blackhole-offset) / 2));
 }
 
 .gradient-text {
@@ -154,15 +155,18 @@ body {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 20px;
+    margin-bottom: 0;
     position: relative;
+    top: 30px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     z-index: 2;
 }
 
 .subtitle {
     font-size: clamp(1.2rem, 2vw, 1.5rem);
     color: var(--text-secondary);
-    margin-bottom: 40px;
+    margin-top: 80px;
+    transform: translateY(20px);
     position: relative;
     z-index: 2;
 }
@@ -433,6 +437,19 @@ body {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+    :root {
+        --blackhole-offset: 80px;
+    }
+
+    .hero {
+        padding-top: 140px;
+        transform: translateY(40px);
+    }
+
+    .gradient-text {
+        top: 20px;
+    }
+
     .sidebar {
         transform: translateX(-100%);
         position: fixed;
@@ -482,7 +499,7 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, calc(-50% - 120px));
+    transform: translate(-50%, calc(-50% - var(--blackhole-offset)));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -584,7 +601,7 @@ body {
 
 /* 醒来状态 */
 .blackhole-container.awake {
-    transform: translate(-50%, calc(-50% - 120px)) scale(2);
+    transform: translate(-50%, calc(-50% - var(--blackhole-offset))) scale(2);
     z-index: 1;
 }
 
@@ -608,10 +625,10 @@ body {
 
 @keyframes breathe {
     0%, 100% {
-        transform: translate(-50%, calc(-50% - 120px)) scale(1);
+        transform: translate(-50%, calc(-50% - var(--blackhole-offset))) scale(1);
     }
     50% {
-        transform: translate(-50%, calc(-50% - 120px)) scale(1.02);
+        transform: translate(-50%, calc(-50% - var(--blackhole-offset))) scale(1.02);
     }
 }
 
