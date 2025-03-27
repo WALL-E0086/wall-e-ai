@@ -500,6 +500,9 @@ body {
     transition: all 0.5s ease-in-out;
     pointer-events: none;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 波纹效果 */
@@ -652,81 +655,59 @@ body {
 /* 眼睛样式 */
 .eyes {
     position: absolute;
-    width: 140px;
+    width: 120px;
     height: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.5s ease-in-out;
-    pointer-events: none;
     z-index: 3;
 }
 
 .eye-container {
     position: relative;
-    width: 60px;
-    height: 50px;
+    width: 50px;
+    height: 40px;
     background: #fff;
-    border-radius: 30px;
-    border: 4px solid #333;
+    border-radius: 25px;
+    border: 3px solid #333;
     transform: rotate(0);
     transition: all 0.5s ease-in-out;
     overflow: hidden;
     box-shadow: 
         inset 0 0 10px rgba(0, 0, 0, 0.2),
         0 0 15px rgba(255, 255, 255, 0.5);
+    animation: blink 4s infinite;
 }
 
 .pupil {
     position: absolute;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background: #000;
     border-radius: 50%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.1s ease-out;
-    z-index: 4;
 }
 
 .pupil::after {
     content: '';
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     background: #fff;
     border-radius: 50%;
-    top: 4px;
-    right: 4px;
+    top: 3px;
+    right: 3px;
     opacity: 0.8;
-}
-
-.awake .eye-container {
-    width: 60px;
-    height: 50px;
-    border-radius: 30px;
-    transform: rotate(0);
-    background: #fff;
-    box-shadow: 
-        inset 0 0 10px rgba(0, 0, 0, 0.2),
-        0 0 15px rgba(255, 255, 255, 0.5);
-}
-
-.awake .pupil {
-    opacity: 1;
 }
 
 @keyframes blink {
     0%, 45%, 55%, 100% {
-        height: 60px;
         transform: scaleY(1);
     }
     50% {
-        height: 5px;
         transform: scaleY(0.1);
     }
 } 
