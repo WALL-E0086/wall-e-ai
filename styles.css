@@ -483,6 +483,10 @@ body {
     button {
         width: 100%;
     }
+
+    .blackhole-container {
+        top: calc(50% - 80px);
+    }
 }
 
 /* 黑洞容器样式 */
@@ -490,7 +494,7 @@ body {
     width: 400px;
     height: 400px;
     position: fixed;
-    top: 50%;
+    top: calc(50% - 100px);
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
