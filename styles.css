@@ -485,7 +485,7 @@ body {
     }
 
     .blackhole-container {
-        top: calc(50% - 80px);
+        top: calc(50% - 100px);
         left: 50%;
     }
 }
@@ -495,8 +495,8 @@ body {
     width: 400px;
     height: 400px;
     position: fixed;
-    top: calc(50% - 100px);
-    left: calc(50% + 60px);
+    top: calc(50% - 120px);
+    left: calc(50% + 100px);
     transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
