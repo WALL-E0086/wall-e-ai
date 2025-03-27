@@ -143,9 +143,9 @@ body {
     align-items: center;
     text-align: center;
     padding: 20px;
-    padding-top: calc(var(--blackhole-offset) + 60px);
+    padding-top: 180px;
     position: relative;
-    transform: translateY(calc(var(--blackhole-offset) / 2));
+    transform: translateY(60px);
 }
 
 .gradient-text {
@@ -499,7 +499,7 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, calc(-50% - var(--blackhole-offset)));
+    transform: translate(-50%, calc(-50% - 120px));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -601,7 +601,7 @@ body {
 
 /* 醒来状态 */
 .blackhole-container.awake {
-    transform: translate(-50%, calc(-50% - var(--blackhole-offset))) scale(2);
+    transform: translate(-50%, calc(-50% - 120px)) scale(2);
     z-index: 1;
 }
 
@@ -625,10 +625,10 @@ body {
 
 @keyframes breathe {
     0%, 100% {
-        transform: translate(-50%, calc(-50% - var(--blackhole-offset))) scale(1);
+        transform: translate(-50%, calc(-50% - 120px)) scale(1);
     }
     50% {
-        transform: translate(-50%, calc(-50% - var(--blackhole-offset))) scale(1.02);
+        transform: translate(-50%, calc(-50% - 120px)) scale(1.02);
     }
 }
 
