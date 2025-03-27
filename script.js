@@ -141,6 +141,27 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('a[href="#home"]').classList.add('active');
         }
     }
+
+    // 添加眼睛移动功能
+    document.addEventListener('mousemove', function(event) {
+        const eyes = document.querySelectorAll('.pupil');
+        eyes.forEach(eye => {
+            const rect = eye.getBoundingClientRect();
+            const eyeCenterX = rect.left + rect.width / 2;
+            const eyeCenterY = rect.top + rect.height / 2;
+            
+            // 计算鼠标和眼睛中心的角度
+            const angle = Math.atan2(event.clientY - eyeCenterY, event.clientX - eyeCenterX);
+            
+            // 限制眼球移动范围
+            const distance = 3;
+            const moveX = Math.cos(angle) * distance;
+            const moveY = Math.sin(angle) * distance;
+            
+            // 应用移动
+            eye.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+        });
+    });
 });
 
 // 监听URL hash变化
@@ -231,28 +252,4 @@ document.getElementById('user-input').addEventListener('keypress', function(e) {
 });
 
 // 监听发送按钮点击
-document.getElementById('send-button').addEventListener('click', sendMessage);
-
-// 眼睛跟随鼠标移动
-function handleEyeMovement(event) {
-    const eyes = document.querySelectorAll('.pupil');
-    eyes.forEach(eye => {
-        const rect = eye.getBoundingClientRect();
-        const eyeCenterX = rect.left + rect.width / 2;
-        const eyeCenterY = rect.top + rect.height / 2;
-        
-        // 计算鼠标和眼睛中心的角度
-        const angle = Math.atan2(event.clientY - eyeCenterY, event.clientX - eyeCenterX);
-        
-        // 限制眼球移动范围
-        const distance = 5;
-        const moveX = Math.cos(angle) * distance;
-        const moveY = Math.sin(angle) * distance;
-        
-        // 应用移动
-        eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    });
-}
-
-// 添加鼠标移动事件监听器
-document.addEventListener('mousemove', handleEyeMovement); 
+document.getElementById('send-button').addEventListener('click', sendMessage); 
