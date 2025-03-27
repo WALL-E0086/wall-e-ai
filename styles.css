@@ -142,7 +142,7 @@ body {
     align-items: center;
     text-align: center;
     padding: 20px;
-    padding-top: 400px; /* 为黑洞留出空间 */
+    padding-top: 300px; /* 减小顶部内边距 */
 }
 
 .gradient-text {
@@ -478,9 +478,9 @@ body {
     width: 400px;
     height: 400px;
     position: fixed;
-    top: 200px; /* 改为固定距离顶部的位置 */
+    top: 100px; /* 降低黑洞位置 */
     left: 50%;
-    transform: translate(-50%, 0); /* 移除Y轴的位移 */
+    transform: translate(-50%, 0);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -494,8 +494,8 @@ body {
 
 /* 黑洞核心样式 */
 .blackhole-core {
-    width: 150px;
-    height: 150px;
+    width: 120px; /* 稍微缩小黑洞核心 */
+    height: 120px;
     background: #000;
     border-radius: 50%;
     position: relative;
