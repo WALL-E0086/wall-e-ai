@@ -503,6 +503,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible;
 }
 
 /* 波纹效果 */
@@ -660,7 +661,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 3;
+    z-index: 10;
 }
 
 .eye-container {
@@ -672,10 +673,10 @@ body {
     border: 3px solid #333;
     transform: rotate(0);
     transition: all 0.5s ease-in-out;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 
         inset 0 0 10px rgba(0, 0, 0, 0.2),
-        0 0 15px rgba(255, 255, 255, 0.5);
+        0 0 15px rgba(255, 255, 255, 0.8);
     animation: blink 4s infinite;
 }
 
@@ -689,6 +690,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.1s ease-out;
+    z-index: 11;
 }
 
 .pupil::after {
