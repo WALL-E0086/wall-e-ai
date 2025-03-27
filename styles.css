@@ -142,7 +142,9 @@ body {
     align-items: center;
     text-align: center;
     padding: 20px;
-    padding-top: 380px;
+    padding-top: 180px;
+    position: relative;
+    transform: translateY(60px);
 }
 
 .gradient-text {
@@ -478,15 +480,15 @@ body {
     width: 400px;
     height: 400px;
     position: fixed;
-    top: 50px;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, calc(-50% - 120px));
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.5s ease-in-out;
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6) 30%, transparent 70%);
-    z-index: -1;
+    z-index: 1;
     overflow: hidden;
     clip-path: inset(0 0 0 0);
     animation: breathe 4s ease-in-out infinite;
@@ -582,8 +584,8 @@ body {
 
 /* 醒来状态 */
 .blackhole-container.awake {
-    transform: translate(-50%, 0) scale(2);
-    z-index: -1;
+    transform: translate(-50%, calc(-50% - 120px)) scale(2);
+    z-index: 1;
 }
 
 .awake .blackhole-core {
@@ -606,10 +608,10 @@ body {
 
 @keyframes breathe {
     0%, 100% {
-        transform: translate(-50%, 0) scale(1);
+        transform: translate(-50%, calc(-50% - 120px)) scale(1);
     }
     50% {
-        transform: translate(-50%, 0) scale(1.02);
+        transform: translate(-50%, calc(-50% - 120px)) scale(1.02);
     }
 }
 
