@@ -138,11 +138,11 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     padding: 20px;
-    padding-top: 300px; /* 减小顶部内边距 */
+    padding-top: 380px;
 }
 
 .gradient-text {
@@ -478,7 +478,7 @@ body {
     width: 400px;
     height: 400px;
     position: fixed;
-    top: 100px; /* 降低黑洞位置 */
+    top: 50px;
     left: 50%;
     transform: translate(-50%, 0);
     display: flex;
@@ -494,8 +494,8 @@ body {
 
 /* 黑洞核心样式 */
 .blackhole-core {
-    width: 120px; /* 稍微缩小黑洞核心 */
-    height: 120px;
+    width: 150px;
+    height: 150px;
     background: #000;
     border-radius: 50%;
     position: relative;
