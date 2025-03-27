@@ -479,7 +479,7 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) translateY(-250px);
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -581,7 +581,7 @@ body {
 
 /* 醒来状态 */
 .blackhole-container.awake {
-    transform: translate(-50%, -50%) translateY(-250px) scale(2);
+    transform: translate(-50%, -50%) scale(2);
     z-index: -1;
 }
 
@@ -605,10 +605,12 @@ body {
 
 @keyframes breathe {
     0%, 100% {
-        transform: translate(-50%, -50%) translateY(-250px) scale(1);
+        transform: translate(-50%, -50%) scale(1);
+        filter: blur(0px);
     }
     50% {
-        transform: translate(-50%, -50%) translateY(-250px) scale(1.05);
+        transform: translate(-50%, -50%) scale(1.02);
+        filter: blur(2px);
     }
 }
 
