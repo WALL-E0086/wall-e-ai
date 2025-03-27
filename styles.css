@@ -142,6 +142,7 @@ body {
     align-items: center;
     text-align: center;
     padding: 20px;
+    padding-top: 400px; /* 为黑洞留出空间 */
 }
 
 .gradient-text {
@@ -477,9 +478,9 @@ body {
     width: 400px;
     height: 400px;
     position: fixed;
-    top: 50%;
+    top: 200px; /* 改为固定距离顶部的位置 */
     left: 50%;
-    transform: translate(-50%, -50%) translateY(-250px);
+    transform: translate(-50%, 0); /* 移除Y轴的位移 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -581,7 +582,7 @@ body {
 
 /* 醒来状态 */
 .blackhole-container.awake {
-    transform: translate(-50%, -50%) translateY(-250px) scale(2);
+    transform: translate(-50%, 0) scale(2);
     z-index: -1;
 }
 
@@ -605,10 +606,10 @@ body {
 
 @keyframes breathe {
     0%, 100% {
-        transform: translate(-50%, -50%) translateY(-250px) scale(1);
+        transform: translate(-50%, 0) scale(1);
     }
     50% {
-        transform: translate(-50%, -50%) translateY(-250px) scale(1.02);
+        transform: translate(-50%, 0) scale(1.02);
     }
 }
 
