@@ -11,7 +11,10 @@
     --background: #fff;
     --secondary-background: #f5f5f7;
     --sidebar-width: 250px;
-    --blackhole-offset: 120px;
+    --horizontal-compensation: 0.5vw;
+    --vertical-offset: 12vh;
+    --mobile-vertical-offset: 8vh;
+    --mobile-horizontal-compensation: -3vw;
 }
 
 body {
@@ -494,12 +497,12 @@ body {
 
 /* 黑洞容器样式 */
 .blackhole-container {
-    width: 400px;
-    height: 400px;
     position: fixed;
-    top: calc(50% - 120px);
-    left: calc(50% + 100px);
-    transform: translate(-50%, -50%);
+    left: calc(50% + var(--horizontal-compensation));
+    top: 50%;
+    transform: translate(-50%, calc(-50% - var(--vertical-offset))) !important;
+    width: min(40vw, 400px);
+    height: min(40vw, 400px);
     display: flex;
     align-items: center;
     justify-content: center;
