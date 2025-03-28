@@ -1,0 +1,245 @@
+/* 黑洞动态对齐系统 */
+:root {
+    --horizontal-compensation: 0.5vw;
+    --vertical-offset: 12vh;
+    --mobile-vertical-offset: 8vh;
+    --mobile-horizontal-compensation: -3vw;
+}
+
+/* 黑洞容器样式 */
+.blackhole-container {
+    position: fixed;
+    left: calc(50% + var(--horizontal-compensation));
+    top: 50%;
+    transform: translate(-50%, calc(-50% - var(--vertical-offset))) !important;
+    width: min(40vw, 400px);
+    height: min(40vw, 400px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease-in-out;
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6) 30%, transparent 70%);
+    z-index: 1;
+    overflow: hidden;
+    clip-path: inset(0 0 0 0);
+    animation: breathe 4s ease-in-out infinite;
+}
+
+/* 黑洞核心样式 */
+.blackhole-core {
+    width: 150px;
+    height: 150px;
+    background: #000;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.5s ease-in-out;
+    pointer-events: none;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+/* 波纹效果 */
+.blackhole-core::before,
+.blackhole-core::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    animation: ripple 3s ease-out infinite;
+}
+
+.blackhole-core::before {
+    animation-delay: 0s;
+}
+
+.blackhole-core::after {
+    animation-delay: 1.5s;
+}
+
+/* 吸积盘样式 */
+.accretion-disk {
+    position: absolute;
+    width: 180vw;
+    height: 180vh;
+    top: -40vh;
+    left: -40vw;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 吸积盘光环 */
+.accretion-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 40%,
+        rgba(255, 140, 0, 0.01) 50%,
+        rgba(255, 140, 0, 0.015) 60%,
+        rgba(255, 69, 0, 0.02) 70%,
+        rgba(255, 69, 0, 0.01) 80%,
+        transparent 90%
+    );
+    filter: blur(5px);
+    transform-origin: center;
+    animation: rotate 20s linear infinite;
+}
+
+.accretion-ring:nth-child(2) {
+    transform: scale(0.8) rotate(45deg);
+    animation: rotate 15s linear infinite reverse;
+    opacity: 0.1;
+}
+
+.accretion-ring:nth-child(3) {
+    transform: scale(0.6) rotate(-30deg);
+    animation: rotate 25s linear infinite;
+    opacity: 0.08;
+}
+
+/* 眼睛样式 */
+.eyes {
+    position: absolute;
+    width: 90px;
+    height: 45px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3;
+}
+
+.eye-container {
+    width: 35px;
+    height: 35px;
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid #333;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        inset 0 0 10px rgba(0, 0, 0, 0.1),
+        0 0 15px rgba(255, 255, 255, 0.8);
+    animation: blink 4s infinite;
+    transform-origin: center;
+}
+
+.pupil {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.1s ease-out;
+}
+
+.pupil::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    right: 2px;
+    opacity: 0.9;
+}
+
+.pupil::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    bottom: 2px;
+    left: 2px;
+    opacity: 0.7;
+}
+
+/* 动画效果 */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes breathe {
+    0%, 100% {
+        transform: translate(-50%, calc(-50% - var(--vertical-offset))) scale(1);
+    }
+    50% {
+        transform: translate(-50%, calc(-50% - var(--vertical-offset))) scale(1.02);
+    }
+}
+
+@keyframes ripple {
+    0% {
+        width: 100%;
+        height: 100%;
+        opacity: 0.8;
+    }
+    100% {
+        width: 300%;
+        height: 300%;
+        opacity: 0;
+    }
+}
+
+@keyframes blink {
+    0%, 96%, 98% {
+        transform: scaleY(1);
+    }
+    97% {
+        transform: scaleY(0.1);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .blackhole-container {
+        transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(0.8) !important;
+        left: calc(50% + var(--mobile-horizontal-compensation));
+    }
+    
+    .accretion-disk {
+        width: 220vw;
+        height: 220vh;
+        top: -60vh;
+        left: -60vw;
+    }
+}
+
+/* 调试模式 */
+.debug-position {
+    background: rgba(255,0,0,0.1) !important;
+    box-shadow: 0 0 0 2px red;
+}
+
+.debug-position::before {
+    content: '';
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 1px;
+    height: 100vh;
+    background: blue;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+} 

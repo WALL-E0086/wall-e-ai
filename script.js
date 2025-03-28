@@ -49,12 +49,12 @@ function generateWallEResponse(userInput) {
 
 // 添加消息到聊天界面
 function addMessage(content, type) {
-    const messages = document.querySelector('.chat-messages');
+    const messages = document.getElementById('chat-messages');
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
+    messageDiv.className = `max-w-[80%] flex flex-col ${type === 'user' ? 'self-end' : 'self-start'}`;
     
     const messageContent = document.createElement('div');
-    messageContent.className = 'message-content';
+    messageContent.className = `p-4 rounded-3xl ${type === 'user' ? 'bg-textPrimary' : 'bg-primary'} text-white relative animate-message-appear break-words`;
     messageContent.textContent = content;
     
     messageDiv.appendChild(messageContent);
@@ -69,12 +69,12 @@ function addMessage(content, type) {
 // 导航处理函数
 function handleNavigation(element) {
     // 获取所有导航链接和部分
-    const navLinks = document.querySelectorAll('.nav-links a');
-    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('#sidebar a');
+    const sections = document.querySelectorAll('main > section');
     
     // 移除所有活动状态
     navLinks.forEach(l => l.classList.remove('active'));
-    sections.forEach(s => s.classList.remove('active'));
+    sections.forEach(s => s.classList.add('hidden'));
     
     // 添加当前活动状态
     element.classList.add('active');
@@ -82,17 +82,25 @@ function handleNavigation(element) {
     const targetSection = document.getElementById(targetId);
     
     if (targetSection) {
-        targetSection.classList.add('active');
+        targetSection.classList.remove('hidden');
         // 确保滚动到顶部
         targetSection.scrollTop = 0;
+    }
+    
+    // 在移动设备上关闭侧边栏
+    if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.remove('translate-x-0');
+        document.getElementById('sidebar').classList.add('-translate-x-full');
     }
 }
 
 // 页面切换功能
 document.addEventListener('DOMContentLoaded', function() {
     // 获取所有导航链接
-    const navLinks = document.querySelectorAll('.nav-links a');
+    const navLinks = document.querySelectorAll('#sidebar a');
     const startChatButton = document.getElementById('start-chat');
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
 
     // 处理导航点击
     navLinks.forEach(link => {
@@ -108,28 +116,28 @@ document.addEventListener('DOMContentLoaded', function() {
         startChatButton.addEventListener('click', function(e) {
             e.preventDefault();
             // 直接切换到对话页面
-            const chatSection = document.getElementById('chat');
             const chatLink = document.querySelector('a[href="#chat"]');
             
-            if (chatSection && chatLink) {
-                // 移除所有活动状态
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
-                
-                // 添加活动状态
-                chatSection.classList.add('active');
-                chatLink.classList.add('active');
-                
-                // 更新URL
+            if (chatLink) {
+                handleNavigation(chatLink);
                 window.location.hash = '#chat';
             }
+        });
+    }
+    
+    // 侧边栏切换
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('translate-x-0');
         });
     }
 
     // 初始化页面状态
     // 如果是直接访问（没有hash）或刷新页面，显示首页
     if (!window.location.hash || window.location.hash === '#') {
-        document.getElementById('home').classList.add('active');
+        document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('home').classList.remove('hidden');
         document.querySelector('a[href="#home"]').classList.add('active');
     } else {
         // 如果有hash值，则显示对应页面
@@ -137,7 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (element) {
             handleNavigation(element);
         } else {
-            document.getElementById('home').classList.add('active');
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('home').classList.remove('hidden');
             document.querySelector('a[href="#home"]').classList.add('active');
         }
     }

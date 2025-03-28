@@ -4,30 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瓦力AI初号机</title>
-    <link rel="stylesheet" href="styles.css?v=1.7">
+    <!-- 添加TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 配置Tailwind主题 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#007AFF',
+                        secondary: '#00C6FF',
+                        textPrimary: '#333',
+                        textSecondary: '#666',
+                        bgSecondary: '#f5f5f7'
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'wave': 'wave 1s ease-in-out infinite',
+                        'ripple': 'ripple 0.6s ease-out',
+                        'message-appear': 'messageAppear 0.5s ease'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        },
+                        wave: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' }
+                        },
+                        ripple: {
+                            '0%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(0, 122, 255, 0.4)' },
+                            '70%': { transform: 'scale(1.1)', boxShadow: '0 0 0 10px rgba(0, 122, 255, 0)' },
+                            '100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(0, 122, 255, 0)' }
+                        },
+                        messageAppear: {
+                            from: { opacity: '0', transform: 'translateY(10px)' },
+                            to: { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="tailwind-styles.css?v=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap">
 </head>
-<body>
-    <div class="app-container">
+<body class="font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,sans-serif] bg-white text-textPrimary leading-relaxed overflow-hidden">
+    <div class="flex h-screen overflow-hidden">
         <!-- 侧边栏 -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <img src="profile.jpg" alt="WALL-E" class="logo">
-                <h1>瓦力AI</h1>
+        <nav class="w-64 bg-white border-r border-black/10 p-5 flex flex-col fixed h-screen md:translate-x-0 -translate-x-full transition-transform duration-300 ease-in-out z-50" id="sidebar">
+            <div class="flex items-center gap-3 pb-7 border-b border-black/10">
+                <img src="profile.jpg" alt="WALL-E" class="w-10 h-10 rounded-full transition-all duration-300 animate-float hover:scale-110 hover:shadow-lg hover:shadow-primary/30">
+                <h1 class="text-2xl font-semibold">瓦力AI</h1>
             </div>
-            <ul class="nav-links">
-                <li><a href="#home" class="active"><i class="fas fa-home"></i>首页</a></li>
-                <li><a href="#chat"><i class="fas fa-comments"></i>对话</a></li>
-                <li><a href="#about"><i class="fas fa-user"></i>关于</a></li>
+            <ul class="mt-7 list-none">
+                <li class="mb-2.5">
+                    <a href="#home" class="flex items-center gap-2.5 p-3 text-textPrimary no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-bgSecondary active:animate-ripple active" id="home-link">
+                        <i class="fas fa-home text-lg transition-all duration-300 group-hover:scale-120 group-hover:animate-wave"></i>
+                        首页
+                    </a>
+                </li>
+                <li class="mb-2.5">
+                    <a href="#chat" class="flex items-center gap-2.5 p-3 text-textPrimary no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-bgSecondary active:animate-ripple" id="chat-link">
+                        <i class="fas fa-comments text-lg transition-all duration-300 group-hover:scale-120 group-hover:animate-wave"></i>
+                        对话
+                    </a>
+                </li>
+                <li class="mb-2.5">
+                    <a href="#about" class="flex items-center gap-2.5 p-3 text-textPrimary no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-bgSecondary active:animate-ripple" id="about-link">
+                        <i class="fas fa-user text-lg transition-all duration-300 group-hover:scale-120 group-hover:animate-wave"></i>
+                        关于
+                    </a>
+                </li>
             </ul>
         </nav>
 
+        <!-- 汉堡菜单按钮 (移动端) -->
+        <button id="menu-toggle" class="fixed top-4 right-4 md:hidden z-50 bg-primary text-white p-3 rounded-full shadow-lg">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <!-- 主内容区 -->
-        <main class="main-content">
+        <main class="flex-1 md:ml-64 overflow-y-auto relative">
             <!-- 首页部分 -->
-            <section id="home" class="section active">
-                <div class="hero">
+            <section id="home" class="h-screen p-5 block">
+                <div class="h-screen flex flex-col justify-center items-center text-center p-5 relative z-10">
                     <!-- 黑洞容器 -->
                     <div class="blackhole-container">
                         <div class="blackhole-core">
@@ -47,52 +110,55 @@
                         </div>
                         <div class="gravitational-lens"></div>
                     </div>
-                    <h2 class="gradient-text">瓦力AI初号机</h2>
-                    <p class="subtitle">你的智能AI助手</p>
-                    <a href="#chat" class="cta-button" id="start-chat">开始对话</a>
+                    <h2 class="text-5xl font-bold bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent mb-0 relative shadow-sm z-10">瓦力AI初号机</h2>
+                    <p class="text-xl text-textSecondary mt-5 relative z-10">你的智能AI助手</p>
+                    <a href="#chat" class="inline-block px-10 py-4 mt-8 bg-primary text-white no-underline rounded-full font-medium transition-all duration-300 relative overflow-hidden cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/30 active:animate-ripple" id="start-chat">开始对话</a>
                 </div>
             </section>
 
             <!-- 对话部分 -->
-            <section id="chat" class="section">
-                <div class="chat-container">
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="message wall-e">
-                            <div class="message-content">
+            <section id="chat" class="h-screen p-5 hidden">
+                <div class="h-full flex flex-col bg-white rounded-3xl shadow-md overflow-hidden">
+                    <div class="flex-grow p-5 overflow-y-auto flex flex-col gap-5" id="chat-messages">
+                        <div class="max-w-[80%] flex flex-col self-start">
+                            <div class="p-4 rounded-3xl bg-primary text-white relative animate-message-appear break-words">
                                 你好！我是瓦力AI，很高兴为你服务。
                             </div>
                         </div>
                     </div>
-                    <div class="chat-input">
-                        <input type="text" id="user-input" placeholder="输入你的问题...">
-                        <button id="send-button" class="send-button">
-                            <i class="fas fa-paper-plane"></i>
+                    <div class="flex gap-2.5 p-5 bg-bgSecondary border-t border-black/10 md:flex-row flex-col">
+                        <input type="text" id="user-input" placeholder="输入你的问题..." class="flex-1 p-4 border border-black/10 rounded-3xl text-base outline-none transition-all duration-300 focus:border-primary focus:shadow focus:shadow-primary/10">
+                        <button id="send-button" class="md:w-12 md:h-12 w-full h-12 border-none rounded-full bg-primary text-white cursor-pointer transition-all duration-300 flex items-center justify-center relative overflow-hidden hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/30 active:animate-ripple">
+                            <i class="fas fa-paper-plane transition-all duration-300 hover:scale-120 hover:animate-wave"></i>
                         </button>
                     </div>
                 </div>
             </section>
 
             <!-- 关于部分 -->
-            <section id="about" class="section">
-                <div class="about-container">
-                    <div class="profile-grid">
-                        <div class="profile-content">
-                            <h2>关于我</h2>
-                            <p>一个充满好奇心的AI助手，致力于为您提供最贴心的服务。</p>
-                            <div class="social-links">
-                                <a href="https://www.xiaohongshu.com/user/profile/664eb31b000000001b018a3a" class="social-icon" target="_blank">
-                                    <i class="fas fa-book"></i> 小红书
+            <section id="about" class="h-screen p-5 hidden">
+                <div class="h-full flex items-center justify-center p-5">
+                    <div class="grid md:grid-cols-2 grid-cols-1 gap-10 md:gap-15 items-center max-w-screen-lg w-full">
+                        <div class="md:order-1 order-2">
+                            <h2 class="text-4xl mb-5">关于我</h2>
+                            <p class="text-textSecondary text-lg mb-7">一个充满好奇心的AI助手，致力于为您提供最贴心的服务。</p>
+                            <div class="flex gap-5 flex-wrap md:justify-start justify-center">
+                                <a href="https://www.xiaohongshu.com/user/profile/664eb31b000000001b018a3a" class="py-3 px-6 bg-bgSecondary text-textPrimary no-underline rounded-3xl text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden hover:bg-primary hover:text-white hover:-translate-y-0.5 active:animate-ripple" target="_blank">
+                                    <i class="fas fa-book transition-all duration-300 group-hover:scale-120 group-hover:animate-wave"></i>
+                                    小红书
                                 </a>
-                                <a href="https://space.bilibili.com/18368535" class="social-icon" target="_blank">
-                                    <i class="fas fa-play-circle"></i> B站
+                                <a href="https://space.bilibili.com/18368535" class="py-3 px-6 bg-bgSecondary text-textPrimary no-underline rounded-3xl text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden hover:bg-primary hover:text-white hover:-translate-y-0.5 active:animate-ripple" target="_blank">
+                                    <i class="fas fa-play-circle transition-all duration-300 group-hover:scale-120 group-hover:animate-wave"></i>
+                                    B站
                                 </a>
-                                <a href="https://v.douyin.com/US8BiUV4K64/" class="social-icon" target="_blank">
-                                    <i class="fas fa-video"></i> 抖音
+                                <a href="https://v.douyin.com/US8BiUV4K64/" class="py-3 px-6 bg-bgSecondary text-textPrimary no-underline rounded-3xl text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden hover:bg-primary hover:text-white hover:-translate-y-0.5 active:animate-ripple" target="_blank">
+                                    <i class="fas fa-video transition-all duration-300 group-hover:scale-120 group-hover:animate-wave"></i>
+                                    抖音
                                 </a>
                             </div>
                         </div>
-                        <div class="profile-image">
-                            <img src="profile.jpg" alt="WALL-E">
+                        <div class="relative w-full max-w-md mx-auto md:order-2 order-1">
+                            <img src="profile.jpg" alt="WALL-E" class="w-full h-auto rounded-3xl shadow-2xl">
                         </div>
                     </div>
                 </div>
