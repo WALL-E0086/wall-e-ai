@@ -1,15 +1,15 @@
 /* 黑洞动态对齐系统 */
 :root {
-    --horizontal-compensation: 0.5vw;
-    --vertical-offset: 12vh;
-    --mobile-vertical-offset: 8vh;
-    --mobile-horizontal-compensation: -3vw;
+    --horizontal-compensation: 0vw;
+    --vertical-offset: 15vh;
+    --mobile-vertical-offset: 20vh;
+    --mobile-horizontal-compensation: 0vw;
 }
 
 /* 黑洞容器样式 */
 .blackhole-container {
     position: fixed;
-    left: calc(50% + var(--horizontal-compensation));
+    left: 50%;
     top: 50%;
     transform: translate(-50%, calc(-50% - var(--vertical-offset))) !important;
     width: min(40vw, 400px);
@@ -20,8 +20,7 @@
     transition: all 0.5s ease-in-out;
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6) 30%, transparent 70%);
     z-index: 1;
-    overflow: hidden;
-    clip-path: inset(0 0 0 0);
+    overflow: visible;
     animation: breathe 4s ease-in-out infinite;
 }
 
@@ -50,11 +49,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
+    width: 150px;
+    height: 150px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     animation: ripple 3s ease-out infinite;
+    z-index: -1;
 }
 
 .blackhole-core::before {
@@ -68,12 +68,14 @@
 /* 吸积盘样式 */
 .accretion-disk {
     position: absolute;
-    width: 180vw;
-    height: 180vh;
-    top: -40vh;
-    left: -40vw;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
     pointer-events: none;
     z-index: 1;
+    transform-origin: center;
+    border-radius: 50%;
 }
 
 /* 吸积盘光环 */
@@ -94,6 +96,7 @@
     filter: blur(5px);
     transform-origin: center;
     animation: rotate 20s linear infinite;
+    overflow: hidden;
 }
 
 .accretion-ring:nth-child(2) {
@@ -191,14 +194,16 @@
 
 @keyframes ripple {
     0% {
-        width: 100%;
-        height: 100%;
+        width: 150px;
+        height: 150px;
         opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1);
     }
     100% {
-        width: 300%;
-        height: 300%;
+        width: 150px;
+        height: 150px;
         opacity: 0;
+        transform: translate(-50%, -50%) scale(3);
     }
 }
 
@@ -214,15 +219,70 @@
 /* 响应式设计 */
 @media (max-width: 768px) {
     .blackhole-container {
-        transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(0.8) !important;
-        left: calc(50% + var(--mobile-horizontal-compensation));
+        width: min(60vw, 280px);
+        height: min(60vw, 280px);
+        transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) !important;
+    }
+    
+    .blackhole-core {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .eyes {
+        width: 60px;
+        height: 30px;
+    }
+    
+    .eye-container {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .pupil {
+        width: 13px;
+        height: 13px;
     }
     
     .accretion-disk {
-        width: 220vw;
-        height: 220vh;
-        top: -60vh;
-        left: -60vw;
+        width: 300%;
+        height: 300%;
+        top: -100%;
+        left: -100%;
+        border-radius: 50%;
+    }
+    
+    .blackhole-core::before,
+    .blackhole-core::after {
+        width: 100px;
+        height: 100px;
+    }
+    
+    @keyframes ripple {
+        0% {
+            width: 100px;
+            height: 100px;
+            opacity: 0.8;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(3);
+        }
+    }
+}
+
+/* 移动端特有的breathing动画 */
+@media (max-width: 768px) {
+    @keyframes breathe {
+        0%, 100% {
+            transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(1);
+        }
+        50% {
+            transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(1.02);
+        }
     }
 }
 
