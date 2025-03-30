@@ -3,7 +3,7 @@ const wallEResponses = {
     greeting: [
         "你好啊！*beep* 很高兴见到你！*whirr*",
         "哇！*click* 是新的朋友！*beep*",
-        "你好！*whirr* 我是瓦力AI智能助手！*beep*"
+        "你好！*whirr* 我是瓦力AI初号机！*beep*"
     ],
     farewell: [
         "再见！*beep* 希望很快能再见到你！*whirr*",

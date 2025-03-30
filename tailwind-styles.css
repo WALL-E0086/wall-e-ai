@@ -1,7 +1,7 @@
 /* 黑洞动态对齐系统 */
 :root {
     --horizontal-compensation: 0vw;
-    --vertical-offset: 18vh;
+    --vertical-offset: 15vh;
     --mobile-vertical-offset: 20vh;
     --mobile-horizontal-compensation: 0vw;
 }
@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.5s ease-in-out;
-    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.8) 30%, transparent 70%);
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6) 30%, transparent 70%);
     z-index: 1;
     overflow: visible;
     animation: breathe 4s ease-in-out infinite;
@@ -31,7 +31,7 @@
     background: #000;
     border-radius: 50%;
     position: relative;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 122, 255, 0.4);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     transition: all 0.5s ease-in-out;
     pointer-events: none;
     z-index: 2;
@@ -64,21 +64,21 @@
     animation-delay: 1.5s;
 }
 
-/* 吸积盘样式 */
+/* 吸积盘样式 - 移除橙色光晕 */
 .accretion-disk {
     position: absolute;
-    width: 220%;
-    height: 220%;
-    top: -60%;
-    left: -60%;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
     pointer-events: none;
-    z-index: 0;
+    z-index: 0; /* 降低z-index */
     transform-origin: center;
     border-radius: 50%;
-    opacity: 0.3;
+    opacity: 0.2; /* 降低整体不透明度 */
 }
 
-/* 吸积盘光环 */
+/* 吸积盘光环 - 降低颜色或完全移除 */
 .accretion-ring {
     position: absolute;
     width: 100%;
@@ -87,10 +87,10 @@
     background: radial-gradient(
         ellipse at center,
         transparent 40%,
-        rgba(0, 122, 255, 0.03) 50%,
-        rgba(0, 122, 255, 0.05) 60%,
-        rgba(0, 122, 255, 0.07) 70%,
-        rgba(0, 122, 255, 0.04) 80%,
+        rgba(255, 255, 255, 0.01) 50%,
+        rgba(255, 255, 255, 0.015) 60%,
+        rgba(255, 255, 255, 0.02) 70%,
+        rgba(255, 255, 255, 0.01) 80%,
         transparent 90%
     );
     filter: blur(5px);
@@ -102,13 +102,13 @@
 .accretion-ring:nth-child(2) {
     transform: scale(0.8) rotate(45deg);
     animation: rotate 15s linear infinite reverse;
-    opacity: 0.1;
+    opacity: 0.05;
 }
 
 .accretion-ring:nth-child(3) {
     transform: scale(0.6) rotate(-30deg);
     animation: rotate 25s linear infinite;
-    opacity: 0.08;
+    opacity: 0.04;
 }
 
 /* 眼睛样式 */
@@ -173,19 +173,7 @@
     opacity: 0.7;
 }
 
-/* 消息气泡动画效果 */
-@keyframes messageAppear {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 黑洞旋转动画 */
+/* 动画效果 */
 @keyframes rotate {
     from {
         transform: rotate(0deg);
@@ -195,17 +183,15 @@
     }
 }
 
-/* 黑洞呼吸动画 */
 @keyframes breathe {
     0%, 100% {
         transform: translate(-50%, calc(-50% - var(--vertical-offset))) scale(1);
     }
     50% {
-        transform: translate(-50%, calc(-50% - var(--vertical-offset))) scale(1.05);
+        transform: translate(-50%, calc(-50% - var(--vertical-offset))) scale(1.02);
     }
 }
 
-/* 波纹动画 */
 @keyframes ripple {
     0% {
         opacity: 0.8;
@@ -213,25 +199,24 @@
     }
     100% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(1.8);
+        transform: translate(-50%, -50%) scale(3);
     }
 }
 
-/* 眼睛眨眼动画 */
 @keyframes blink {
-    0%, 95%, 100% {
+    0%, 96%, 98% {
         transform: scaleY(1);
     }
-    97.5% {
+    97% {
         transform: scaleY(0.1);
     }
 }
 
-/* 移动端适配 */
+/* 响应式设计 */
 @media (max-width: 768px) {
     .blackhole-container {
-        width: min(60vw, 250px);
-        height: min(60vw, 250px);
+        width: min(60vw, 280px);
+        height: min(60vw, 280px);
         transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) !important;
     }
     
@@ -251,21 +236,22 @@
     }
     
     .pupil {
-        width: 12px;
-        height: 12px;
+        width: 13px;
+        height: 13px;
     }
     
     .accretion-disk {
-        width: 200%;
-        height: 200%;
-        top: -50%;
-        left: -50%;
+        width: 300%;
+        height: 300%;
+        top: -100%;
+        left: -100%;
+        border-radius: 50%;
     }
     
     .blackhole-core::before,
     .blackhole-core::after {
-        width: 150%;
-        height: 150%;
+        width: 100%;
+        height: 100%;
     }
     
     @keyframes ripple {
@@ -275,20 +261,134 @@
         }
         100% {
             opacity: 0;
-            transform: translate(-50%, -50%) scale(1.5);
+            transform: translate(-50%, -50%) scale(3);
         }
     }
 }
 
+/* 移动端特有的breathing动画 */
 @media (max-width: 768px) {
     @keyframes breathe {
         0%, 100% {
             transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(1);
         }
         50% {
-            transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(1.05);
+            transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(1.02);
         }
     }
+}
+
+/* 文字定位 - 固定在初始位置 */
+.title-container {
+    position: relative;
+    z-index: 20;
+    text-align: center;
+    margin-top: 250px; /* 确保文字在黑洞下方且位置固定 */
+}
+
+.title-container h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.title-container p {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .title-container {
+        margin-top: 180px; /* 移动端调整文字位置 */
+    }
+    
+    .title-container h1 {
+        font-size: 2rem;
+    }
+    
+    .title-container p {
+        font-size: 1rem;
+    }
+}
+
+/* 添加动画效果到黑洞 */
+.main-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ripple-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    height: 50vw;
+    max-width: 500px;
+    max-height: 500px;
+    background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+    animation: ripple-animate 6s ease-in-out infinite;
+}
+
+@keyframes ripple-animate {
+    0% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+/* 添加按钮动画效果 */
+#start-chat {
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+}
+
+#start-chat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+}
+
+#start-chat:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+}
+
+/* 修复聊天消息气泡 */
+#chat-messages {
+    padding: 1rem;
+}
+
+#chat-messages .max-w-\[80\%\] {
+    margin-bottom: 1rem;
+}
+
+#chat-messages .max-w-\[80\%\]:last-child {
+    margin-bottom: 0;
+}
+
+#chat-messages .bg-primary {
+    background-color: #007AFF;
+}
+
+#chat-messages .bg-textPrimary {
+    background-color: #333;
 }
 
 /* 聊天消息样式增强 */
