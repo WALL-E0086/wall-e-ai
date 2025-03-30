@@ -25,6 +25,7 @@ body {
     justify-content: center;
     z-index: 1 !important; /* 黑洞z-index: 1，确保在文字后面 */
     margin-top: 0 !important; /* 移除内联样式的影响 */
+    overflow: visible !important; /* 允许内容溢出，避免旋转线条被裁剪 */
 }
 
 /* 黑洞核心样式 - 放大黑洞主体 */
@@ -39,7 +40,10 @@ body {
     box-shadow: 0 0 30px 5px rgba(0,0,0,0.5);
     z-index: 2;
     overflow: hidden;
-    position: relative;
+    position: absolute; /* 改为绝对定位 */
+    top: 50%; /* 中心点定位 */
+    left: 50%; /* 中心点定位 */
+    transform: translate(-50%, -50%); /* 确保完全居中 */
 }
 
 /* 波纹效果 - 完全重写确保与黑洞重合，限制波纹范围 */
@@ -76,7 +80,9 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1;
-    transform: translateY(0); /* 确保居中 */
+    top: 50%; /* 中心点定位 */
+    left: 50%; /* 中心点定位 */
+    transform: translate(-50%, -50%); /* 确保完全居中 */
 }
 
 /* 吸积盘光环 - 限制大小不超过吸积盘，调整位置使完全重合 */
@@ -94,16 +100,16 @@ body {
 }
 
 .accretion-ring:nth-child(1) {
-    width: 110%; /* 降低比例 */
-    height: 110%; /* 降低比例 */
+    width: 350px; /* 设置固定宽度 */
+    height: 350px; /* 设置固定高度 */
     border-top-color: rgba(255, 165, 0, 0.7);
     border-left-color: rgba(255, 69, 0, 0.7);
     animation-duration: 8s;
 }
 
 .accretion-ring:nth-child(2) {
-    width: 130%; /* 降低比例 */
-    height: 130%; /* 降低比例 */
+    width: 350px; /* 设置固定宽度 */
+    height: 350px; /* 设置固定高度 */
     border-top-color: rgba(138, 43, 226, 0.6);
     border-right-color: rgba(75, 0, 130, 0.6);
     animation-duration: 12s;
@@ -111,8 +117,8 @@ body {
 }
 
 .accretion-ring:nth-child(3) {
-    width: 150%; /* 降低比例 */
-    height: 150%; /* 降低比例 */
+    width: 350px; /* 设置固定宽度 */
+    height: 350px; /* 设置固定高度 */
     border-bottom-color: rgba(0, 191, 255, 0.5);
     border-left-color: rgba(30, 144, 255, 0.5);
     animation-duration: 16s;
@@ -125,6 +131,7 @@ body {
     display: flex;
     justify-content: space-between;
     position: relative;
+    z-index: 3; /* 确保眼睛在最前层 */
 }
 
 .eye-container {
@@ -286,8 +293,12 @@ body {
 
 /* 动画效果 */
 @keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { 
+        transform: translate(-50%, -50%) rotate(0deg); 
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(360deg); 
+    }
 }
 
 @keyframes pulse {
@@ -372,6 +383,13 @@ body {
         height: 250px;
     }
     
+    .accretion-ring:nth-child(1),
+    .accretion-ring:nth-child(2),
+    .accretion-ring:nth-child(3) {
+        width: 250px; /* 设置固定宽度 */
+        height: 250px; /* 设置固定高度 */
+    }
+    
     .ripple-effect {
         width: 250px; /* 与移动端吸积盘大小一致 */
         height: 250px; /* 与移动端吸积盘大小一致 */
@@ -427,6 +445,8 @@ body {
     z-index: 0 !important; /* 波纹z-index: 0，确保在黑洞下方 */
     margin-top: 0 !important; /* 移除内联样式的影响 */
     overflow: hidden; /* 防止波纹效果溢出 */
+    top: 50% !important; /* 确保与黑洞容器中心对齐 */
+    left: 50% !important; /* 确保与黑洞容器中心对齐 */
 }
 
 .ripple-effect::before,
@@ -625,7 +645,6 @@ button:hover .fas {
 
 /* 重要：移除多余的重复定义 */
 .black-hole-container,
-.accretion-ring:nth-child(1),
 .gravitational-lens,
 .black-hole-container,
 .pupil::before,
