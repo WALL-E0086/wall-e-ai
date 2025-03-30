@@ -115,6 +115,7 @@
     <!-- 动态加载JavaScript文件防止缓存 -->
     <script>
         document.write('<script src="script.js?v=' + timestamp + '"><\/script>');
+        document.write('<script src="force-update.js?v=' + timestamp + '"><\/script>');
     </script>
     
     <script>
