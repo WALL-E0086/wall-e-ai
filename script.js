@@ -3,22 +3,32 @@ const wallEResponses = {
     greeting: [
         "你好啊！*beep* 很高兴见到你！*whirr*",
         "哇！*click* 是新的朋友！*beep*",
-        "你好！*whirr* 我是瓦力AI初号机！*beep*"
+        "你好！*whirr* 我是瓦力AI智能助手！*beep*"
     ],
     farewell: [
         "再见！*beep* 希望很快能再见到你！*whirr*",
         "要走了吗？*click* 我会想你的！*beep*",
         "下次见！*whirr* 记得常来找我玩！*beep*"
     ],
+    thinking: [
+        "嗯...*whirr* 让我思考一下...*beep*",
+        "这个问题很有趣！*click* 我正在分析中...*beep*",
+        "*whirr* 正在处理您的请求...*beep* 请稍等..."
+    ],
     default: [
         "嗯...*whirr* 让我想想...*beep*",
         "这个问题很有趣！*click* 让我来回答你！*beep*",
         "*whirr* 我明白了！*beep* 让我告诉你..."
+    ],
+    confused: [
+        "哎呀！*buzz* 我有点困惑...*click* 能再说详细点吗？",
+        "*whirr* 我不太确定您的意思...*beep* 能换个方式问吗？",
+        "抱歉...*click* 我没完全理解...*whirr* 请再解释一下？"
     ]
 };
 
 // 电子音符号
-const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*'];
+const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*boop*'];
 
 // 添加电子音到文本
 function addElectronicSound(text) {
@@ -41,10 +51,21 @@ function generateWallEResponse(userInput) {
     if (input.includes('再见') || input.includes('bye') || input.includes('goodbye')) {
         return wallEResponses.farewell[Math.floor(Math.random() * wallEResponses.farewell.length)];
     }
+
+    if (input.includes('不明白') || input.includes('不懂') || input.includes('什么意思')) {
+        return wallEResponses.confused[Math.floor(Math.random() * wallEResponses.confused.length)];
+    }
     
     // 默认回复
     const defaultResponse = wallEResponses.default[Math.floor(Math.random() * wallEResponses.default.length)];
     return addElectronicSound(defaultResponse);
+}
+
+// 显示思考状态
+function showThinking() {
+    const thinkingResponse = wallEResponses.thinking[Math.floor(Math.random() * wallEResponses.thinking.length)];
+    const thinkingMessage = addMessage(thinkingResponse, 'bot');
+    return thinkingMessage;
 }
 
 // 添加消息到聊天界面
@@ -101,6 +122,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const startChatButton = document.getElementById('start-chat');
     const menuToggle = document.getElementById('menu-toggle');
     const sidebar = document.getElementById('sidebar');
+    const saveChatButton = document.getElementById('save-chat');
+    const clearChatButton = document.getElementById('clear-chat');
+
+    // 保存聊天记录
+    if (saveChatButton) {
+        saveChatButton.addEventListener('click', saveChat);
+    }
+
+    // 清空聊天记录
+    if (clearChatButton) {
+        clearChatButton.addEventListener('click', clearChat);
+    }
 
     // 处理导航点击
     navLinks.forEach(link => {
@@ -171,6 +204,29 @@ document.addEventListener('DOMContentLoaded', function() {
             eye.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
         });
     });
+
+    // 文件上传功能
+    const uploadButton = document.getElementById('upload-file');
+    const fileInput = document.getElementById('file-input');
+    
+    if(uploadButton && fileInput) {
+        uploadButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', handleFileUpload);
+    }
+
+    // 为用户输入添加键盘事件
+    const userInput = document.getElementById('user-input');
+    if (userInput) {
+        userInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    }
 });
 
 // 监听URL hash变化
@@ -189,6 +245,9 @@ const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
 // 发送消息到ChatGLM API
 async function sendToChatGLM(message) {
     try {
+        // 显示思考状态消息
+        const thinkingMessage = showThinking();
+        
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -209,6 +268,11 @@ async function sendToChatGLM(message) {
             })
         });
 
+        // 移除思考状态消息
+        if (thinkingMessage && thinkingMessage.parentNode) {
+            thinkingMessage.parentNode.removeChild(thinkingMessage);
+        }
+
         if (!response.ok) {
             throw new Error('API请求失败');
         }
@@ -217,7 +281,7 @@ async function sendToChatGLM(message) {
         return data.choices[0].message.content;
     } catch (error) {
         console.error('API调用错误:', error);
-        return '抱歉，我现在遇到了一些问题，请稍后再试。';
+        return '抱歉，我现在遇到了一些问题，请稍后再试。*buzz* 错误代码：' + error.message;
     }
 }
 
@@ -230,35 +294,170 @@ async function sendMessage() {
 
     // 添加用户消息
     addMessage(message, 'user');
+    
+    // 清空输入框
     input.value = '';
 
-    // 显示加载动画
-    const loadingMessage = addMessage('正在思考...', 'wall-e');
-
     try {
-        // 调用ChatGLM API
+        // 发送到ChatGLM API
         const response = await sendToChatGLM(message);
         
-        // 移除加载消息
-        loadingMessage.remove();
-        
         // 添加AI回复
-        addMessage(response, 'wall-e');
+        addMessage(response, 'bot');
     } catch (error) {
-        // 移除加载消息
-        loadingMessage.remove();
-        // 显示错误消息
-        addMessage('抱歉，我现在遇到了一些问题，请稍后再试。', 'wall-e');
+        console.error('消息发送错误:', error);
+        // 添加错误消息
+        addMessage('抱歉，我遇到了一些问题。*buzz* 请稍后再试。', 'bot');
     }
 }
 
-// 监听回车键
-document.getElementById('user-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+// 文件上传处理
+async function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // 显示上传中的消息
+    const uploadingMessage = addMessage(`正在处理文件: ${file.name} *whirr*`, 'bot');
+    
+    try {
+        // 读取文件内容
+        const content = await readFileContent(file);
+        
+        if (content) {
+            // 清除上传中消息
+            if (uploadingMessage && uploadingMessage.parentNode) {
+                uploadingMessage.parentNode.removeChild(uploadingMessage);
+            }
+            
+            // 显示文件内容预览
+            addMessage(`文件 "${file.name}" 已上传成功! *beep* 现在您可以询问关于这个文件的问题。`, 'bot');
+            
+            // 存储文件内容供后续使用
+            window.lastUploadedFileContent = content;
+            window.lastUploadedFileName = file.name;
+            
+            // 如果文件内容太长，只显示摘要
+            let contentPreview = content.length > 500 
+                ? content.substring(0, 500) + '...(文件较长，仅显示部分内容)' 
+                : content;
+            
+            // 添加文件内容预览消息
+            addMessage(`文件内容预览:\n${contentPreview}`, 'bot');
+        }
+    } catch (error) {
+        console.error('文件处理错误:', error);
+        
+        // 移除上传中消息
+        if (uploadingMessage && uploadingMessage.parentNode) {
+            uploadingMessage.parentNode.removeChild(uploadingMessage);
+        }
+        
+        // 显示错误消息
+        addMessage(`抱歉，处理文件时出错: ${error.message} *buzz*`, 'bot');
     }
-});
+    
+    // 清除文件输入，允许上传相同文件
+    event.target.value = '';
+}
 
-// 监听发送按钮点击
-document.getElementById('send-button').addEventListener('click', sendMessage); 
+// 读取文件内容
+function readFileContent(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+            resolve(event.target.result);
+        };
+        
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        
+        if (file.name.toLowerCase().endsWith('.txt')) {
+            reader.readAsText(file);
+        } else {
+            // 对于其他类型的文件，可能需要特殊处理
+            // 这里简化为读取文本内容
+            reader.readAsText(file);
+        }
+    });
+}
+
+// 保存聊天记录
+function saveChat() {
+    const messages = document.getElementById('chat-messages');
+    if (!messages) return;
+    
+    let chatContent = '';
+    const messageElements = messages.querySelectorAll('.max-w-[80%]');
+    
+    messageElements.forEach(messageDiv => {
+        const isUser = messageDiv.classList.contains('self-end');
+        const content = messageDiv.querySelector('div').textContent;
+        
+        chatContent += `${isUser ? '用户' : '瓦力AI'}: ${content}\n\n`;
+    });
+    
+    if (chatContent) {
+        // 创建下载链接
+        const blob = new Blob([chatContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        // 设置下载文件名，加入日期时间
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
+        
+        a.href = url;
+        a.download = `瓦力AI对话记录_${dateStr}_${timeStr}.txt`;
+        a.style.display = 'none';
+        
+        document.body.appendChild(a);
+        a.click();
+        
+        // 清理
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+        
+        // 显示保存成功消息
+        addMessage('聊天记录已保存! *ding*', 'bot');
+    }
+}
+
+// 清空聊天记录
+function clearChat() {
+    const messages = document.getElementById('chat-messages');
+    if (!messages) return;
+    
+    // 保留第一条欢迎消息
+    const firstMessage = messages.querySelector('.max-w-[80%]');
+    
+    // 清空所有消息
+    messages.innerHTML = '';
+    
+    // 如果存在第一条消息，重新添加
+    if (firstMessage) {
+        messages.appendChild(firstMessage);
+    } else {
+        // 如果没有第一条消息，添加一个新的欢迎消息
+        addMessage('你好！*beep* 我是瓦力AI，很高兴为你服务。有什么我能帮到你的吗？*whirr*', 'bot');
+    }
+}
+
+// 添加用户输入框占位符自动切换功能
+setInterval(() => {
+    const userInput = document.getElementById('user-input');
+    if (userInput) {
+        const placeholders = [
+            "输入你的问题...",
+            "有什么可以帮您的？",
+            "想知道什么？问我吧！",
+            "有疑问？我来解答！"
+        ];
+        const randomIndex = Math.floor(Math.random() * placeholders.length);
+        userInput.placeholder = placeholders[randomIndex];
+    }
+}, 5000); 
