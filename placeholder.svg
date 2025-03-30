@@ -1,0 +1,10 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#007AFF" />
+  <circle cx="100" cy="90" r="30" fill="#333333" />
+  <circle cx="70" cy="90" r="10" fill="white" />
+  <circle cx="130" cy="90" r="10" fill="white" />
+  <circle cx="70" cy="90" r="5" fill="black" />
+  <circle cx="130" cy="90" r="5" fill="black" />
+  <rect x="50" y="120" width="100" height="10" rx="5" fill="white" />
+  <text x="100" y="170" font-family="Arial" font-size="24" fill="white" text-anchor="middle">瓦力AI</text>
+</svg> 
