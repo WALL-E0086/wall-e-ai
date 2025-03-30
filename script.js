@@ -115,336 +115,264 @@ function handleNavigation(element) {
     }
 }
 
-// 页面切换功能
+// 页面初始化
 document.addEventListener('DOMContentLoaded', function() {
-    // 获取所有导航链接
-    const navLinks = document.querySelectorAll('#sidebar a');
-    const startChatButton = document.getElementById('start-chat');
+    // 初始化侧边栏
+    initSidebar();
+    
+    // 初始化黑洞眼睛
+    initBlackholeEyes();
+    
+    // 初始化聊天功能
+    initChat();
+});
+
+// 侧边栏初始化和导航
+function initSidebar() {
     const menuToggle = document.getElementById('menu-toggle');
     const sidebar = document.getElementById('sidebar');
-    const saveChatButton = document.getElementById('save-chat');
-    const clearChatButton = document.getElementById('clear-chat');
-
-    // 保存聊天记录
-    if (saveChatButton) {
-        saveChatButton.addEventListener('click', saveChat);
+    const navLinks = document.querySelectorAll('#sidebar a');
+    
+    // 默认显示首页
+    document.getElementById('home').classList.remove('hidden');
+    
+    // 汉堡菜单切换
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('-translate-x-full');
+        });
     }
-
-    // 清空聊天记录
-    if (clearChatButton) {
-        clearChatButton.addEventListener('click', clearChat);
-    }
-
-    // 处理导航点击
+    
+    // 导航链接点击处理
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            handleNavigation(this);
-            window.location.hash = this.getAttribute('href');
-        });
-    });
-
-    // 处理开始对话按钮点击
-    if (startChatButton) {
-        startChatButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            // 直接切换到对话页面
-            const chatLink = document.querySelector('a[href="#chat"]');
             
-            if (chatLink) {
-                handleNavigation(chatLink);
-                window.location.hash = '#chat';
+            // 移除所有链接的active类
+            navLinks.forEach(l => l.classList.remove('active', 'bg-blue-50'));
+            
+            // 为当前点击的链接添加active类
+            this.classList.add('active', 'bg-blue-50');
+            
+            // 获取目标部分ID
+            const targetId = this.getAttribute('href').substring(1);
+            navigateTo(targetId);
+            
+            // 在移动设备上，点击后关闭侧边栏
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
             }
         });
-    }
-    
-    // 侧边栏切换
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('-translate-x-full');
-            sidebar.classList.toggle('translate-x-0');
-        });
-    }
+    });
+}
 
-    // 初始化页面状态
-    // 如果是直接访问（没有hash）或刷新页面，显示首页
-    if (!window.location.hash || window.location.hash === '#') {
-        document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+// 导航到指定部分
+function navigateTo(targetId) {
+    // 隐藏所有部分
+    const sections = document.querySelectorAll('main section');
+    sections.forEach(section => section.classList.add('hidden'));
+    
+    // 显示目标部分
+    if (targetId === 'home') {
         document.getElementById('home').classList.remove('hidden');
-        document.querySelector('a[href="#home"]').classList.add('active');
-    } else {
-        // 如果有hash值，则显示对应页面
-        const element = document.querySelector(`a[href="${window.location.hash}"]`);
-        if (element) {
-            handleNavigation(element);
-        } else {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('home').classList.remove('hidden');
-            document.querySelector('a[href="#home"]').classList.add('active');
-        }
+    } else if (targetId === 'chat') {
+        document.getElementById('chat-section').classList.remove('hidden');
+    } else if (targetId === 'cuime') {
+        document.getElementById('cuime-section').classList.remove('hidden');
+    } else if (targetId === 'time') {
+        document.getElementById('time-section').classList.remove('hidden');
+    } else if (targetId === 'photo') {
+        document.getElementById('photo-section').classList.remove('hidden');
+    } else if (targetId === 'about') {
+        document.getElementById('about-section').classList.remove('hidden');
     }
+}
 
-    // 添加眼睛移动功能
-    document.addEventListener('mousemove', function(event) {
-        const eyes = document.querySelectorAll('.pupil');
-        eyes.forEach(eye => {
-            const rect = eye.getBoundingClientRect();
-            const eyeCenterX = rect.left + rect.width / 2;
-            const eyeCenterY = rect.top + rect.height / 2;
-            
-            // 计算鼠标和眼睛中心的角度
-            const angle = Math.atan2(event.clientY - eyeCenterY, event.clientX - eyeCenterX);
-            
-            // 限制眼球移动范围
-            const distance = 3;
-            const moveX = Math.cos(angle) * distance;
-            const moveY = Math.sin(angle) * distance;
-            
-            // 应用移动
-            eye.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
-        });
-    });
-
-    // 文件上传功能
-    const uploadButton = document.getElementById('upload-file');
-    const fileInput = document.getElementById('file-input');
+// 黑洞眼睛初始化和交互
+function initBlackholeEyes() {
+    const pupils = document.querySelectorAll('.pupil, .pupil-small');
+    let lastMoveTime = Date.now();
     
-    if(uploadButton && fileInput) {
-        uploadButton.addEventListener('click', function() {
-            fileInput.click();
-        });
+    // 设置初始位置为居中（正视）
+    pupils.forEach(pupil => {
+        pupil.style.transform = 'translate(0px, 0px)';
+    });
+    
+    // 鼠标移动时眼睛跟随
+    document.addEventListener('mousemove', function(e) {
+        lastMoveTime = Date.now();
         
-        fileInput.addEventListener('change', handleFileUpload);
-    }
+        // 主黑洞
+        const blackholeContainers = document.querySelectorAll('.blackhole-container');
+        if (blackholeContainers.length > 0) {
+            const blackholeRect = blackholeContainers[0].getBoundingClientRect();
+            const blackholeCenterX = blackholeRect.left + blackholeRect.width / 2;
+            const blackholeCenterY = blackholeRect.top + blackholeRect.height / 2;
+            
+            const angleX = (e.clientX - blackholeCenterX) / window.innerWidth * 10;
+            const angleY = (e.clientY - blackholeCenterY) / window.innerHeight * 10;
+            
+            document.querySelectorAll('.blackhole-container .pupil').forEach(pupil => {
+                pupil.style.transform = `translate(${angleX}px, ${angleY}px)`;
+            });
+        }
+        
+        // 关于页面小黑洞
+        const smallBlackholeContainers = document.querySelectorAll('.blackhole-container-small');
+        if (smallBlackholeContainers.length > 0) {
+            const smallBlackholeRect = smallBlackholeContainers[0].getBoundingClientRect();
+            const smallBlackholeCenterX = smallBlackholeRect.left + smallBlackholeRect.width / 2;
+            const smallBlackholeCenterY = smallBlackholeRect.top + smallBlackholeRect.height / 2;
+            
+            const smallAngleX = (e.clientX - smallBlackholeCenterX) / window.innerWidth * 6;
+            const smallAngleY = (e.clientY - smallBlackholeCenterY) / window.innerHeight * 6;
+            
+            document.querySelectorAll('.blackhole-container-small .pupil-small').forEach(pupil => {
+                pupil.style.transform = `translate(${smallAngleX}px, ${smallAngleY}px)`;
+            });
+        }
+    });
+    
+    // 每3秒检查一次，如果超过3秒没有鼠标移动，则恢复居中位置
+    setInterval(() => {
+        if (Date.now() - lastMoveTime > 3000) {
+            pupils.forEach(pupil => {
+                pupil.style.transform = 'translate(0px, 0px)';
+            });
+        }
+    }, 3000);
+}
 
-    // 为用户输入添加键盘事件
+// 聊天功能初始化和交互
+function initChat() {
+    // 弹出式聊天界面
+    const startChatBtn = document.getElementById('start-chat');
+    const chatInterface = document.getElementById('chat-interface');
+    const closeChat = document.getElementById('close-chat');
     const userInput = document.getElementById('user-input');
+    const sendMessage = document.getElementById('send-message');
+    
+    // 内嵌聊天界面
+    const chatSection = document.getElementById('chat-section');
+    const chatInput = document.getElementById('chat-input');
+    const sendButton = document.getElementById('send-button');
+    const chatHistory = document.getElementById('chat-history');
+    
+    // 弹出式聊天初始化
+    if (startChatBtn && chatInterface) {
+        startChatBtn.addEventListener('click', function() {
+            chatInterface.classList.remove('hidden');
+        });
+    }
+    
+    if (closeChat) {
+        closeChat.addEventListener('click', function() {
+            chatInterface.classList.add('hidden');
+        });
+    }
+    
+    // 弹出式聊天消息发送
+    if (sendMessage) {
+        sendMessage.addEventListener('click', function() {
+            sendChatMessage(userInput, 'chat-messages');
+        });
+    }
+    
     if (userInput) {
-        userInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                sendMessage();
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage(userInput, 'chat-messages');
             }
         });
     }
-});
-
-// 监听URL hash变化
-window.addEventListener('hashchange', function() {
-    const hash = window.location.hash || '#home';
-    const element = document.querySelector(`a[href="${hash}"]`);
-    if (element) {
-        handleNavigation(element);
-    }
-});
-
-// ChatGLM API配置
-const API_KEY = 'eed9af215d47fc16afefcd223710e28e.XKe7PGy7dHEeaQaX';
-const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
-
-// 发送消息到ChatGLM API
-async function sendToChatGLM(message) {
-    try {
-        // 显示思考状态消息
-        const thinkingMessage = showThinking();
-        
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: "glm-4",
-                messages: [
-                    {
-                        role: "user",
-                        content: message
-                    }
-                ],
-                temperature: 0.7,
-                top_p: 0.9,
-                stream: false
-            })
+    
+    // 内嵌聊天消息发送
+    if (sendButton) {
+        sendButton.addEventListener('click', function() {
+            sendChatMessage(chatInput, 'chat-history');
         });
-
-        // 移除思考状态消息
-        if (thinkingMessage && thinkingMessage.parentNode) {
-            thinkingMessage.parentNode.removeChild(thinkingMessage);
-        }
-
-        if (!response.ok) {
-            throw new Error('API请求失败');
-        }
-
-        const data = await response.json();
-        return data.choices[0].message.content;
-    } catch (error) {
-        console.error('API调用错误:', error);
-        return '抱歉，我现在遇到了一些问题，请稍后再试。*buzz* 错误代码：' + error.message;
     }
-}
-
-// 发送消息
-async function sendMessage() {
-    const input = document.getElementById('user-input');
-    const message = input.value.trim();
     
-    if (!message) return;
-
-    // 添加用户消息
-    addMessage(message, 'user');
-    
-    // 清空输入框
-    input.value = '';
-
-    try {
-        // 发送到ChatGLM API
-        const response = await sendToChatGLM(message);
-        
-        // 添加AI回复
-        addMessage(response, 'bot');
-    } catch (error) {
-        console.error('消息发送错误:', error);
-        // 添加错误消息
-        addMessage('抱歉，我遇到了一些问题。*buzz* 请稍后再试。', 'bot');
-    }
-}
-
-// 文件上传处理
-async function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    // 显示上传中的消息
-    const uploadingMessage = addMessage(`正在处理文件: ${file.name} *whirr*`, 'bot');
-    
-    try {
-        // 读取文件内容
-        const content = await readFileContent(file);
-        
-        if (content) {
-            // 清除上传中消息
-            if (uploadingMessage && uploadingMessage.parentNode) {
-                uploadingMessage.parentNode.removeChild(uploadingMessage);
+    if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage(chatInput, 'chat-history');
             }
-            
-            // 显示文件内容预览
-            addMessage(`文件 "${file.name}" 已上传成功! *beep* 现在您可以询问关于这个文件的问题。`, 'bot');
-            
-            // 存储文件内容供后续使用
-            window.lastUploadedFileContent = content;
-            window.lastUploadedFileName = file.name;
-            
-            // 如果文件内容太长，只显示摘要
-            let contentPreview = content.length > 500 
-                ? content.substring(0, 500) + '...(文件较长，仅显示部分内容)' 
-                : content;
-            
-            // 添加文件内容预览消息
-            addMessage(`文件内容预览:\n${contentPreview}`, 'bot');
-        }
-    } catch (error) {
-        console.error('文件处理错误:', error);
-        
-        // 移除上传中消息
-        if (uploadingMessage && uploadingMessage.parentNode) {
-            uploadingMessage.parentNode.removeChild(uploadingMessage);
-        }
-        
-        // 显示错误消息
-        addMessage(`抱歉，处理文件时出错: ${error.message} *buzz*`, 'bot');
+        });
     }
-    
-    // 清除文件输入，允许上传相同文件
-    event.target.value = '';
 }
 
-// 读取文件内容
-function readFileContent(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+// 发送聊天消息
+function sendChatMessage(inputElement, targetContainerId) {
+    const message = inputElement.value.trim();
+    if (message) {
+        const targetContainer = document.getElementById(targetContainerId);
         
-        reader.onload = (event) => {
-            resolve(event.target.result);
-        };
-        
-        reader.onerror = (error) => {
-            reject(error);
-        };
-        
-        if (file.name.toLowerCase().endsWith('.txt')) {
-            reader.readAsText(file);
+        // 添加用户消息
+        const userDiv = document.createElement('div');
+        userDiv.className = targetContainerId === 'chat-messages' 
+            ? 'max-w-[80%] self-end p-3 bg-gray-800 text-white rounded-xl rounded-br-none' 
+            : 'max-w-[80%] flex flex-col self-end';
+            
+        if (targetContainerId === 'chat-history') {
+            const userMessage = document.createElement('div');
+            userMessage.className = 'p-4 rounded-3xl bg-gray-800 text-white relative break-words';
+            userMessage.textContent = message;
+            userDiv.appendChild(userMessage);
         } else {
-            // 对于其他类型的文件，可能需要特殊处理
-            // 这里简化为读取文本内容
-            reader.readAsText(file);
+            userDiv.textContent = message;
         }
-    });
-}
-
-// 保存聊天记录
-function saveChat() {
-    const messages = document.getElementById('chat-messages');
-    if (!messages) return;
-    
-    let chatContent = '';
-    const messageElements = messages.querySelectorAll('.max-w-[80%]');
-    
-    messageElements.forEach(messageDiv => {
-        const isUser = messageDiv.classList.contains('self-end');
-        const content = messageDiv.querySelector('div').textContent;
         
-        chatContent += `${isUser ? '用户' : '瓦力AI'}: ${content}\n\n`;
-    });
-    
-    if (chatContent) {
-        // 创建下载链接
-        const blob = new Blob([chatContent], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        userDiv.style.animation = 'messageAppear 0.3s ease-out';
+        targetContainer.appendChild(userDiv);
         
-        // 设置下载文件名，加入日期时间
-        const now = new Date();
-        const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        const timeStr = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
+        // 清空输入框
+        inputElement.value = '';
         
-        a.href = url;
-        a.download = `瓦力AI对话记录_${dateStr}_${timeStr}.txt`;
-        a.style.display = 'none';
+        // 滚动到底部
+        targetContainer.scrollTop = targetContainer.scrollHeight;
         
-        document.body.appendChild(a);
-        a.click();
-        
-        // 清理
+        // 模拟AI回复
         setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
-        
-        // 显示保存成功消息
-        addMessage('聊天记录已保存! *ding*', 'bot');
+            const botResponse = getBotResponse(message);
+            
+            // 添加机器人消息
+            const botDiv = document.createElement('div');
+            botDiv.className = targetContainerId === 'chat-messages'
+                ? 'max-w-[80%] self-start p-3 bg-blue-500 text-white rounded-xl rounded-bl-none'
+                : 'max-w-[80%] flex flex-col self-start';
+                
+            if (targetContainerId === 'chat-history') {
+                const botMessage = document.createElement('div');
+                botMessage.className = 'p-4 rounded-3xl bg-blue-500 text-white relative break-words';
+                botMessage.textContent = botResponse;
+                botDiv.appendChild(botMessage);
+            } else {
+                botDiv.textContent = botResponse;
+            }
+            
+            botDiv.style.animation = 'messageAppear 0.3s ease-out';
+            targetContainer.appendChild(botDiv);
+            
+            // 滚动到底部
+            targetContainer.scrollTop = targetContainer.scrollHeight;
+        }, 1000);
     }
 }
 
-// 清空聊天记录
-function clearChat() {
-    const messages = document.getElementById('chat-messages');
-    if (!messages) return;
+// 生成AI回复
+function getBotResponse(message) {
+    const responses = [
+        "我理解你的问题，让我来帮你解决。",
+        "这是个很好的问题！根据我的分析...",
+        "我可以为你提供相关信息。",
+        "让我思考一下这个问题...",
+        "根据我的数据库，我可以告诉你...",
+        "很高兴能帮到你，这是我的建议...",
+        "这个问题很有趣，我的回答是..."
+    ];
     
-    // 保留第一条欢迎消息
-    const firstMessage = messages.querySelector('.max-w-[80%]');
-    
-    // 清空所有消息
-    messages.innerHTML = '';
-    
-    // 如果存在第一条消息，重新添加
-    if (firstMessage) {
-        messages.appendChild(firstMessage);
-    } else {
-        // 如果没有第一条消息，添加一个新的欢迎消息
-        addMessage('你好！*beep* 我是瓦力AI，很高兴为你服务。有什么我能帮到你的吗？*whirr*', 'bot');
-    }
+    return responses[Math.floor(Math.random() * responses.length)];
 }
 
 // 添加用户输入框占位符自动切换功能
@@ -460,4 +388,5 @@ setInterval(() => {
         const randomIndex = Math.floor(Math.random() * placeholders.length);
         userInput.placeholder = placeholders[randomIndex];
     }
+}, 5000); 
 }, 5000); 

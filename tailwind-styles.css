@@ -16,8 +16,8 @@ body {
 .blackhole-container {
     position: fixed;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, calc(-50% - var(--vertical-offset))) !important;
+    top: 40%;
+    transform: translate(-50%, -50%) !important;
     width: min(40vw, 400px);
     height: min(40vw, 400px);
     display: flex;
@@ -151,7 +151,7 @@ body {
     border-radius: 50%;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); /* 默认居中 */
     transition: all 0.1s ease-out;
 }
 
@@ -179,6 +179,70 @@ body {
     opacity: 0.7;
 }
 
+/* 关于页面的小型黑洞 */
+.blackhole-container-small {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: breathe 4s ease-in-out infinite;
+}
+
+.blackhole-core-small {
+    background: #000;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eyes-small {
+    position: absolute;
+    width: 60px;
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3;
+}
+
+.eye-container-small {
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid #333;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: blink 4s infinite;
+}
+
+.pupil-small {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: #000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pupil-small::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    right: 2px;
+    opacity: 0.9;
+}
+
 /* 动画效果 */
 @keyframes rotate {
     from {
@@ -191,10 +255,10 @@ body {
 
 @keyframes breathe {
     0%, 100% {
-        transform: translate(-50%, calc(-50% - var(--vertical-offset))) scale(1);
+        transform: scale(1);
     }
     50% {
-        transform: translate(-50%, calc(-50% - var(--vertical-offset))) scale(1.02);
+        transform: scale(1.02);
     }
 }
 
@@ -223,7 +287,7 @@ body {
     position: relative;
     z-index: 20;
     text-align: center;
-    margin-top: 250px; /* 确保文字在黑洞下方且位置固定 */
+    margin-top: 280px; /* 确保文字在黑洞下方且位置固定 */
 }
 
 .title-container h1 {
@@ -244,7 +308,7 @@ body {
     .blackhole-container {
         width: min(60vw, 280px);
         height: min(60vw, 280px);
-        transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) !important;
+        top: 35%;
     }
     
     .blackhole-core {
@@ -275,23 +339,6 @@ body {
         border-radius: 50%;
     }
     
-    .blackhole-core::before,
-    .blackhole-core::after {
-        width: 100%;
-        height: 100%;
-    }
-    
-    @keyframes ripple {
-        0% {
-            opacity: 0.8;
-            transform: translate(-50%, -50%) scale(1);
-        }
-        100% {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(3);
-        }
-    }
-    
     .title-container {
         margin-top: 180px; /* 移动端调整文字位置 */
     }
@@ -302,15 +349,6 @@ body {
     
     .title-container p {
         font-size: 1rem;
-    }
-    
-    @keyframes breathe {
-        0%, 100% {
-            transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(1);
-        }
-        50% {
-            transform: translate(-50%, calc(-50% - var(--mobile-vertical-offset))) scale(1.02);
-        }
     }
 }
 
@@ -328,7 +366,7 @@ body {
 /* 波纹效果 */
 .ripple-effect {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 50vw;
@@ -464,7 +502,7 @@ body {
 }
 
 /* 输入框样式 */
-#user-input:focus {
+#user-input:focus, #chat-input:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3);
     border-color: #007AFF;
@@ -495,6 +533,12 @@ button:active {
     to {
         transform: translateX(0);
     }
+}
+
+/* 激活状态的侧边栏链接 */
+#sidebar a.active {
+    background-color: rgba(0, 122, 255, 0.1);
+    color: #007AFF;
 }
 
 /* 滚动条美化 */
