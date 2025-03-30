@@ -14,22 +14,23 @@ body {
 
 /* 黑洞容器样式 */
 .blackhole-container {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -60%); /* 调整位置向上偏移 */
-    width: 280px;
-    height: 280px;
+    transform: translate(-50%, -20%); /* 调整位置向下偏移，在文字下方 */
+    width: min(40vw, 400px);
+    height: min(40vw, 400px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1;
+    z-index: 10; /* 确保在文字后面 */
+    transition: transform 0.5s ease-in-out;
 }
 
 /* 黑洞核心样式 */
 .blackhole-core {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     background-color: #000;
     border-radius: 50%;
     display: flex;
@@ -67,8 +68,8 @@ body {
 /* 吸积盘样式 - 移除橙色光晕 */
 .accretion-disk {
     position: absolute;
-    width: 250px;
-    height: 250px;
+    width: 350px;
+    height: 350px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -111,16 +112,16 @@ body {
 
 /* 眼睛样式 */
 .eyes {
-    width: 50px;
-    height: 25px;
+    width: 70px;
+    height: 35px;
     display: flex;
     justify-content: space-between;
     position: relative;
 }
 
 .eye-container {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     background-color: #f5f5f5;
     border-radius: 50%;
     display: flex;
@@ -130,8 +131,8 @@ body {
 }
 
 .pupil {
-    width: 8px;
-    height: 8px;
+    width: 14px;
+    height: 14px;
     background-color: #0a0a0a;
     border-radius: 50%;
     position: relative;
@@ -246,65 +247,65 @@ body {
 /* 文字定位 - 固定在初始位置 */
 .title-container {
     position: relative;
-    z-index: 10;
-    color: #fff; /* 恢复为白色文字 */
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* 为文字添加阴影提高可读性 */
+    z-index: 20;
+    color: #2563eb; /* 恢复为蓝色文字 */
+    margin-top: -260px; /* 确保文字在黑洞上方 */
 }
 
 .title-container h1 {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color: #fff; /* 改回白色，以便在黑洞上清晰可见 */
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加文字阴影增强可读性 */
+    color: #2563eb; /* 蓝色标题 */
 }
 
 .title-container p {
     font-size: 1.25rem;
-    color: #fff; /* 改回白色，以便在黑洞上清晰可见 */
+    color: #3b82f6; /* 稍浅的蓝色副标题 */
     margin-bottom: 2rem;
-    text-shadow: 0 0 8px rgba(0, 0, 0, 0.5); /* 添加文字阴影增强可读性 */
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
     .blackhole-container {
-        width: 200px;
-        height: 200px;
+        width: min(60vw, 280px);
+        height: min(60vw, 280px);
+        transform: translate(-50%, -30%); /* 移动端位置调整 */
     }
     
     .blackhole-core {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
     }
     
     .eyes {
-        width: 40px;
-        height: 20px;
+        width: 50px;
+        height: 25px;
     }
     
     .eye-container {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
     }
     
     .pupil {
-        width: 6px;
-        height: 6px;
+        width: 10px;
+        height: 10px;
     }
     
     .accretion-disk {
-        width: 180px;
-        height: 180px;
+        width: 250px;
+        height: 250px;
     }
     
     .ripple-effect {
-        width: 200px;
-        height: 200px;
+        width: 300px;
+        height: 300px;
+        transform: translate(-50%, -30%); /* 移动端位置调整 */
     }
     
     .title-container {
-        margin-top: 180px; /* 移动端调整文字位置 */
+        margin-top: -180px; /* 移动端调整文字位置 */
     }
     
     .title-container h1 {
@@ -336,15 +337,15 @@ body {
 
 /* 波纹效果 */
 .ripple-effect {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -60%); /* 与黑洞位置保持一致 */
-    width: 300px;
-    height: 300px;
+    transform: translate(-50%, -20%); /* 与黑洞位置保持一致 */
+    width: 400px;
+    height: 400px;
     background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.1) 80%);
     border-radius: 50%;
-    z-index: 0;
+    z-index: 5; /* 确保在文字后面 */
 }
 
 .ripple-effect::before,
@@ -356,7 +357,7 @@ body {
     right: 0;
     bottom: 0;
     border-radius: 50%;
-    border: 2px solid rgba(138, 43, 226, 0.2);
+    border: 2px solid rgba(59, 130, 246, 0.2); /* 改为蓝色风格 */
     animation: ripple 4s linear infinite;
 }
 
@@ -367,19 +368,19 @@ body {
 /* 启动按钮样式 */
 #start-chat {
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     position: relative;
     overflow: hidden;
 }
 
 #start-chat:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 #start-chat:active {
     transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
 }
 
 /* 添加波动效果到按钮 */

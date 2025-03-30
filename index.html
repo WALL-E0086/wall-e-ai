@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Version 1.0.3 - 恢复原有标题和颜色，修正黑洞位置 -->
+<!-- Version 1.0.4 - 调整黑洞位置，恢复蓝色设计 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -29,7 +29,7 @@
                         <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
                     </div>
                 </div>
-                <h1 class="text-2xl font-semibold">瓦力AI初号机</h1>
+                <h1 class="text-2xl font-semibold">瓦力AI</h1>
             </div>
             
             <ul class="mt-7 list-none">
@@ -73,7 +73,7 @@
             
             <!-- 添加功能介绍区域 -->
             <div class="mt-auto p-4 bg-gray-50 rounded-xl">
-                <h3 class="text-sm font-semibold mb-2">瓦力AI初号机功能</h3>
+                <h3 class="text-sm font-semibold mb-2">瓦力AI功能</h3>
                 <ul class="text-xs text-gray-600 space-y-1.5">
                     <li class="flex items-center gap-1.5">
                         <i class="fas fa-robot text-blue-500"></i>
@@ -105,8 +105,17 @@
             <!-- 首页部分 -->
             <section id="home" class="min-h-screen p-5 block">
                 <div class="main-container min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+                    <!-- 主要内容 -->
+                    <div class="title-container text-center z-20">
+                        <h1 class="text-4xl font-bold mb-2 text-blue-500">瓦力AI初号机</h1>
+                        <p class="text-xl mb-8 text-blue-600">你的智能生活小管家</p>
+                        <button id="start-chat" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                            开始对话
+                        </button>
+                    </div>
+                    
                     <!-- 黑洞效果 -->
-                    <div class="blackhole-container">
+                    <div class="blackhole-container" style="margin-top: -100px;">
                         <div class="blackhole-core">
                             <div class="eyes">
                                 <div class="eye-container">
@@ -125,16 +134,7 @@
                     </div>
                     
                     <!-- 波纹效果 -->
-                    <div class="ripple-effect"></div>
-                    
-                    <!-- 主要内容 -->
-                    <div class="title-container text-center z-10">
-                        <h1 class="text-4xl font-bold mb-2">瓦力AI初号机</h1>
-                        <p class="text-xl mb-8">你的智能AI助手</p>
-                        <button id="start-chat" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-                            开始对话
-                        </button>
-                    </div>
+                    <div class="ripple-effect" style="margin-top: -100px;"></div>
                     
                     <!-- 功能展示 -->
                     <div class="max-w-6xl mx-auto px-4 py-16">
@@ -181,7 +181,7 @@
             <section id="chat-section" class="h-screen p-5 hidden">
                 <div class="h-full flex flex-col bg-white rounded-3xl shadow-md overflow-hidden">
                     <div class="flex justify-between items-center p-5 bg-gray-50 border-b border-black/10">
-                        <h2 class="text-xl font-semibold">瓦力AI初号机 对话</h2>
+                        <h2 class="text-xl font-semibold">瓦力AI 对话</h2>
                         <div class="flex gap-2">
                             <button id="clear-chat" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-xl text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:bg-gray-300">
                                 <i class="fas fa-trash-alt mr-2"></i>清空
@@ -194,7 +194,7 @@
                     <div class="flex-grow p-5 overflow-y-auto flex flex-col gap-5" id="chat-history">
                         <div class="max-w-[80%] flex flex-col self-start">
                             <div class="p-4 rounded-3xl bg-blue-500 text-white relative break-words">
-                                你好！*beep* 我是瓦力AI初号机，很高兴为你服务。*whirr* 有什么我能帮到你的吗？
+                                你好！*beep* 我是瓦力AI，很高兴为你服务。*whirr* 有什么我能帮到你的吗？
                             </div>
                         </div>
                     </div>
@@ -251,8 +251,8 @@
                 <div class="h-full flex items-center justify-center p-5">
                     <div class="grid md:grid-cols-2 grid-cols-1 gap-10 md:gap-15 items-center max-w-screen-lg w-full">
                         <div class="md:order-1 order-2">
-                            <h2 class="text-4xl mb-5">关于瓦力AI初号机</h2>
-                            <p class="text-gray-600 text-lg mb-7">瓦力AI初号机是一个充满好奇心的智能助手，专注于为您提供高质量的问答服务和知识管理。无论是日常问题还是专业领域，瓦力AI初号机都能成为您的得力助手。</p>
+                            <h2 class="text-4xl mb-5">关于瓦力AI</h2>
+                            <p class="text-gray-600 text-lg mb-7">瓦力AI是一个充满好奇心的智能助手，专注于为您提供高质量的问答服务和知识管理。无论是日常问题还是专业领域，瓦力AI都能成为您的得力助手。</p>
                             <div class="space-y-4 mb-7">
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-check-circle text-blue-500"></i>
@@ -285,7 +285,7 @@
                             </div>
                             <div class="absolute -bottom-5 -right-5 bg-white p-4 rounded-2xl shadow-lg">
                                 <div class="text-sm font-semibold mb-1">版本信息</div>
-                                <div class="text-xs text-gray-600">瓦力AI初号机 v1.0</div>
+                                <div class="text-xs text-gray-600">瓦力AI v1.0</div>
                             </div>
                         </div>
                     </div>
@@ -297,7 +297,7 @@
     <!-- 聊天界面弹出层 -->
     <div id="chat-interface" class="fixed inset-0 bg-white z-50 flex flex-col hidden">
         <div class="bg-blue-500 text-white py-4 px-6 flex justify-between items-center shadow-md">
-            <h2 class="text-xl font-semibold">瓦力AI初号机 助手</h2>
+            <h2 class="text-xl font-semibold">瓦力AI 助手</h2>
             <button id="close-chat" class="text-white hover:text-gray-200">
                 <i class="fas fa-times text-2xl"></i>
             </button>
