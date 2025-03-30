@@ -27,10 +27,10 @@ body {
     margin-top: 0 !important; /* 移除内联样式的影响 */
 }
 
-/* 黑洞核心样式 */
+/* 黑洞核心样式 - 放大黑洞主体 */
 .blackhole-core {
-    width: 150px;
-    height: 150px;
+    width: 180px; /* 放大黑洞主体 */
+    height: 180px; /* 放大黑洞主体 */
     background-color: #000;
     border-radius: 50%;
     display: flex;
@@ -42,7 +42,7 @@ body {
     position: relative;
 }
 
-/* 波纹效果 - 完全重写确保与黑洞重合 */
+/* 波纹效果 - 完全重写确保与黑洞重合，限制波纹范围 */
 .blackhole-core::before,
 .blackhole-core::after {
     content: '';
@@ -65,7 +65,7 @@ body {
     animation-delay: 1.5s;
 }
 
-/* 吸积盘样式 - 移除橙色光晕 */
+/* 吸积盘样式 - 保持大小不变 */
 .accretion-disk {
     position: absolute;
     width: 350px;
@@ -77,25 +77,27 @@ body {
     z-index: 1;
 }
 
-/* 吸积盘光环 - 降低颜色或完全移除 */
+/* 吸积盘光环 - 限制大小不超过吸积盘 */
 .accretion-ring {
     position: absolute;
     border-radius: 50%;
     border: 4px solid transparent;
     animation: rotate linear infinite;
+    max-width: 100%; /* 限制最大宽度 */
+    max-height: 100%; /* 限制最大高度 */
 }
 
 .accretion-ring:nth-child(1) {
-    width: 130%;
-    height: 130%;
+    width: 120%; /* 降低比例 */
+    height: 120%; /* 降低比例 */
     border-top-color: rgba(255, 165, 0, 0.7);
     border-left-color: rgba(255, 69, 0, 0.7);
     animation-duration: 8s;
 }
 
 .accretion-ring:nth-child(2) {
-    width: 160%;
-    height: 160%;
+    width: 140%; /* 降低比例 */
+    height: 140%; /* 降低比例 */
     border-top-color: rgba(138, 43, 226, 0.6);
     border-right-color: rgba(75, 0, 130, 0.6);
     animation-duration: 12s;
@@ -103,48 +105,50 @@ body {
 }
 
 .accretion-ring:nth-child(3) {
-    width: 190%;
-    height: 190%;
+    width: 160%; /* 降低比例 */
+    height: 160%; /* 降低比例 */
     border-bottom-color: rgba(0, 191, 255, 0.5);
     border-left-color: rgba(30, 144, 255, 0.5);
     animation-duration: 16s;
 }
 
-/* 眼睛样式 */
+/* 眼睛样式 - 恢复更灵动的眼睛设计 */
 .eyes {
-    width: 70px;
-    height: 35px;
+    width: 80px; /* 调整眼睛整体宽度 */
+    height: 40px; /* 调整眼睛整体高度 */
     display: flex;
     justify-content: space-between;
     position: relative;
 }
 
 .eye-container {
-    width: 30px;
-    height: 30px;
+    width: 35px; /* 增大眼睛大小 */
+    height: 35px; /* 增大眼睛大小 */
     background-color: #f5f5f5;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    position: relative; /* 添加相对定位 */
+    animation: blink 6s infinite; /* 添加眨眼动画 */
 }
 
 .pupil {
-    width: 14px;
-    height: 14px;
+    width: 16px; /* 增大瞳孔尺寸 */
+    height: 16px; /* 增大瞳孔尺寸 */
     background-color: #0a0a0a;
     border-radius: 50%;
     position: relative;
-    transition: transform 0.2s ease-out;
+    transition: transform 0.15s ease-out; /* 加速过渡，让眼睛更灵动 */
     transform: translate(0, 0); /* 默认朝向正前方 */
 }
 
 .pupil::after {
     content: '';
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 9px; /* 眼睛高光更大 */
+    height: 9px; /* 眼睛高光更大 */
     background: #fff;
     border-radius: 50%;
     top: 2px;
@@ -162,6 +166,12 @@ body {
     bottom: 2px;
     left: 2px;
     opacity: 0.7;
+}
+
+/* 添加眨眼动画 */
+@keyframes blink {
+    0%, 95%, 100% { transform: scaleY(1); }
+    97% { transform: scaleY(0.1); }
 }
 
 /* 关于页面的小型黑洞 */
@@ -235,8 +245,8 @@ body {
 }
 
 @keyframes ripple {
-    0% { transform: scale(0.8); opacity: 1; }
-    100% { transform: scale(2); opacity: 0; }
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; } /* 降低扩散比例 */
 }
 
 @keyframes messageAppear {
@@ -274,23 +284,23 @@ body {
     }
     
     .blackhole-core {
-        width: 100px;
-        height: 100px;
+        width: 130px; /* 移动端调整黑洞主体大小 */
+        height: 130px; /* 移动端调整黑洞主体大小 */
     }
     
     .eyes {
-        width: 50px;
-        height: 25px;
+        width: 60px;
+        height: 30px;
     }
     
     .eye-container {
-        width: 20px;
-        height: 20px;
+        width: 25px;
+        height: 25px;
     }
     
     .pupil {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
     }
     
     .accretion-disk {
@@ -299,8 +309,8 @@ body {
     }
     
     .ripple-effect {
-        width: 300px;
-        height: 300px;
+        width: 250px; /* 与移动端吸积盘大小一致 */
+        height: 250px; /* 与移动端吸积盘大小一致 */
         top: 10% !important; /* 移动端保持位置一致 */
     }
     
@@ -340,14 +350,14 @@ body {
     background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
 }
 
-/* 波纹效果 */
+/* 波纹效果 - 限制大小与黑洞吸积盘一致 */
 .ripple-effect {
     position: absolute !important; /* 修改为绝对定位，与黑洞保持一致 */
     top: 10% !important; /* 与黑洞保持一致 */
     left: 50% !important;
     transform: translate(-50%, 0) !important;
-    width: 400px;
-    height: 400px;
+    width: 350px; /* 与吸积盘大小一致 */
+    height: 350px; /* 与吸积盘大小一致 */
     background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.1) 80%);
     border-radius: 50%;
     z-index: 0 !important; /* 波纹z-index: 0，确保在黑洞下方 */
@@ -365,6 +375,9 @@ body {
     border-radius: 50%;
     border: 2px solid rgba(59, 130, 246, 0.2); /* 改为蓝色风格 */
     animation: ripple 4s linear infinite;
+    transform-origin: center; /* 确保从中心扩散 */
+    max-width: 100%; /* 限制最大宽度 */
+    max-height: 100%; /* 限制最大高度 */
 }
 
 .ripple-effect::after {

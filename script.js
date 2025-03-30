@@ -201,6 +201,8 @@ function navigateTo(target) {
 function initBlackholeEyes() {
     const pupils = document.querySelectorAll('.pupil');
     let lastMoveTime = Date.now();
+    let idleTimer = null;
+    let animationFrame = null;
     
     // 设置初始位置为居中（正视）
     pupils.forEach(pupil => {
@@ -219,26 +221,78 @@ function initBlackholeEyes() {
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         
-        // 计算鼠标相对于黑洞中心的位置
-        const deltaX = (e.clientX - centerX) / 20;
-        const deltaY = (e.clientY - centerY) / 20;
+        // 计算鼠标相对于黑洞中心的位置 - 增加敏感度
+        const deltaX = (e.clientX - centerX) / 15; // 增加敏感度
+        const deltaY = (e.clientY - centerY) / 15; // 增加敏感度
         
-        // 限制眼球移动范围
-        const maxMove = 5;
+        // 限制眼球移动范围 - 增加最大移动范围
+        const maxMove = 8; // 增加最大移动范围
         const moveX = Math.max(-maxMove, Math.min(maxMove, deltaX));
         const moveY = Math.max(-maxMove, Math.min(maxMove, deltaY));
         
-        // 应用到所有瞳孔
-        pupils.forEach(pupil => {
-            pupil.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        // 清除之前的动画帧
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
+        }
+        
+        // 使用requestAnimationFrame使动画更流畅
+        animationFrame = requestAnimationFrame(() => {
+            // 应用到所有瞳孔并加入一些随机性，让眼睛看起来更活跃
+            pupils.forEach(pupil => {
+                // 添加轻微随机偏移使眼睛更活泼
+                const randomX = (Math.random() - 0.5) * 0.8;
+                const randomY = (Math.random() - 0.5) * 0.8;
+                pupil.style.transform = `translate(${moveX + randomX}px, ${moveY + randomY}px)`;
+            });
         });
+        
+        // 清除之前的空闲计时器
+        if (idleTimer) {
+            clearTimeout(idleTimer);
+        }
+        
+        // 设置新的空闲计时器
+        idleTimer = setTimeout(() => {
+            // 3秒内无鼠标移动，眼睛逐渐回到中心
+            const returnToCenter = () => {
+                const currentPupils = document.querySelectorAll('.pupil');
+                currentPupils.forEach(pupil => {
+                    const currentTransform = pupil.style.transform;
+                    const match = currentTransform.match(/translate\(([^,]+)px, ([^)]+)px\)/);
+                    if (match) {
+                        const currentX = parseFloat(match[1]);
+                        const currentY = parseFloat(match[2]);
+                        
+                        // 缓慢回到中心
+                        if (Math.abs(currentX) > 0.1 || Math.abs(currentY) > 0.1) {
+                            const newX = currentX * 0.8;
+                            const newY = currentY * 0.8;
+                            pupil.style.transform = `translate(${newX}px, ${newY}px)`;
+                            requestAnimationFrame(returnToCenter);
+                        } else {
+                            pupil.style.transform = 'translate(0px, 0px)';
+                        }
+                    }
+                });
+            };
+            
+            returnToCenter();
+        }, 2000); // 更快地响应无活动状态
     });
     
-    // 每3秒检查，如果超过3秒没有鼠标移动，眼睛回正
+    // 添加偶尔自主眨眼
     setInterval(() => {
-        if (Date.now() - lastMoveTime > 3000) {
-            pupils.forEach(pupil => {
-                pupil.style.transform = 'translate(0px, 0px)';
+        const eyeContainers = document.querySelectorAll('.eye-container');
+        // 随机眨眼
+        if (Math.random() > 0.7) {
+            eyeContainers.forEach(eye => {
+                eye.style.animation = 'none';
+                void eye.offsetWidth; // 触发重绘
+                eye.style.animation = 'blink 0.2s forwards';
+                
+                setTimeout(() => {
+                    eye.style.animation = 'blink 6s infinite';
+                }, 200);
             });
         }
     }, 3000);
