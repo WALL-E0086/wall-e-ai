@@ -15,7 +15,7 @@ body {
 /* 黑洞容器样式 */
 .blackhole-container {
     position: absolute !important; /* 绝对定位 */
-    top: 50% !important; /* 修正为中心位置 */
+    top: 25% !important; /* 修正为页面上方约1/4处 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
     width: min(40vw, 400px);
@@ -349,7 +349,7 @@ body {
     position: relative;
     z-index: 2; /* 文字z-index: 2 */
     color: #2563eb; /* 蓝色文字 */
-    margin-top: 350px; /* 调整为黑洞高度的约90% */
+    margin-top: 160px; /* 调整为黑洞高度的约9/10，让黑洞下边缘与文字上边缘对齐 */
 }
 
 .title-container h1 {
@@ -370,7 +370,7 @@ body {
     .blackhole-container {
         width: min(60vw, 280px);
         height: min(60vw, 280px);
-        top: 50% !important; /* 移动端保持位置一致 */
+        top: 25% !important; /* 移动端保持位置一致 */
     }
     
     .blackhole-core {
@@ -408,11 +408,11 @@ body {
     .ripple-effect {
         width: 250px; /* 与移动端吸积盘大小一致 */
         height: 250px; /* 与移动端吸积盘大小一致 */
-        top: 50% !important; /* 移动端保持位置一致 */
+        top: 25% !important; /* 移动端保持位置一致 */
     }
     
     .title-container {
-        margin-top: 230px; /* 移动端适当调整，对应黑洞90%的位置 */
+        margin-top: 110px; /* 移动端适当调整，对应黑洞9/10的位置 */
     }
     
     .title-container h1 {
@@ -450,7 +450,7 @@ body {
 /* 波纹效果 - 限制大小与黑洞吸积盘一致 */
 .ripple-effect {
     position: absolute !important; /* 修改为绝对定位，与黑洞保持一致 */
-    top: 50% !important; /* 修正为中心位置与黑洞容器完全一致 */
+    top: 25% !important; /* 与黑洞保持相同位置 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
     width: 350px; /* 与吸积盘大小一致 */
