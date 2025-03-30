@@ -75,9 +75,10 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1;
+    transform: translateY(0); /* 确保居中 */
 }
 
-/* 吸积盘光环 - 限制大小不超过吸积盘 */
+/* 吸积盘光环 - 限制大小不超过吸积盘，调整位置使完全重合 */
 .accretion-ring {
     position: absolute;
     border-radius: 50%;
@@ -85,19 +86,23 @@ body {
     animation: rotate linear infinite;
     max-width: 100%; /* 限制最大宽度 */
     max-height: 100%; /* 限制最大高度 */
+    top: 50%; /* 确保垂直居中 */
+    left: 50%; /* 确保水平居中 */
+    transform: translate(-50%, -50%); /* 使用transform确保完全居中 */
+    margin: 0; /* 移除任何可能的边距 */
 }
 
 .accretion-ring:nth-child(1) {
-    width: 120%; /* 降低比例 */
-    height: 120%; /* 降低比例 */
+    width: 110%; /* 降低比例 */
+    height: 110%; /* 降低比例 */
     border-top-color: rgba(255, 165, 0, 0.7);
     border-left-color: rgba(255, 69, 0, 0.7);
     animation-duration: 8s;
 }
 
 .accretion-ring:nth-child(2) {
-    width: 140%; /* 降低比例 */
-    height: 140%; /* 降低比例 */
+    width: 130%; /* 降低比例 */
+    height: 130%; /* 降低比例 */
     border-top-color: rgba(138, 43, 226, 0.6);
     border-right-color: rgba(75, 0, 130, 0.6);
     animation-duration: 12s;
@@ -105,25 +110,25 @@ body {
 }
 
 .accretion-ring:nth-child(3) {
-    width: 160%; /* 降低比例 */
-    height: 160%; /* 降低比例 */
+    width: 150%; /* 降低比例 */
+    height: 150%; /* 降低比例 */
     border-bottom-color: rgba(0, 191, 255, 0.5);
     border-left-color: rgba(30, 144, 255, 0.5);
     animation-duration: 16s;
 }
 
-/* 眼睛样式 - 恢复更灵动的眼睛设计 */
+/* 眼睛样式 - 更大更可爱的眼睛设计 */
 .eyes {
-    width: 80px; /* 调整眼睛整体宽度 */
-    height: 40px; /* 调整眼睛整体高度 */
+    width: 90px; /* 增大眼睛整体宽度 */
+    height: 50px; /* 增大眼睛整体高度 */
     display: flex;
     justify-content: space-between;
     position: relative;
 }
 
 .eye-container {
-    width: 35px; /* 增大眼睛大小 */
-    height: 35px; /* 增大眼睛大小 */
+    width: 40px; /* 增大眼睛大小 */
+    height: 40px; /* 增大眼睛大小 */
     background-color: #f5f5f5;
     border-radius: 50%;
     display: flex;
@@ -132,46 +137,96 @@ body {
     overflow: hidden;
     position: relative; /* 添加相对定位 */
     animation: blink 6s infinite; /* 添加眨眼动画 */
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8) inset; /* 内阴影增加深度感 */
 }
 
 .pupil {
-    width: 16px; /* 增大瞳孔尺寸 */
-    height: 16px; /* 增大瞳孔尺寸 */
+    width: 22px; /* 显著增大瞳孔尺寸 */
+    height: 22px; /* 显著增大瞳孔尺寸 */
     background-color: #0a0a0a;
     border-radius: 50%;
     position: relative;
     transition: transform 0.15s ease-out; /* 加速过渡，让眼睛更灵动 */
     transform: translate(0, 0); /* 默认朝向正前方 */
+    overflow: visible; /* 允许溢出以显示闪光效果 */
 }
 
+/* 瞳孔高光 - 主要高光更大更亮 */
 .pupil::after {
     content: '';
     position: absolute;
-    width: 9px; /* 眼睛高光更大 */
-    height: 9px; /* 眼睛高光更大 */
+    width: 12px; /* 更大的眼睛高光 */
+    height: 12px; /* 更大的眼睛高光 */
     background: #fff;
     border-radius: 50%;
     top: 2px;
     right: 2px;
-    opacity: 0.9;
+    opacity: 0.95; /* 更高的不透明度 */
+    filter: blur(1px); /* 轻微模糊以增加光晕效果 */
+}
+
+/* 瞳孔次要高光 - 增加额外高光增强水汪汪效果 */
+.pupil::before {
+    content: '';
+    position: absolute;
+    width: 6px; /* 增大次要高光 */
+    height: 6px; /* 增大次要高光 */
+    background: #fff;
+    border-radius: 50%;
+    bottom: 5px;
+    left: 3px;
+    opacity: 0.8; /* 更高的不透明度 */
+}
+
+/* 添加第三个小高光点增强立体感 */
+.pupil::after {
+    content: '';
+    position: absolute;
+    width: 12px; /* 主高光 */
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    right: 2px;
+    opacity: 0.95;
+    box-shadow: 0 0 4px 2px rgba(255, 255, 255, 0.3); /* 光晕效果 */
 }
 
 .pupil::before {
     content: '';
     position: absolute;
-    width: 4px;
-    height: 4px;
+    width: 6px; /* 次高光 */
+    height: 6px;
     background: #fff;
     border-radius: 50%;
-    bottom: 2px;
-    left: 2px;
+    bottom: 5px;
+    left: 3px;
+    opacity: 0.8;
+}
+
+/* 添加第三个小高光点 */
+.pupil > div {
+    content: '';
+    position: absolute;
+    width: 3px; /* 小高光 */
+    height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    top: 14px;
+    left: 11px;
     opacity: 0.7;
 }
 
-/* 添加眨眼动画 */
+/* 调整眨眼动画使其更自然 */
 @keyframes blink {
-    0%, 95%, 100% { transform: scaleY(1); }
-    97% { transform: scaleY(0.1); }
+    0%, 96%, 100% { transform: scaleY(1); }
+    97%, 99% { transform: scaleY(0.1); }
+}
+
+/* 添加闪烁动画增强水汪汪效果 */
+@keyframes twinkle {
+    0%, 100% { opacity: 0.95; }
+    50% { opacity: 0.7; }
 }
 
 /* 关于页面的小型黑洞 */
@@ -289,18 +344,18 @@ body {
     }
     
     .eyes {
-        width: 60px;
-        height: 30px;
+        width: 70px; /* 调整移动端眼睛宽度 */
+        height: 35px; /* 调整移动端眼睛高度 */
     }
     
     .eye-container {
-        width: 25px;
-        height: 25px;
+        width: 30px; /* 调整移动端眼球大小 */
+        height: 30px;
     }
     
     .pupil {
-        width: 12px;
-        height: 12px;
+        width: 16px; /* 调整移动端瞳孔大小 */
+        height: 16px;
     }
     
     .accretion-disk {
