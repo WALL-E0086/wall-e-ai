@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Version 1.0.2 - 修复侧边栏和黑洞眼睛方向 -->
+<!-- Version 1.0.3 - 恢复原有标题和颜色，修正黑洞位置 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>WALL-E AI - 您的智能助手</title>
+    <title>瓦力AI初号机</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- 使用动态生成的时间戳强制刷新CSS -->
     <script>
@@ -29,7 +29,7 @@
                         <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
                     </div>
                 </div>
-                <h1 class="text-2xl font-semibold">WALL-E AI</h1>
+                <h1 class="text-2xl font-semibold">瓦力AI初号机</h1>
             </div>
             
             <ul class="mt-7 list-none">
@@ -73,7 +73,7 @@
             
             <!-- 添加功能介绍区域 -->
             <div class="mt-auto p-4 bg-gray-50 rounded-xl">
-                <h3 class="text-sm font-semibold mb-2">WALL-E AI 功能</h3>
+                <h3 class="text-sm font-semibold mb-2">瓦力AI初号机功能</h3>
                 <ul class="text-xs text-gray-600 space-y-1.5">
                     <li class="flex items-center gap-1.5">
                         <i class="fas fa-robot text-blue-500"></i>
@@ -129,16 +129,16 @@
                     
                     <!-- 主要内容 -->
                     <div class="title-container text-center z-10">
-                        <h1 class="text-4xl font-bold text-gray-800 mb-2">WALL-E AI</h1>
-                        <p class="text-xl text-gray-600 mb-8">您的智能AI助手，随时为您服务</p>
+                        <h1 class="text-4xl font-bold mb-2">瓦力AI初号机</h1>
+                        <p class="text-xl mb-8">你的智能AI助手</p>
                         <button id="start-chat" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-                            开始聊天
+                            开始对话
                         </button>
                     </div>
                     
                     <!-- 功能展示 -->
                     <div class="max-w-6xl mx-auto px-4 py-16">
-                        <h2 class="text-3xl font-bold text-center mb-12">WALL-E AI 能做什么？</h2>
+                        <h2 class="text-3xl font-bold text-center mb-12">瓦力AI初号机能做什么？</h2>
                         <div class="flex flex-wrap -mx-4 justify-center">
                             <!-- 功能卡片 1 -->
                             <div class="w-full md:w-1/3 px-4 mb-8">
@@ -181,7 +181,7 @@
             <section id="chat-section" class="h-screen p-5 hidden">
                 <div class="h-full flex flex-col bg-white rounded-3xl shadow-md overflow-hidden">
                     <div class="flex justify-between items-center p-5 bg-gray-50 border-b border-black/10">
-                        <h2 class="text-xl font-semibold">WALL-E AI 对话</h2>
+                        <h2 class="text-xl font-semibold">瓦力AI初号机 对话</h2>
                         <div class="flex gap-2">
                             <button id="clear-chat" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-xl text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:bg-gray-300">
                                 <i class="fas fa-trash-alt mr-2"></i>清空
@@ -194,7 +194,7 @@
                     <div class="flex-grow p-5 overflow-y-auto flex flex-col gap-5" id="chat-history">
                         <div class="max-w-[80%] flex flex-col self-start">
                             <div class="p-4 rounded-3xl bg-blue-500 text-white relative break-words">
-                                你好！我是WALL-E AI，很高兴为你服务。有什么我能帮到你的吗？
+                                你好！*beep* 我是瓦力AI初号机，很高兴为你服务。*whirr* 有什么我能帮到你的吗？
                             </div>
                         </div>
                     </div>
@@ -251,8 +251,8 @@
                 <div class="h-full flex items-center justify-center p-5">
                     <div class="grid md:grid-cols-2 grid-cols-1 gap-10 md:gap-15 items-center max-w-screen-lg w-full">
                         <div class="md:order-1 order-2">
-                            <h2 class="text-4xl mb-5">关于 WALL-E AI</h2>
-                            <p class="text-gray-600 text-lg mb-7">WALL-E AI是一个充满好奇心的智能助手，专注于为您提供高质量的问答服务和知识管理。无论是日常问题还是专业领域，WALL-E AI都能成为您的得力助手。</p>
+                            <h2 class="text-4xl mb-5">关于瓦力AI初号机</h2>
+                            <p class="text-gray-600 text-lg mb-7">瓦力AI初号机是一个充满好奇心的智能助手，专注于为您提供高质量的问答服务和知识管理。无论是日常问题还是专业领域，瓦力AI初号机都能成为您的得力助手。</p>
                             <div class="space-y-4 mb-7">
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-check-circle text-blue-500"></i>
@@ -285,7 +285,7 @@
                             </div>
                             <div class="absolute -bottom-5 -right-5 bg-white p-4 rounded-2xl shadow-lg">
                                 <div class="text-sm font-semibold mb-1">版本信息</div>
-                                <div class="text-xs text-gray-600">WALL-E AI v1.0</div>
+                                <div class="text-xs text-gray-600">瓦力AI初号机 v1.0</div>
                             </div>
                         </div>
                     </div>
@@ -297,7 +297,7 @@
     <!-- 聊天界面弹出层 -->
     <div id="chat-interface" class="fixed inset-0 bg-white z-50 flex flex-col hidden">
         <div class="bg-blue-500 text-white py-4 px-6 flex justify-between items-center shadow-md">
-            <h2 class="text-xl font-semibold">WALL-E AI 助手</h2>
+            <h2 class="text-xl font-semibold">瓦力AI初号机 助手</h2>
             <button id="close-chat" class="text-white hover:text-gray-200">
                 <i class="fas fa-times text-2xl"></i>
             </button>
@@ -319,158 +319,6 @@
     <script>
         document.write('<script src="script.js?v=' + timestamp + '"><\/script>');
         document.write('<script src="force-update.js?v=' + timestamp + '"><\/script>');
-    </script>
-    
-    <script>
-        // 眼球跟随鼠标效果 - 修复默认朝向
-        document.addEventListener('DOMContentLoaded', function() {
-            const pupils = document.querySelectorAll('.pupil');
-            let lastMoveTime = Date.now();
-            
-            // 设置初始位置为居中（正视）
-            pupils.forEach(pupil => {
-                pupil.style.transform = 'translate(0px, 0px)';
-            });
-            
-            document.addEventListener('mousemove', function(e) {
-                lastMoveTime = Date.now();
-                const blackholeRect = document.querySelector('.blackhole-container').getBoundingClientRect();
-                const blackholeCenterX = blackholeRect.left + blackholeRect.width / 2;
-                const blackholeCenterY = blackholeRect.top + blackholeRect.height / 2;
-                
-                const angleX = (e.clientX - blackholeCenterX) / window.innerWidth * 10;
-                const angleY = (e.clientY - blackholeCenterY) / window.innerHeight * 10;
-                
-                pupils.forEach(pupil => {
-                    pupil.style.transform = `translate(${angleX}px, ${angleY}px)`;
-                });
-            });
-            
-            // 每3秒检查一次，如果超过3秒没有鼠标移动，则恢复居中位置
-            setInterval(() => {
-                if (Date.now() - lastMoveTime > 3000) {
-                    pupils.forEach(pupil => {
-                        pupil.style.transform = 'translate(0px, 0px)';
-                    });
-                }
-            }, 3000);
-        });
-        
-        // 侧边栏交互
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggle = document.getElementById('menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-            const navLinks = document.querySelectorAll('#sidebar a');
-            const sections = document.querySelectorAll('main section');
-            
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('-translate-x-full');
-            });
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // 移除所有链接的active类
-                    navLinks.forEach(l => l.classList.remove('active', 'bg-gray-100'));
-                    
-                    // 为当前点击的链接添加active类
-                    this.classList.add('active', 'bg-gray-100');
-                    
-                    // 隐藏所有部分
-                    sections.forEach(section => section.classList.add('hidden'));
-                    
-                    // 显示对应部分
-                    const target = this.getAttribute('href').substring(1);
-                    if (target === 'home') {
-                        document.getElementById('home').classList.remove('hidden');
-                    } else if (target === 'chat') {
-                        document.getElementById('chat-section').classList.remove('hidden');
-                    } else if (target === 'cuime') {
-                        document.getElementById('cuime-section').classList.remove('hidden');
-                    } else if (target === 'time') {
-                        document.getElementById('time-section').classList.remove('hidden');
-                    } else if (target === 'photo') {
-                        document.getElementById('photo-section').classList.remove('hidden');
-                    } else if (target === 'about') {
-                        document.getElementById('about-section').classList.remove('hidden');
-                    }
-                    
-                    // 在移动设备上，点击后关闭侧边栏
-                    if (window.innerWidth < 768) {
-                        sidebar.classList.add('-translate-x-full');
-                    }
-                });
-            });
-        });
-        
-        // 聊天界面交互
-        document.getElementById('start-chat').addEventListener('click', function() {
-            document.getElementById('chat-interface').classList.remove('hidden');
-            // 添加欢迎消息
-            addBotMessage("你好！我是WALL-E AI，你的智能助手。有什么我能帮到你的吗？");
-        });
-        
-        document.getElementById('close-chat').addEventListener('click', function() {
-            document.getElementById('chat-interface').classList.add('hidden');
-        });
-        
-        document.getElementById('send-message').addEventListener('click', sendUserMessage);
-        document.getElementById('user-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendUserMessage();
-            }
-        });
-        
-        function sendUserMessage() {
-            const userInput = document.getElementById('user-input');
-            const message = userInput.value.trim();
-            
-            if (message) {
-                addUserMessage(message);
-                userInput.value = '';
-                
-                // 模拟AI思考
-                setTimeout(() => {
-                    addBotMessage(getBotResponse(message));
-                }, 1000);
-            }
-        }
-        
-        function addUserMessage(message) {
-            const chatMessages = document.getElementById('chat-messages');
-            const messageElement = document.createElement('div');
-            messageElement.className = 'max-w-[80%] self-end p-3 bg-gray-800 text-white rounded-xl rounded-br-none';
-            messageElement.style.animation = 'messageAppear 0.3s ease-out';
-            messageElement.textContent = message;
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        function addBotMessage(message) {
-            const chatMessages = document.getElementById('chat-messages');
-            const messageElement = document.createElement('div');
-            messageElement.className = 'max-w-[80%] self-start p-3 bg-blue-500 text-white rounded-xl rounded-bl-none';
-            messageElement.style.animation = 'messageAppear 0.3s ease-out';
-            messageElement.textContent = message;
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        // 简单的响应生成（用于演示）
-        function getBotResponse(message) {
-            const responses = [
-                "我理解你的问题，让我来帮你解决。",
-                "这是个很好的问题！根据我的分析...",
-                "我可以为你提供相关信息。",
-                "让我思考一下这个问题...",
-                "根据我的数据库，我可以告诉你...",
-                "很高兴能帮到你，这是我的建议...",
-                "这个问题很有趣，我的回答是..."
-            ];
-            
-            return responses[Math.floor(Math.random() * responses.length)];
-        }
     </script>
 </body>
 </html> 

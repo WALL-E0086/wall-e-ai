@@ -14,37 +14,31 @@ body {
 
 /* 黑洞容器样式 */
 .blackhole-container {
-    position: fixed;
+    position: absolute;
+    top: 50%;
     left: 50%;
-    top: 40%;
-    transform: translate(-50%, -50%) !important;
-    width: min(40vw, 400px);
-    height: min(40vw, 400px);
+    transform: translate(-50%, -60%); /* 调整位置向上偏移 */
+    width: 280px;
+    height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.5s ease-in-out;
-    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6) 30%, transparent 70%);
     z-index: 1;
-    overflow: visible;
-    animation: breathe 4s ease-in-out infinite;
 }
 
 /* 黑洞核心样式 */
 .blackhole-core {
-    width: 150px;
-    height: 150px;
-    background: #000;
+    width: 100px;
+    height: 100px;
+    background-color: #000;
     border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    transition: all 0.5s ease-in-out;
-    pointer-events: none;
-    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
+    box-shadow: 0 0 30px 5px rgba(0,0,0,0.5);
+    z-index: 2;
+    overflow: hidden;
+    position: relative;
 }
 
 /* 波纹效果 - 完全重写确保与黑洞重合 */
@@ -73,86 +67,76 @@ body {
 /* 吸积盘样式 - 移除橙色光晕 */
 .accretion-disk {
     position: absolute;
-    width: 200%;
-    height: 200%;
-    top: -50%;
-    left: -50%;
-    pointer-events: none;
-    z-index: 0; /* 降低z-index */
-    transform-origin: center;
+    width: 250px;
+    height: 250px;
     border-radius: 50%;
-    opacity: 0.2; /* 降低整体不透明度 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
 }
 
 /* 吸积盘光环 - 降低颜色或完全移除 */
 .accretion-ring {
     position: absolute;
-    width: 100%;
-    height: 100%;
     border-radius: 50%;
-    background: radial-gradient(
-        ellipse at center,
-        transparent 40%,
-        rgba(255, 255, 255, 0.01) 50%,
-        rgba(255, 255, 255, 0.015) 60%,
-        rgba(255, 255, 255, 0.02) 70%,
-        rgba(255, 255, 255, 0.01) 80%,
-        transparent 90%
-    );
-    filter: blur(5px);
-    transform-origin: center;
-    animation: rotate 20s linear infinite;
-    overflow: hidden;
+    border: 4px solid transparent;
+    animation: rotate linear infinite;
+}
+
+.accretion-ring:nth-child(1) {
+    width: 130%;
+    height: 130%;
+    border-top-color: rgba(255, 165, 0, 0.7);
+    border-left-color: rgba(255, 69, 0, 0.7);
+    animation-duration: 8s;
 }
 
 .accretion-ring:nth-child(2) {
-    transform: scale(0.8) rotate(45deg);
-    animation: rotate 15s linear infinite reverse;
-    opacity: 0.05;
+    width: 160%;
+    height: 160%;
+    border-top-color: rgba(138, 43, 226, 0.6);
+    border-right-color: rgba(75, 0, 130, 0.6);
+    animation-duration: 12s;
+    animation-direction: reverse;
 }
 
 .accretion-ring:nth-child(3) {
-    transform: scale(0.6) rotate(-30deg);
-    animation: rotate 25s linear infinite;
-    opacity: 0.04;
+    width: 190%;
+    height: 190%;
+    border-bottom-color: rgba(0, 191, 255, 0.5);
+    border-left-color: rgba(30, 144, 255, 0.5);
+    animation-duration: 16s;
 }
 
 /* 眼睛样式 */
 .eyes {
-    position: absolute;
-    width: 90px;
-    height: 45px;
+    width: 50px;
+    height: 25px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    z-index: 3;
+    position: relative;
 }
 
 .eye-container {
-    width: 35px;
-    height: 35px;
-    background: #fff;
+    width: 20px;
+    height: 20px;
+    background-color: #f5f5f5;
     border-radius: 50%;
-    border: 2px solid #333;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
-    box-shadow: 
-        inset 0 0 10px rgba(0, 0, 0, 0.1),
-        0 0 15px rgba(255, 255, 255, 0.8);
-    animation: blink 4s infinite;
-    transform-origin: center;
 }
 
 .pupil {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    background: #000;
+    width: 8px;
+    height: 8px;
+    background-color: #0a0a0a;
     border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* 默认居中 */
-    transition: all 0.1s ease-out;
+    position: relative;
+    transition: transform 0.2s ease-out;
+    transform: translate(0, 0); /* 默认朝向正前方 */
 }
 
 .pupil::after {
@@ -185,50 +169,40 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: breathe 4s ease-in-out infinite;
 }
 
 .blackhole-core-small {
-    background: #000;
+    background-color: #000;
     border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px 5px rgba(0,0,0,0.3);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.eyes-small {
+    width: 40px;
+    height: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.eye-container-small {
+    width: 15px;
+    height: 15px;
+    background-color: #f5f5f5;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.eyes-small {
-    position: absolute;
-    width: 60px;
-    height: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 3;
-}
-
-.eye-container-small {
-    width: 25px;
-    height: 25px;
-    background: #fff;
-    border-radius: 50%;
-    border: 2px solid #333;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(255, 255, 255, 0.8);
-    animation: blink 4s infinite;
-}
-
 .pupil-small {
-    position: absolute;
-    width: 13px;
-    height: 13px;
-    background: #000;
+    width: 6px;
+    height: 6px;
+    background-color: #0a0a0a;
     border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .pupil-small::after {
@@ -245,98 +219,88 @@ body {
 
 /* 动画效果 */
 @keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-@keyframes breathe {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
 }
 
 @keyframes ripple {
-    0% {
-        opacity: 0.8;
-        transform: translate(-50%, -50%) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(3);
-    }
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
 }
 
-@keyframes blink {
-    0%, 96%, 98% {
-        transform: scaleY(1);
-    }
-    97% {
-        transform: scaleY(0.1);
-    }
+@keyframes messageAppear {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 /* 文字定位 - 固定在初始位置 */
 .title-container {
     position: relative;
-    z-index: 20;
-    text-align: center;
-    margin-top: 280px; /* 确保文字在黑洞下方且位置固定 */
+    z-index: 10;
+    color: #fff; /* 恢复为白色文字 */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* 为文字添加阴影提高可读性 */
 }
 
 .title-container h1 {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: #fff; /* 改回白色，以便在黑洞上清晰可见 */
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加文字阴影增强可读性 */
 }
 
 .title-container p {
     font-size: 1.25rem;
-    color: #666;
+    color: #fff; /* 改回白色，以便在黑洞上清晰可见 */
     margin-bottom: 2rem;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.5); /* 添加文字阴影增强可读性 */
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
     .blackhole-container {
-        width: min(60vw, 280px);
-        height: min(60vw, 280px);
-        top: 35%;
+        width: 200px;
+        height: 200px;
     }
     
     .blackhole-core {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
     }
     
     .eyes {
-        width: 60px;
-        height: 30px;
+        width: 40px;
+        height: 20px;
     }
     
     .eye-container {
-        width: 25px;
-        height: 25px;
+        width: 16px;
+        height: 16px;
     }
     
     .pupil {
-        width: 13px;
-        height: 13px;
+        width: 6px;
+        height: 6px;
     }
     
     .accretion-disk {
-        width: 300%;
-        height: 300%;
-        top: -100%;
-        left: -100%;
-        border-radius: 50%;
+        width: 180px;
+        height: 180px;
+    }
+    
+    .ripple-effect {
+        width: 200px;
+        height: 200px;
     }
     
     .title-container {
@@ -350,48 +314,54 @@ body {
     .title-container p {
         font-size: 1rem;
     }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
 }
 
 /* 主容器样式 */
 .main-container {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
     position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
+    z-index: 0;
 }
 
 /* 波纹效果 */
 .ripple-effect {
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50vw;
-    height: 50vw;
-    max-width: 500px;
-    max-height: 500px;
-    background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 70%);
+    transform: translate(-50%, -60%); /* 与黑洞位置保持一致 */
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.1) 80%);
     border-radius: 50%;
     z-index: 0;
-    animation: ripple-animate 6s ease-in-out infinite;
 }
 
-@keyframes ripple-animate {
-    0% {
-        opacity: 0.5;
-        transform: translate(-50%, -50%) scale(0.8);
-    }
-    50% {
-        opacity: 0.8;
-        transform: translate(-50%, -50%) scale(1);
-    }
-    100% {
-        opacity: 0.5;
-        transform: translate(-50%, -50%) scale(0.8);
-    }
+.ripple-effect::before,
+.ripple-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(138, 43, 226, 0.2);
+    animation: ripple 4s linear infinite;
+}
+
+.ripple-effect::after {
+    animation-delay: 2s;
 }
 
 /* 启动按钮样式 */
@@ -487,18 +457,6 @@ body {
     transform: rotate(45deg);
     border-radius: 3px;
     z-index: -1;
-}
-
-/* 消息动画 */
-@keyframes messageAppear {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* 输入框样式 */
