@@ -4,99 +4,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="瓦力AI初号机 - 智能生活小管家">
+    <meta name="keywords" content="人工智能, 智能助手, 聊天机器人, AI助手">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>瓦力AI初号机</title>
+    
+    <!-- Version 1.0.6 - 修复灰色吸积盘阴影和波纹效果的位置与黑洞重合问题 -->
+    
+    <!-- 预加载关键字体以优化性能 -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    
+    <!-- 引入Tailwind和FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- 使用动态生成的时间戳强制刷新CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义样式，带时间戳防止缓存 -->
     <script>
-        // 在头部创建一个时间戳变量，供后面使用
         const timestamp = new Date().getTime();
-        // 动态加载CSS文件防止缓存
         document.write('<link rel="stylesheet" href="tailwind-styles.css?v=' + timestamp + '">');
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        /* 关键样式优先内联以提升性能 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .delayed-fadeIn {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 antialiased">
+<body class="bg-gray-50 text-gray-800">
     <div class="flex h-screen overflow-hidden">
         <!-- 侧边栏 -->
-        <nav class="w-64 bg-white border-r border-black/10 p-5 flex flex-col fixed h-screen md:translate-x-0 -translate-x-full transition-transform duration-300 ease-in-out z-50" id="sidebar">
-            <div class="flex items-center gap-3 pb-7 border-b border-black/10">
-                <div class="w-10 h-10 rounded-full bg-black flex items-center justify-center">
-                    <div class="w-4 h-2 flex justify-between">
-                        <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
-                        <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-md z-10 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="text-lg font-semibold">瓦力AI</h2>
+                            <p class="text-xs text-gray-500">智能生活小管家</p>
+                        </div>
                     </div>
+                    <button id="close-sidebar" class="md:hidden text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <h1 class="text-2xl font-semibold">瓦力AI</h1>
+                
+                <nav class="flex-grow py-6 px-4 overflow-y-auto">
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#home" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300 active" data-section="home">
+                                <i class="fas fa-home w-5 text-center"></i>
+                                <span class="ml-3">首页</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#chat" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="chat-section">
+                                <i class="fas fa-comments w-5 text-center"></i>
+                                <span class="ml-3">智能对话</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#cuime" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="cuime-section">
+                                <i class="fas fa-tshirt w-5 text-center"></i>
+                                <span class="ml-3">柜me</span>
+                                <span class="ml-auto px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">新功能</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#time" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="time-section">
+                                <i class="fas fa-clock w-5 text-center"></i>
+                                <span class="ml-3">时綰</span>
+                                <span class="ml-auto px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">新功能</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#photo" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="photo-section">
+                                <i class="fas fa-image w-5 text-center"></i>
+                                <span class="ml-3">秒秒</span>
+                                <span class="ml-auto px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">新功能</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#about" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="about-section">
+                                <i class="fas fa-info-circle w-5 text-center"></i>
+                                <span class="ml-3">关于</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <div class="p-4 border-t border-gray-200">
+                    <button class="w-full px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300">
+                        <i class="fas fa-star mr-2 text-yellow-500"></i>
+                        评价我们
+                    </button>
+                </div>
             </div>
-            
-            <ul class="mt-7 list-none">
-                <li class="mb-2.5">
-                    <a href="#home" class="flex items-center gap-2.5 p-3 text-gray-800 no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-gray-100 active" id="home-link">
-                        <i class="fas fa-home text-lg"></i>
-                        首页
-                    </a>
-                </li>
-                <li class="mb-2.5">
-                    <a href="#chat" class="flex items-center gap-2.5 p-3 text-gray-800 no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-gray-100" id="chat-link">
-                        <i class="fas fa-comments text-lg"></i>
-                        对话
-                    </a>
-                </li>
-                <li class="mb-2.5">
-                    <a href="#cuime" class="flex items-center gap-2.5 p-3 text-gray-800 no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-gray-100" id="cuime-link">
-                        <i class="fas fa-tshirt text-lg"></i>
-                        柜me
-                    </a>
-                </li>
-                <li class="mb-2.5">
-                    <a href="#time" class="flex items-center gap-2.5 p-3 text-gray-800 no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-gray-100" id="time-link">
-                        <i class="fas fa-clock text-lg"></i>
-                        时綰
-                    </a>
-                </li>
-                <li class="mb-2.5">
-                    <a href="#photo" class="flex items-center gap-2.5 p-3 text-gray-800 no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-gray-100" id="photo-link">
-                        <i class="fas fa-camera-retro text-lg"></i>
-                        秒秒
-                    </a>
-                </li>
-                <li class="mb-2.5">
-                    <a href="#about" class="flex items-center gap-2.5 p-3 text-gray-800 no-underline rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-gray-100" id="about-link">
-                        <i class="fas fa-user text-lg"></i>
-                        关于
-                    </a>
-                </li>
-            </ul>
-            
-            <!-- 添加功能介绍区域 -->
-            <div class="mt-auto p-4 bg-gray-50 rounded-xl">
-                <h3 class="text-sm font-semibold mb-2">瓦力AI功能</h3>
-                <ul class="text-xs text-gray-600 space-y-1.5">
-                    <li class="flex items-center gap-1.5">
-                        <i class="fas fa-robot text-blue-500"></i>
-                        智能对话
-                    </li>
-                    <li class="flex items-center gap-1.5">
-                        <i class="fas fa-cloud-sun text-blue-500"></i>
-                        着装推荐
-                    </li>
-                    <li class="flex items-center gap-1.5">
-                        <i class="fas fa-history text-blue-500"></i>
-                        故事记录
-                    </li>
-                    <li class="flex items-center gap-1.5">
-                        <i class="fas fa-image text-blue-500"></i>
-                        照片修复
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- 汉堡菜单按钮 (移动端) -->
-        <button id="menu-toggle" class="fixed top-4 left-4 md:hidden z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg">
+        </div>
+        
+        <!-- 移动端菜单按钮 -->
+        <button id="menu-toggle" class="fixed top-4 left-4 md:hidden bg-white shadow z-20 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <i class="fas fa-bars"></i>
         </button>
 
@@ -114,7 +137,7 @@
                         </button>
                     </div>
                     
-                    <!-- 黑洞效果 -->
+                    <!-- 黑洞效果 - 位置与波纹和吸积盘100%重合 -->
                     <div class="blackhole-container">
                         <div class="blackhole-core">
                             <div class="eyes">
@@ -137,7 +160,7 @@
                         </div>
                     </div>
                     
-                    <!-- 波纹效果 -->
+                    <!-- 波纹效果 - 与黑洞完全重合 -->
                     <div class="ripple-effect"></div>
                     
                     <!-- 功能展示 -->
