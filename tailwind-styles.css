@@ -39,7 +39,7 @@ body {
     justify-content: center;
     box-shadow: 0 0 30px 5px rgba(0,0,0,0.5);
     z-index: 2;
-    overflow: hidden;
+    overflow: visible; /* 改为visible让波纹可见 */
     position: absolute; /* 改为绝对定位 */
     top: 50%; /* 中心点定位 */
     left: 50%; /* 中心点定位 */
@@ -57,7 +57,7 @@ body {
     height: 100%;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    animation: ripple 3s ease-out infinite;
+    animation: core-ripple 3s ease-out infinite;
     z-index: -1;
     transform: translate(-50%, -50%); /* 确保完全居中 */
 }
@@ -68,6 +68,20 @@ body {
 
 .blackhole-core::after {
     animation-delay: 1.5s;
+}
+
+/* 定义黑洞核心波纹动画 */
+@keyframes core-ripple {
+    0% { 
+        width: 100%;
+        height: 100%;
+        opacity: 1; 
+    }
+    100% { 
+        width: 200%;
+        height: 200%;
+        opacity: 0; 
+    }
 }
 
 /* 吸积盘样式 - 保持大小不变 */
@@ -311,6 +325,7 @@ body {
     50% { transform: translateY(-20px); }
 }
 
+/* 吸积盘波纹动画 */
 @keyframes ripple {
     0% { 
         width: 60%;
@@ -643,7 +658,7 @@ button:hover .fas {
     transform: scale(1.2);
 }
 
-/* 重要：移除多余的重复定义 */
+/* 重要：移除多余的重复定义，但保留波纹效果 */
 .black-hole-container,
 .gravitational-lens,
 .black-hole-container,
