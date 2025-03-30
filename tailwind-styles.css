@@ -14,17 +14,17 @@ body {
 
 /* 黑洞容器样式 */
 .blackhole-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -20%); /* 调整位置向下偏移，在文字下方 */
+    position: absolute !important; /* 修改为绝对定位 */
+    top: 55% !important;  /* 调整到页面中部偏下 */
+    left: 50% !important;
+    transform: translate(-50%, 0) !important; /* 修正偏移 */
     width: min(40vw, 400px);
     height: min(40vw, 400px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10; /* 确保在文字后面 */
-    transition: transform 0.5s ease-in-out;
+    z-index: 5 !important; /* 确保黑洞在文字后面 */
+    margin-top: 0 !important; /* 移除内联样式的影响 */
 }
 
 /* 黑洞核心样式 */
@@ -248,8 +248,8 @@ body {
 .title-container {
     position: relative;
     z-index: 20;
-    color: #2563eb; /* 恢复为蓝色文字 */
-    margin-top: -260px; /* 确保文字在黑洞上方 */
+    color: #2563eb; /* 蓝色文字 */
+    margin-top: 0; /* 重置顶部边距 */
 }
 
 .title-container h1 {
@@ -270,7 +270,7 @@ body {
     .blackhole-container {
         width: min(60vw, 280px);
         height: min(60vw, 280px);
-        transform: translate(-50%, -30%); /* 移动端位置调整 */
+        top: 60% !important; /* 移动端调整位置 */
     }
     
     .blackhole-core {
@@ -301,11 +301,11 @@ body {
     .ripple-effect {
         width: 300px;
         height: 300px;
-        transform: translate(-50%, -30%); /* 移动端位置调整 */
+        top: 60% !important; /* 移动端调整位置，与黑洞保持一致 */
     }
     
     .title-container {
-        margin-top: -180px; /* 移动端调整文字位置 */
+        margin-top: 0;
     }
     
     .title-container h1 {
@@ -329,23 +329,28 @@ body {
 
 /* 主容器样式 */
 .main-container {
-    background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     position: relative;
-    overflow: hidden;
-    z-index: 0;
+    min-height: 100vh;
+    padding-bottom: 200px; /* 为功能卡片留出空间 */
+    background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
 }
 
 /* 波纹效果 */
 .ripple-effect {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -20%); /* 与黑洞位置保持一致 */
+    position: absolute !important; /* 修改为绝对定位，与黑洞保持一致 */
+    top: 55% !important;
+    left: 50% !important;
+    transform: translate(-50%, 0) !important;
     width: 400px;
     height: 400px;
     background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.1) 80%);
     border-radius: 50%;
-    z-index: 5; /* 确保在文字后面 */
+    z-index: 4 !important; /* 确保在黑洞下方 */
+    margin-top: 0 !important; /* 移除内联样式的影响 */
 }
 
 .ripple-effect::before,

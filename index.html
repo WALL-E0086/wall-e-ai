@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Version 1.0.4 - 调整黑洞位置，恢复蓝色设计 -->
+<!-- Version 1.0.5 - 修复黑洞位置和层级问题 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -104,7 +104,7 @@
         <main class="flex-1 md:ml-64 overflow-y-auto overflow-x-hidden relative">
             <!-- 首页部分 -->
             <section id="home" class="min-h-screen p-5 block">
-                <div class="main-container min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+                <div class="main-container">
                     <!-- 主要内容 -->
                     <div class="title-container text-center z-20">
                         <h1 class="text-4xl font-bold mb-2 text-blue-500">瓦力AI初号机</h1>
@@ -115,7 +115,7 @@
                     </div>
                     
                     <!-- 黑洞效果 -->
-                    <div class="blackhole-container" style="margin-top: -100px;">
+                    <div class="blackhole-container">
                         <div class="blackhole-core">
                             <div class="eyes">
                                 <div class="eye-container">
@@ -134,7 +134,7 @@
                     </div>
                     
                     <!-- 波纹效果 -->
-                    <div class="ripple-effect" style="margin-top: -100px;"></div>
+                    <div class="ripple-effect"></div>
                     
                     <!-- 功能展示 -->
                     <div class="max-w-6xl mx-auto px-4 py-16">
