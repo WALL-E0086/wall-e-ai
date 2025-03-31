@@ -31,7 +31,7 @@ const wallEResponses = {
 const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*boop*'];
 
 // 高德地图API密钥
-const AMAP_API_KEY = 'a505bf9c8ea9216812c88adf18f1eb6b';
+const AMAP_API_KEY = 'b3afc44486e2c9cfc79442d058748932';
 
 // 默认城市
 const DEFAULT_CITY = '北京';
