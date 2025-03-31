@@ -523,7 +523,7 @@ function autoDetectCity(savedPreferences) {
         // 获取天气数据
         try {
             fetchWeatherData();
-        } catch (error) {
+    } catch (error) {
             console.error('获取天气数据时出错：', error);
             // 如果获取天气失败，至少显示默认城市
             updateUIWithUserPreferences(DEFAULT_CITY);
@@ -672,8 +672,23 @@ function fetchWeatherData() {
         cityInput.disabled = false;
     }
     
-    // 构建心知天气API URL
-    const url = `https://api.seniverse.com/v3/weather/now.json?key=${SENIVERSE_API_KEY}&location=${encodeURIComponent(city)}&language=zh-Hans&unit=c`;
+    // 构建心知天气API URL - 添加域名相关参数
+    const apiUrl = `https://api.seniverse.com/v3/weather/now.json`;
+    const params = {
+        key: SENIVERSE_API_KEY,
+        location: city,
+        language: 'zh-Hans',
+        unit: 'c',
+        refer: window.location.hostname || 'wall-e0086.github.io'  // 添加引用站点，使用当前域名
+    };
+    
+    // 构建URL参数
+    const queryString = Object.keys(params)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .join('&');
+    const url = `${apiUrl}?${queryString}`;
+    
+    console.log('正在请求天气数据，URL为：', url);
     
     // 设置超时保护
     const requestTimeout = setTimeout(() => {
@@ -687,13 +702,14 @@ function fetchWeatherData() {
             clearTimeout(requestTimeout); // 清除超时保护
             
             if (data && data.results && data.results[0]) {
+                console.log('成功获取天气数据:', data);
                 const weatherData = data.results[0];
                 updateWeatherUI(weatherData);
                 generateOutfitSuggestion(weatherData);
                 showWeatherLoading(false);
             } else {
                 // 天气数据获取失败
-                console.error('天气数据无效');
+                console.error('天气数据无效', data);
                 showWeatherError();
             }
         }, function(error) {
