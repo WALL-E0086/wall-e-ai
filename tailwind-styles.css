@@ -10,22 +10,23 @@
 body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
+    background-color: #ffffff; /* 确保body背景为纯白色 */
 }
 
 /* 黑洞容器样式 */
 .blackhole-container {
-    position: absolute !important; /* 绝对定位 */
-    top: 20% !important; /* 修正为页面上方约1/5处 */
+    position: absolute !important;
+    top: 15% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
-    width: min(40vw, 400px);
-    height: min(40vw, 400px);
+    transform: translate(-50%, -50%) !important;
+    width: min(30vw, 300px);
+    height: min(30vw, 300px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1 !important; /* 黑洞z-index: 1，确保在文字后面 */
-    margin-top: 0 !important; /* 移除内联样式的影响 */
-    overflow: visible !important; /* 允许内容溢出，避免旋转线条被裁剪 */
+    z-index: 1 !important;
+    margin-top: 0 !important;
+    overflow: visible !important;
 }
 
 /* 黑洞核心样式 - 放大黑洞主体 */
@@ -347,10 +348,9 @@ body {
 /* 文字定位 - 固定在初始位置 */
 .title-container {
     position: relative;
-    z-index: 2; /* 文字z-index: 2 */
-    color: #2563eb; /* 蓝色文字 */
-    margin-top: 300px; /* 调整为黑洞高度的9/10，让文字顶部与黑洞9/10部分对齐 */
-    padding-top: 20px; /* 增加一些顶部内边距 */
+    z-index: 2;
+    padding-top: 45vh;
+    text-align: center;
 }
 
 .title-container h1 {
@@ -368,17 +368,22 @@ body {
 
 /* 功能展示部分 - 锁定位置 */
 .max-w-6xl {
-    position: relative; /* 设置为相对定位 */
-    z-index: 2; /* 与文字相同层级 */
-    margin-top: 40px; /* 增加与文字的间距 */
+    margin-top: auto;
+    padding-top: 2rem;
+    background: transparent; /* 确保功能展示区域背景透明 */
+}
+
+/* 功能卡片背景 */
+.bg-white\/80 {
+    background-color: rgba(255, 255, 255, 0.9) !important; /* 调整卡片背景透明度 */
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
     .blackhole-container {
-        width: min(60vw, 280px);
-        height: min(60vw, 280px);
-        top: 20% !important; /* 移动端保持位置一致 */
+        width: min(40vw, 250px);
+        height: min(40vw, 250px);
+        top: 20% !important;
     }
     
     .blackhole-core {
@@ -420,44 +425,25 @@ body {
     }
     
     .title-container {
-        margin-top: 200px; /* 移动端适当调整，对应黑洞9/10的位置 */
-        padding-top: 15px; /* 移动端调整内边距 */
-    }
-    
-    .title-container h1 {
-        font-size: 2rem;
-    }
-    
-    .title-container p {
-        font-size: 1rem;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.05); opacity: 1; }
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
+        padding-top: 40vh;
     }
     
     .max-w-6xl {
-        margin-top: 30px; /* 移动端调整间距 */
+        margin-top: 2rem;
     }
 }
 
 /* 主容器样式 */
 .main-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* 从顶部开始排列 */
     position: relative;
     min-height: 100vh;
-    padding-top: 50px; /* 顶部padding */
-    padding-bottom: 100px; /* 为功能卡片留出空间 */
-    background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+    max-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    background: transparent; /* 移除背景色 */
 }
 
 /* 波纹效果 - 限制大小与黑洞吸积盘一致 */
