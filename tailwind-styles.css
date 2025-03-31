@@ -349,7 +349,8 @@ body {
     position: relative;
     z-index: 2; /* 文字z-index: 2 */
     color: #2563eb; /* 蓝色文字 */
-    margin-top: 160px; /* 调整为黑洞高度的约9/10，让黑洞下边缘与文字上边缘对齐 */
+    margin-top: 220px; /* 调整为黑洞高度的约9/10，让文字顶部与黑洞9/10部分对齐 */
+    padding-top: 20px; /* 增加一些顶部内边距 */
 }
 
 .title-container h1 {
@@ -363,6 +364,13 @@ body {
     font-size: 1.25rem;
     color: #3b82f6; /* 稍浅的蓝色副标题 */
     margin-bottom: 2rem;
+}
+
+/* 功能展示部分 - 锁定位置 */
+.max-w-6xl {
+    position: relative; /* 设置为相对定位 */
+    z-index: 2; /* 与文字相同层级 */
+    margin-top: 40px; /* 增加与文字的间距 */
 }
 
 /* 响应式设计 */
@@ -412,7 +420,8 @@ body {
     }
     
     .title-container {
-        margin-top: 110px; /* 移动端适当调整，对应黑洞9/10的位置 */
+        margin-top: 150px; /* 移动端适当调整，对应黑洞9/10的位置 */
+        padding-top: 15px; /* 移动端调整内边距 */
     }
     
     .title-container h1 {
@@ -431,6 +440,10 @@ body {
     @keyframes float {
         0%, 100% { transform: translateY(0px); }
         50% { transform: translateY(-20px); }
+    }
+    
+    .max-w-6xl {
+        margin-top: 30px; /* 移动端调整间距 */
     }
 }
 
