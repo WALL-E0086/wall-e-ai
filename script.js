@@ -30,11 +30,8 @@ const wallEResponses = {
 // 电子音符号
 const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*boop*'];
 
-// 心知天气API密钥 - 更新为公钥+私钥模式
-const SENIVERSE = {
-    PUBLIC_KEY: 'PKwiV7auWJE3iBJ8d', // 请替换为您的公钥
-    PRIVATE_KEY: 'SMEieQjde1C9eXnbE' // 请替换为您的私钥
-};
+// 心知天气API密钥
+const SENIVERSE_API_KEY = 'Pn-ybB_zCFLxVzOGf'; // 用户提供的正确公钥
 
 // 默认城市
 const DEFAULT_CITY = '北京';
@@ -676,38 +673,18 @@ function fetchWeatherData() {
     }
     
     try {
-        // 构建心知天气API URL使用签名验证方式
+        // 构建心知天气API URL - 使用直接密钥方式，简化调用
         const apiUrl = 'https://api.seniverse.com/v3/weather/now.json';
         
-        // 1. 准备请求参数
-        const ts = Math.floor(Date.now() / 1000); // 当前时间戳（秒）
-        const ttl = 600; // 签名有效期10分钟
-        
-        // 2. 按字典序排列的参数对象
+        // 构建参数对象
         const params = {
+            key: SENIVERSE_API_KEY,
             location: city,
-            public_key: SENIVERSE.PUBLIC_KEY,
-            ts: ts.toString(),
-            ttl: ttl.toString(),
             language: 'zh-Hans',
             unit: 'c'
         };
         
-        // 3. 按字典序拼接参数字符串
-        const paramsSorted = Object.keys(params).sort().map(key => {
-            return `${key}=${params[key]}`;
-        }).join('&');
-        
-        console.log('签名前参数串:', paramsSorted);
-        
-        // 4. 使用简化版的签名生成方法
-        const sig = generateSignatureSimple(paramsSorted, SENIVERSE.PRIVATE_KEY);
-        console.log('计算的签名:', sig);
-        
-        // 5. 添加签名到参数
-        params.sig = sig;
-        
-        // 6. 构建最终请求URL
+        // 构建最终请求URL
         const queryString = Object.keys(params).map(key => {
             return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
         }).join('&');
@@ -746,37 +723,6 @@ function fetchWeatherData() {
         showWeatherError('天气服务出现异常，请稍后重试');
     }
 }
-
-// 简化版的签名生成函数 - 使用预计算的HMAC-SHA1签名
-function generateSignatureSimple(str, key) {
-    // 这是一个非常简化的函数，实际中应使用crypto-js库
-    
-    // 下面是几个预计算的签名，仅用于演示
-    // 实际应用中，应该使用服务端计算或引入专业的加密库
-    const knownSignatures = {
-        'language=zh-Hans&location=北京&public_key=PKwiV7auWJE3iBJ8d&ts=1687654321&ttl=600&unit=c': 'b3RvzFUG8FpVbMzl9t+6uN/V0HQ=',
-        'language=zh-Hans&location=上海&public_key=PKwiV7auWJE3iBJ8d&ts=1687654321&ttl=600&unit=c': 'dZ9A95gUJGtQU9/ULE26yS3ZKX0=',
-        'language=zh-Hans&location=广州&public_key=PKwiV7auWJE3iBJ8d&ts=1687654321&ttl=600&unit=c': 'OXQzEPHm0PbQWCmwQB4j+aZr83w='
-    };
-    
-    // 使用特殊签名处理常见城市
-    if (str.includes('location=北京')) {
-        return 'b3RvzFUG8FpVbMzl9t+6uN/V0HQ=';
-    } else if (str.includes('location=上海')) {
-        return 'dZ9A95gUJGtQU9/ULE26yS3ZKX0=';
-    } else if (str.includes('location=广州')) {
-        return 'OXQzEPHm0PbQWCmwQB4j+aZr83w=';
-    }
-    
-    // 对其他城市使用一个通用签名
-    return 'SwTpcp/LjEWpQoF5POYSPziRLdY=';
-}
-
-// 注意：在实际生产环境中，应当避免这种硬编码签名的方式
-// 实际应用中可以使用以下方式：
-// 1. 引入crypto-js库使用客户端计算
-// 2. 通过服务端API获取签名
-// 3. 或者使用其他现代加密API
 
 // JSONP请求辅助函数，增加错误处理
 function fetchJSONP(url, successCallback, errorCallback) {
