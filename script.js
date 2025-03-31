@@ -453,7 +453,7 @@ setInterval(() => {
 // 柜me功能初始化
 function initCuime() {
     // 初始化用户偏好设置
-    loadUserPreferences();
+    const savedPreferences = loadUserPreferences();
     
     // 刷新天气按钮事件
     const refreshWeatherBtn = document.getElementById('refresh-weather');
@@ -468,45 +468,163 @@ function initCuime() {
     if (preferencesForm) {
         preferencesForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            saveUserPreferences();
-            fetchWeatherData(); // 保存后重新获取天气
+            
+            // 先保存用户偏好设置
+            const preferences = saveUserPreferences();
+            
+            // 如果天气获取失败，至少展示用户设置的城市
+            const cityName = preferences.city;
+            
+            // 直接更新基本的UI元素，确保用户看到自己设置的内容
+            updateUIWithUserPreferences(cityName);
+            
+            // 尝试获取天气，但不影响保存功能
+            try {
+                fetchWeatherData();
+            } catch (error) {
+                console.error('获取天气数据时出错：', error);
+                // 已经显示了基本UI，这里只需要显示一个提示
+                showToast('偏好设置已保存，但获取天气数据失败', 'warning');
+            }
         });
     }
     
-    // 尝试通过IP定位获取城市
-    autoDetectCity();
+    // 尝试初始化城市设置
+    autoDetectCity(savedPreferences);
 }
 
-// IP地址自动定位城市
-function autoDetectCity() {
+// 初始化城市
+function autoDetectCity(savedPreferences) {
     const cityInput = document.getElementById('city');
-    const savedPreferences = localStorage.getItem('cuime-preferences');
     
     // 如果用户已经设置了城市，优先使用已设置的城市
-    if (savedPreferences) {
-        const preferences = JSON.parse(savedPreferences);
-        if (preferences.city && cityInput) {
-            cityInput.value = preferences.city;
-            fetchWeatherData();
-            return;
+    if (savedPreferences && savedPreferences.city) {
+        if (cityInput) {
+            cityInput.value = savedPreferences.city;
+            cityInput.disabled = false;
         }
+        
+        // 尝试获取天气，如果失败也至少显示用户保存的设置
+        try {
+            fetchWeatherData();
+        } catch (error) {
+            console.error('获取天气数据时出错：', error);
+            // 如果获取天气失败，至少显示用户设置的城市
+            updateUIWithUserPreferences(savedPreferences.city);
+        }
+        return;
     }
     
-    // 由于无法可靠地获取用户IP所在城市，直接使用默认城市
+    // 如果没有保存的城市，使用默认城市
     if (cityInput) {
         cityInput.value = DEFAULT_CITY;
-        cityInput.disabled = false; // 确保输入框始终可用
+        cityInput.disabled = false;
         
         // 获取天气数据
-        fetchWeatherData();
+        try {
+            fetchWeatherData();
+        } catch (error) {
+            console.error('获取天气数据时出错：', error);
+            // 如果获取天气失败，至少显示默认城市
+            updateUIWithUserPreferences(DEFAULT_CITY);
+        }
     }
+}
+
+// 使用用户偏好设置更新UI
+function updateUIWithUserPreferences(cityName) {
+    // 即使天气API调用失败，也至少显示用户设置的城市
+    const weatherIcon = document.getElementById('weather-icon');
+    if (weatherIcon) {
+        weatherIcon.innerHTML = '<i class="fas fa-map-marker-alt text-blue-500"></i>';
+        weatherIcon.classList.remove('hidden');
+    }
+    
+    const tempElement = document.getElementById('weather-temp');
+    if (tempElement) {
+        tempElement.textContent = '--°C';
+        tempElement.classList.remove('hidden');
+    }
+    
+    const descElement = document.getElementById('weather-desc');
+    if (descElement) {
+        descElement.textContent = `${cityName} · 无法获取天气数据`;
+        descElement.classList.remove('hidden');
+    }
+    
+    // 确保城市输入框可用
+    const cityInput = document.getElementById('city');
+    if (cityInput) {
+        cityInput.disabled = false;
+        cityInput.value = cityName;
+    }
+    
+    // 显示穿搭建议区域的用户设置信息
+    const outfitLoading = document.getElementById('outfit-loading');
+    if (outfitLoading) {
+        outfitLoading.textContent = '已保存您的偏好设置，但无法获取实时天气数据。您可以稍后点击刷新按钮重试。';
+        outfitLoading.classList.remove('hidden');
+    }
+    
+    const outfitContent = document.getElementById('outfit-content');
+    if (outfitContent) {
+        outfitContent.classList.add('hidden');
+    }
+    
+    // 显示一些基本信息
+    const detailsElement = document.getElementById('weather-details');
+    if (detailsElement) {
+        detailsElement.classList.remove('hidden');
+    }
+}
+
+// 保存用户偏好设置
+function saveUserPreferences() {
+    const cityInput = document.getElementById('city');
+    const styleSelect = document.getElementById('style-preference');
+    const sensitivityRadio = document.querySelector('input[name="temperature-sensitivity"]:checked');
+    
+    // 确保城市输入框不为空
+    if (cityInput && !cityInput.value.trim()) {
+        cityInput.value = DEFAULT_CITY;
+    }
+    
+    const preferences = {
+        city: cityInput ? cityInput.value.trim() : DEFAULT_CITY,
+        style: styleSelect ? styleSelect.value : 'casual',
+        temperatureSensitivity: sensitivityRadio ? sensitivityRadio.value : 'normal'
+    };
+    
+    // 保存到本地存储
+    localStorage.setItem('cuime-preferences', JSON.stringify(preferences));
+    
+    // 确保输入框不被禁用
+    if (cityInput) {
+        cityInput.disabled = false;
+    }
+    
+    // 显示保存成功提示
+    showToast('偏好设置已保存', 'success');
+    
+    return preferences; // 返回保存的偏好，方便其他函数使用
 }
 
 // 加载用户偏好设置
 function loadUserPreferences() {
     const savedPreferences = localStorage.getItem('cuime-preferences');
-    if (savedPreferences) {
+    if (!savedPreferences) {
+        return null; // 没有保存的偏好设置
+    }
+    
+    try {
         const preferences = JSON.parse(savedPreferences);
+        
+        // 设置城市
+        const cityInput = document.getElementById('city');
+        if (cityInput && preferences.city) {
+            cityInput.value = preferences.city;
+            cityInput.disabled = false;
+        }
         
         // 设置穿衣风格
         const styleSelect = document.getElementById('style-preference');
@@ -521,6 +639,11 @@ function loadUserPreferences() {
                 sensitivityRadio.checked = true;
             }
         }
+        
+        return preferences;
+    } catch (e) {
+        console.error('解析已保存的偏好设置时出错:', e);
+        return null;
     }
 }
 
@@ -534,24 +657,6 @@ function resetCityInput() {
     }
 }
 
-// 保存用户偏好设置
-function saveUserPreferences() {
-    const cityInput = document.getElementById('city');
-    const styleSelect = document.getElementById('style-preference');
-    const sensitivityRadio = document.querySelector('input[name="temperature-sensitivity"]:checked');
-    
-    const preferences = {
-        city: cityInput ? cityInput.value : '北京',
-        style: styleSelect ? styleSelect.value : 'casual',
-        temperatureSensitivity: sensitivityRadio ? sensitivityRadio.value : 'normal'
-    };
-    
-    localStorage.setItem('cuime-preferences', JSON.stringify(preferences));
-    
-    // 显示保存成功提示
-    showToast('偏好设置已保存', 'success');
-}
-
 // 获取天气数据
 function fetchWeatherData() {
     // 显示加载状态
@@ -561,41 +666,71 @@ function fetchWeatherData() {
     let city = DEFAULT_CITY;
     const cityInput = document.getElementById('city');
     if (cityInput && cityInput.value) {
-        city = cityInput.value;
+        city = cityInput.value.trim();
+        
+        // 确保城市输入框始终可用
+        cityInput.disabled = false;
     }
     
     // 构建心知天气API URL
     const url = `https://api.seniverse.com/v3/weather/now.json?key=${SENIVERSE_API_KEY}&location=${encodeURIComponent(city)}&language=zh-Hans&unit=c`;
     
-    // 使用JSONP方式请求天气数据（绕过跨域限制）
-    fetchJSONP(url, function(data) {
-        if (data && data.results && data.results[0]) {
-            const weatherData = data.results[0];
-            updateWeatherUI(weatherData);
-            generateOutfitSuggestion(weatherData);
-            showWeatherLoading(false);
-        } else {
-            // 天气数据获取失败
-            showWeatherError();
-        }
-    }, function(error) {
-        console.error('获取天气数据失败:', error);
+    // 设置超时保护
+    const requestTimeout = setTimeout(() => {
+        console.error('天气API请求超时');
         showWeatherError();
-    });
+    }, 15000); // 15秒超时
+    
+    // 使用JSONP方式请求天气数据（绕过跨域限制）
+    try {
+        fetchJSONP(url, function(data) {
+            clearTimeout(requestTimeout); // 清除超时保护
+            
+            if (data && data.results && data.results[0]) {
+                const weatherData = data.results[0];
+                updateWeatherUI(weatherData);
+                generateOutfitSuggestion(weatherData);
+                showWeatherLoading(false);
+            } else {
+                // 天气数据获取失败
+                console.error('天气数据无效');
+                showWeatherError();
+            }
+        }, function(error) {
+            clearTimeout(requestTimeout); // 清除超时保护
+            console.error('获取天气数据失败:', error);
+            showWeatherError();
+        });
+    } catch (e) {
+        clearTimeout(requestTimeout); // 清除超时保护
+        console.error('fetchWeatherData发生异常:', e);
+        showWeatherError();
+    }
 }
 
 // 修复JSONP请求辅助函数，增加错误处理
 function fetchJSONP(url, successCallback, errorCallback) {
+    // 创建唯一的回调函数名
     const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+    let script = null;
     
     // 设置超时处理
     const timeoutId = setTimeout(function() {
         // 清理：移除脚本标签和回调函数
-        if (script && script.parentNode) script.parentNode.removeChild(script);
-        delete window[callbackName];
+        cleanup();
         errorCallback(new Error('JSONP请求超时'));
     }, 10000); // 10秒超时
     
+    // 清理函数，确保无内存泄漏
+    function cleanup() {
+        if (script && script.parentNode) {
+            script.parentNode.removeChild(script);
+        }
+        window[callbackName] = null;
+        delete window[callbackName];
+    }
+    
+    // 定义全局回调函数
     window[callbackName] = function(data) {
         try {
             clearTimeout(timeoutId);
@@ -604,19 +739,25 @@ function fetchJSONP(url, successCallback, errorCallback) {
             errorCallback(e);
         } finally {
             // 清理：移除脚本标签和回调函数
-            if (script && script.parentNode) script.parentNode.removeChild(script);
-            delete window[callbackName];
+            cleanup();
         }
     };
     
-    // 添加回调参数到URL
-    const script = document.createElement('script');
-    script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
-    script.onerror = function() {
+    try {
+        // 添加回调参数到URL
+        script = document.createElement('script');
+        script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+        script.onerror = function(e) {
+            clearTimeout(timeoutId);
+            cleanup();
+            errorCallback(new Error('JSONP请求失败: ' + e.message));
+        };
+        document.body.appendChild(script);
+    } catch (e) {
         clearTimeout(timeoutId);
-        errorCallback(new Error('JSONP请求失败'));
-    };
-    document.body.appendChild(script);
+        cleanup();
+        errorCallback(e);
+    }
 }
 
 // 更新天气UI显示
