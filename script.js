@@ -30,6 +30,9 @@ const wallEResponses = {
 // 电子音符号
 const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*boop*'];
 
+// 心知天气API密钥
+const SENIVERSE_API_KEY = 'Pn-ybB_zCFLxVzOGf';
+
 // 添加电子音到文本
 function addElectronicSound(text) {
     const words = text.split(' ');
@@ -125,6 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化聊天功能
     initChat();
+    
+    // 初始化柜me功能
+    initCuime();
 });
 
 // 侧边栏初始化和导航
@@ -182,6 +188,8 @@ function navigateTo(target) {
             break;
         case 'cuime':
             document.getElementById('cuime-section').classList.remove('hidden');
+            // 每次进入柜me页面时刷新天气数据
+            fetchWeatherData();
             break;
         case 'time':
             document.getElementById('time-section').classList.remove('hidden');
@@ -437,4 +445,436 @@ setInterval(() => {
         const randomIndex = Math.floor(Math.random() * placeholders.length);
         userInput.placeholder = placeholders[randomIndex];
     }
-}, 5000); 
+}, 5000);
+
+// 柜me功能初始化
+function initCuime() {
+    // 初始化用户偏好设置
+    loadUserPreferences();
+    
+    // 刷新天气按钮事件
+    const refreshWeatherBtn = document.getElementById('refresh-weather');
+    if (refreshWeatherBtn) {
+        refreshWeatherBtn.addEventListener('click', function() {
+            fetchWeatherData();
+        });
+    }
+    
+    // 保存偏好设置表单提交事件
+    const preferencesForm = document.getElementById('preferences-form');
+    if (preferencesForm) {
+        preferencesForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveUserPreferences();
+            fetchWeatherData(); // 保存后重新获取天气
+        });
+    }
+    
+    // 首次加载天气数据
+    fetchWeatherData();
+}
+
+// 加载用户偏好设置
+function loadUserPreferences() {
+    const savedPreferences = localStorage.getItem('cuime-preferences');
+    if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        
+        // 设置城市
+        const cityInput = document.getElementById('city');
+        if (cityInput && preferences.city) {
+            cityInput.value = preferences.city;
+        }
+        
+        // 设置穿衣风格
+        const styleSelect = document.getElementById('style-preference');
+        if (styleSelect && preferences.style) {
+            styleSelect.value = preferences.style;
+        }
+        
+        // 设置冷热感知
+        if (preferences.temperatureSensitivity) {
+            const sensitivityRadio = document.querySelector(`input[name="temperature-sensitivity"][value="${preferences.temperatureSensitivity}"]`);
+            if (sensitivityRadio) {
+                sensitivityRadio.checked = true;
+            }
+        }
+    }
+}
+
+// 保存用户偏好设置
+function saveUserPreferences() {
+    const cityInput = document.getElementById('city');
+    const styleSelect = document.getElementById('style-preference');
+    const sensitivityRadio = document.querySelector('input[name="temperature-sensitivity"]:checked');
+    
+    const preferences = {
+        city: cityInput ? cityInput.value : '北京',
+        style: styleSelect ? styleSelect.value : 'casual',
+        temperatureSensitivity: sensitivityRadio ? sensitivityRadio.value : 'normal'
+    };
+    
+    localStorage.setItem('cuime-preferences', JSON.stringify(preferences));
+    
+    // 显示保存成功提示
+    showToast('偏好设置已保存', 'success');
+}
+
+// 获取天气数据
+function fetchWeatherData() {
+    // 显示加载状态
+    showWeatherLoading(true);
+    
+    // 获取用户设置的城市，默认为北京
+    let city = '北京';
+    const cityInput = document.getElementById('city');
+    if (cityInput && cityInput.value) {
+        city = cityInput.value;
+    }
+    
+    // 构建心知天气API URL
+    const url = `https://api.seniverse.com/v3/weather/now.json?key=${SENIVERSE_API_KEY}&location=${encodeURIComponent(city)}&language=zh-Hans&unit=c`;
+    
+    // 使用JSONP方式请求天气数据（绕过跨域限制）
+    fetchJSONP(url, function(data) {
+        if (data && data.results && data.results[0]) {
+            const weatherData = data.results[0];
+            updateWeatherUI(weatherData);
+            generateOutfitSuggestion(weatherData);
+            showWeatherLoading(false);
+        } else {
+            // 天气数据获取失败
+            showWeatherError();
+        }
+    }, function(error) {
+        console.error('获取天气数据失败:', error);
+        showWeatherError();
+    });
+}
+
+// JSONP请求辅助函数
+function fetchJSONP(url, successCallback, errorCallback) {
+    const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+    window[callbackName] = function(data) {
+        try {
+            successCallback(data);
+        } catch (e) {
+            errorCallback(e);
+        } finally {
+            // 清理：移除脚本标签和回调函数
+            document.body.removeChild(script);
+            delete window[callbackName];
+        }
+    };
+    
+    // 添加回调参数到URL
+    const script = document.createElement('script');
+    script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+    script.onerror = errorCallback;
+    document.body.appendChild(script);
+}
+
+// 更新天气UI显示
+function updateWeatherUI(weatherData) {
+    const location = weatherData.location;
+    const now = weatherData.now;
+    
+    // 更新天气图标
+    const weatherIcon = document.getElementById('weather-icon');
+    if (weatherIcon) {
+        weatherIcon.innerHTML = getWeatherIcon(now.code);
+        weatherIcon.classList.remove('hidden');
+    }
+    
+    // 更新温度
+    const tempElement = document.getElementById('weather-temp');
+    if (tempElement) {
+        tempElement.textContent = `${now.temperature}°C`;
+        tempElement.classList.remove('hidden');
+    }
+    
+    // 更新天气描述
+    const descElement = document.getElementById('weather-desc');
+    if (descElement) {
+        descElement.textContent = `${location.name} · ${now.text}`;
+        descElement.classList.remove('hidden');
+    }
+    
+    // 更新湿度（心知天气基础版API中可能没有，根据实际情况调整）
+    const humidityElement = document.getElementById('weather-humidity');
+    if (humidityElement) {
+        humidityElement.textContent = now.humidity ? `${now.humidity}%` : '暂无数据';
+    }
+    
+    // 更新风速
+    const windElement = document.getElementById('weather-wind');
+    if (windElement) {
+        windElement.textContent = `${now.wind_direction}${now.wind_scale}级`;
+    }
+    
+    // 显示详细信息
+    const detailsElement = document.getElementById('weather-details');
+    if (detailsElement) {
+        detailsElement.classList.remove('hidden');
+    }
+}
+
+// 根据天气代码获取对应的图标
+function getWeatherIcon(code) {
+    // 天气代码对应的图标，使用Font Awesome图标
+    const iconMap = {
+        '0': '<i class="fas fa-sun text-yellow-500"></i>', // 晴天
+        '1': '<i class="fas fa-cloud-sun text-yellow-400"></i>', // 多云
+        '2': '<i class="fas fa-cloud-sun text-yellow-300"></i>', // 少云
+        '3': '<i class="fas fa-cloud text-gray-400"></i>', // 阴
+        '4': '<i class="fas fa-cloud-sun-rain text-blue-400"></i>', // 阵雨
+        '5': '<i class="fas fa-cloud-showers-heavy text-blue-500"></i>', // 雷阵雨
+        '6': '<i class="fas fa-cloud-rain text-blue-500"></i>', // 雨夹雪
+        '7': '<i class="fas fa-cloud-rain text-blue-600"></i>', // 小雨
+        '8': '<i class="fas fa-cloud-showers-heavy text-blue-700"></i>', // 中雨
+        '9': '<i class="fas fa-cloud-showers-heavy text-blue-800"></i>', // 大雨
+        '10': '<i class="fas fa-cloud-showers-heavy text-blue-900"></i>', // 暴雨
+        '11': '<i class="fas fa-snowflake text-blue-100"></i>', // 小雪
+        '12': '<i class="fas fa-snowflake text-blue-200"></i>', // 中雪
+        '13': '<i class="fas fa-snowflake text-blue-300"></i>', // 大雪
+        '14': '<i class="fas fa-smog text-gray-500"></i>', // 雾
+        '15': '<i class="fas fa-smog text-gray-600"></i>', // 雾霾
+        '16': '<i class="fas fa-wind text-gray-400"></i>', // 大风
+        '17': '<i class="fas fa-wind text-gray-500"></i>', // 飓风
+        '18': '<i class="fas fa-temperature-high text-red-500"></i>', // 热
+        '19': '<i class="fas fa-temperature-low text-blue-500"></i>', // 冷
+        '20': '<i class="fas fa-wind text-gray-400"></i>', // 大风
+        '99': '<i class="fas fa-question-circle text-gray-500"></i>' // 未知
+    };
+    
+    return iconMap[code] || '<i class="fas fa-cloud text-gray-400"></i>';
+}
+
+// 显示/隐藏天气加载状态
+function showWeatherLoading(isLoading) {
+    const loadingElement = document.getElementById('loading-weather');
+    const weatherIcon = document.getElementById('weather-icon');
+    const tempElement = document.getElementById('weather-temp');
+    const descElement = document.getElementById('weather-desc');
+    const detailsElement = document.getElementById('weather-details');
+    
+    if (loadingElement) {
+        loadingElement.classList.toggle('hidden', !isLoading);
+    }
+    
+    if (isLoading) {
+        if (weatherIcon) weatherIcon.classList.add('hidden');
+        if (tempElement) tempElement.classList.add('hidden');
+        if (descElement) descElement.classList.add('hidden');
+        if (detailsElement) detailsElement.classList.add('hidden');
+    }
+}
+
+// 显示天气错误信息
+function showWeatherError() {
+    showWeatherLoading(false);
+    
+    const weatherIcon = document.getElementById('weather-icon');
+    if (weatherIcon) {
+        weatherIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i>';
+        weatherIcon.classList.remove('hidden');
+    }
+    
+    const tempElement = document.getElementById('weather-temp');
+    if (tempElement) {
+        tempElement.textContent = '--°C';
+        tempElement.classList.remove('hidden');
+    }
+    
+    const descElement = document.getElementById('weather-desc');
+    if (descElement) {
+        descElement.textContent = '获取天气信息失败，请检查网络或城市名称';
+        descElement.classList.remove('hidden');
+    }
+    
+    // 显示提示消息
+    showToast('获取天气数据失败，请稍后重试', 'error');
+}
+
+// 根据天气数据生成穿搭建议
+function generateOutfitSuggestion(weatherData) {
+    const now = weatherData.now;
+    const temperature = parseInt(now.temperature);
+    const weatherText = now.text;
+    
+    // 显示加载状态
+    const outfitLoading = document.getElementById('outfit-loading');
+    const outfitContent = document.getElementById('outfit-content');
+    
+    if (outfitLoading) outfitLoading.classList.add('hidden');
+    if (outfitContent) outfitContent.classList.remove('hidden');
+    
+    // 获取用户的温度敏感度设置
+    let temperatureSensitivity = 'normal';
+    const sensitivityRadio = document.querySelector('input[name="temperature-sensitivity"]:checked');
+    if (sensitivityRadio) {
+        temperatureSensitivity = sensitivityRadio.value;
+    }
+    
+    // 获取用户的风格偏好
+    let stylePreference = 'casual';
+    const styleSelect = document.getElementById('style-preference');
+    if (styleSelect) {
+        stylePreference = styleSelect.value;
+    }
+    
+    // 温度范围建议
+    let temperatureAdvice = getTemperatureAdvice(temperature, temperatureSensitivity);
+    
+    // 降水建议
+    let precipitationAdvice = getPrecipitationAdvice(weatherText);
+    
+    // 根据温度和天气生成穿搭建议
+    let outfitRecommendation = getOutfitRecommendation(temperature, weatherText, temperatureSensitivity, stylePreference);
+    
+    // 更新UI
+    const tempAdviceElement = document.getElementById('temperature-advice');
+    if (tempAdviceElement) {
+        tempAdviceElement.textContent = temperatureAdvice;
+    }
+    
+    const precipAdviceElement = document.getElementById('precipitation-advice');
+    if (precipAdviceElement) {
+        precipAdviceElement.textContent = precipitationAdvice;
+    }
+    
+    const outfitElement = document.getElementById('outfit-recommendation');
+    if (outfitElement) {
+        outfitElement.textContent = outfitRecommendation;
+    }
+}
+
+// 根据温度范围和敏感度返回温度建议
+function getTemperatureAdvice(temperature, sensitivity) {
+    let advice = '';
+    
+    // 根据温度敏感度调整温度感知
+    let adjustedTemp = temperature;
+    if (sensitivity === 'cold') {
+        adjustedTemp -= 2; // 怕冷的人感觉温度更低
+    } else if (sensitivity === 'hot') {
+        adjustedTemp += 2; // 怕热的人感觉温度更高
+    }
+    
+    if (adjustedTemp <= 0) {
+        advice = '极冷，注意保暖';
+    } else if (adjustedTemp <= 5) {
+        advice = '很冷，需要厚重保暖';
+    } else if (adjustedTemp <= 10) {
+        advice = '冷，需要保暖';
+    } else if (adjustedTemp <= 15) {
+        advice = '凉爽，适合加件外套';
+    } else if (adjustedTemp <= 20) {
+        advice = '舒适，适合轻薄外套';
+    } else if (adjustedTemp <= 25) {
+        advice = '温暖，适合单层衣物';
+    } else if (adjustedTemp <= 30) {
+        advice = '热，建议穿轻薄透气衣物';
+    } else {
+        advice = '炎热，建议穿最少最透气的衣物';
+    }
+    
+    return advice;
+}
+
+// 根据天气状况返回降水建议
+function getPrecipitationAdvice(weatherText) {
+    if (weatherText.includes('雨') || weatherText.includes('雪') || weatherText.includes('阵雨')) {
+        return '有降水，建议携带雨具/雪具';
+    } else if (weatherText.includes('阴') || weatherText.includes('多云')) {
+        return '可能有降水，建议备雨具';
+    } else {
+        return '无降水，晴好天气';
+    }
+}
+
+// 根据温度、天气和偏好生成具体穿搭建议
+function getOutfitRecommendation(temperature, weatherText, sensitivity, stylePreference) {
+    // 根据温度敏感度调整温度感知
+    let adjustedTemp = temperature;
+    if (sensitivity === 'cold') {
+        adjustedTemp -= 2; // 怕冷的人感觉温度更低
+    } else if (sensitivity === 'hot') {
+        adjustedTemp += 2; // 怕热的人感觉温度更高
+    }
+    
+    let baseRecommendation = '';
+    
+    // 根据温度范围给出基础穿搭建议
+    if (adjustedTemp <= 0) {
+        baseRecommendation = '厚羽绒服、保暖内衣、毛衣、厚裤子、围巾、帽子和手套';
+    } else if (adjustedTemp <= 5) {
+        baseRecommendation = '厚外套或羽绒服、毛衣、厚裤子、围巾';
+    } else if (adjustedTemp <= 10) {
+        baseRecommendation = '夹克或大衣、毛衣或长袖衫、牛仔裤或休闲裤';
+    } else if (adjustedTemp <= 15) {
+        baseRecommendation = '轻薄外套、长袖衫或薄毛衣、牛仔裤或休闲裤';
+    } else if (adjustedTemp <= 20) {
+        baseRecommendation = '薄外套或开衫、长袖衬衫或T恤、休闲裤';
+    } else if (adjustedTemp <= 25) {
+        baseRecommendation = '长袖T恤或衬衫、休闲裤或牛仔裤';
+    } else if (adjustedTemp <= 30) {
+        baseRecommendation = '短袖T恤、短裤或轻薄长裤';
+    } else {
+        baseRecommendation = '轻薄透气的短袖T恤、短裤、凉鞋';
+    }
+    
+    // 根据风格偏好调整建议
+    let styleAdjustment = '';
+    switch (stylePreference) {
+        case 'formal':
+            styleAdjustment = '选择正式款式，如衬衫、西装裤或正装裙，保持整洁的商务形象。';
+            break;
+        case 'sporty':
+            styleAdjustment = '选择运动风格，如运动T恤、运动裤、运动鞋，活力十足。';
+            break;
+        case 'minimalist':
+            styleAdjustment = '选择简约风格，如基础款T恤、纯色裤装，干净利落。';
+            break;
+        default: // casual
+            styleAdjustment = '选择休闲风格，如舒适的T恤、牛仔裤，轻松随意。';
+    }
+    
+    // 根据天气状况添加特殊建议
+    let weatherAdjustment = '';
+    if (weatherText.includes('雨')) {
+        weatherAdjustment = '建议携带雨伞，穿防水鞋或靴子，选择防水外套。';
+    } else if (weatherText.includes('雪')) {
+        weatherAdjustment = '建议穿防滑防水的雪地靴，选择防水外套。';
+    } else if (weatherText.includes('风') || weatherText.includes('大风')) {
+        weatherAdjustment = '建议选择防风外套，避免穿裙装或宽松衣物。';
+    } else if (weatherText.includes('雾') || weatherText.includes('霾')) {
+        weatherAdjustment = '建议戴口罩，穿深色衣物减少污染物附着。';
+    }
+    
+    return `今日推荐：${baseRecommendation}。${styleAdjustment} ${weatherAdjustment}`;
+}
+
+// 显示提示消息
+function showToast(message, type = 'info') {
+    // 创建提示元素
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white text-sm font-medium shadow-lg transform transition-all duration-300 opacity-0 translate-y-4 z-50 ${type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500'}`;
+    toast.textContent = message;
+    
+    // 添加到页面
+    document.body.appendChild(toast);
+    
+    // 触发动画
+    setTimeout(() => {
+        toast.classList.remove('opacity-0', 'translate-y-4');
+    }, 10);
+    
+    // 设置自动消失
+    setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+} 
