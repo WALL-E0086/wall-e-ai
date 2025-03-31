@@ -33,9 +33,8 @@ const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*
 // 心知天气API密钥
 const SENIVERSE_API_KEY = 'Pn-ybB_zCFLxVzOGf';
 
-// IP定位API
-const IP_LOCATION_API = 'https://restapi.amap.com/v3/ip';
-const IP_LOCATION_API_KEY = '9d6935ba76e904ef6f0c9b0a548b2e8f'; // 高德地图开放平台API密钥
+// 默认城市
+const DEFAULT_CITY = '北京';
 
 // 添加电子音到文本
 function addElectronicSound(text) {
@@ -493,36 +492,14 @@ function autoDetectCity() {
         }
     }
     
-    // 显示正在定位提示
+    // 由于无法可靠地获取用户IP所在城市，直接使用默认城市
     if (cityInput) {
-        cityInput.value = "正在自动定位...";
-        cityInput.disabled = true;
+        cityInput.value = DEFAULT_CITY;
+        cityInput.disabled = false;
+        
+        // 获取天气数据
+        fetchWeatherData();
     }
-    
-    // 使用高德IP定位API获取城市
-    const url = `${IP_LOCATION_API}?key=${IP_LOCATION_API_KEY}&output=json`;
-    
-    // 先尝试使用高德IP定位API
-    fetchJSONP(url, function(data) {
-        if (data && data.status === '1' && data.city) {
-            if (cityInput) {
-                cityInput.value = data.city;
-                cityInput.disabled = false;
-                
-                // 保存城市到用户偏好
-                saveUserPreferences();
-                
-                // 获取天气数据
-                fetchWeatherData();
-            }
-        } else {
-            // 高德API失败，使用备用API
-            fallbackCityDetection();
-        }
-    }, function(error) {
-        console.error('IP定位失败:', error);
-        fallbackCityDetection();
-    });
 }
 
 // 加载用户偏好设置
@@ -547,37 +524,11 @@ function loadUserPreferences() {
     }
 }
 
-// 备用城市定位方法
-function fallbackCityDetection() {
-    // 备用API：使用ipapi.co的免费服务
-    fetch('https://ipapi.co/json/')
-        .then(response => response.json())
-        .then(data => {
-            const cityInput = document.getElementById('city');
-            if (cityInput && data.city) {
-                cityInput.value = data.city;
-                cityInput.disabled = false;
-                
-                // 保存城市到用户偏好
-                saveUserPreferences();
-                
-                // 获取天气数据
-                fetchWeatherData();
-            } else {
-                resetCityInput();
-            }
-        })
-        .catch(error => {
-            console.error('备用IP定位失败:', error);
-            resetCityInput();
-        });
-}
-
-// 重置城市输入框
+// 简化城市输入框重置函数
 function resetCityInput() {
     const cityInput = document.getElementById('city');
     if (cityInput) {
-        cityInput.value = '北京'; // 默认城市
+        cityInput.value = DEFAULT_CITY;
         cityInput.disabled = false;
         fetchWeatherData();
     }
@@ -607,7 +558,7 @@ function fetchWeatherData() {
     showWeatherLoading(true);
     
     // 获取用户设置的城市，默认为北京
-    let city = '北京';
+    let city = DEFAULT_CITY;
     const cityInput = document.getElementById('city');
     if (cityInput && cityInput.value) {
         city = cityInput.value;
@@ -633,17 +584,27 @@ function fetchWeatherData() {
     });
 }
 
-// JSONP请求辅助函数
+// 修复JSONP请求辅助函数，增加错误处理
 function fetchJSONP(url, successCallback, errorCallback) {
     const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+    
+    // 设置超时处理
+    const timeoutId = setTimeout(function() {
+        // 清理：移除脚本标签和回调函数
+        if (script && script.parentNode) script.parentNode.removeChild(script);
+        delete window[callbackName];
+        errorCallback(new Error('JSONP请求超时'));
+    }, 10000); // 10秒超时
+    
     window[callbackName] = function(data) {
         try {
+            clearTimeout(timeoutId);
             successCallback(data);
         } catch (e) {
             errorCallback(e);
         } finally {
             // 清理：移除脚本标签和回调函数
-            document.body.removeChild(script);
+            if (script && script.parentNode) script.parentNode.removeChild(script);
             delete window[callbackName];
         }
     };
@@ -651,7 +612,10 @@ function fetchJSONP(url, successCallback, errorCallback) {
     // 添加回调参数到URL
     const script = document.createElement('script');
     script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
-    script.onerror = errorCallback;
+    script.onerror = function() {
+        clearTimeout(timeoutId);
+        errorCallback(new Error('JSONP请求失败'));
+    };
     document.body.appendChild(script);
 }
 
