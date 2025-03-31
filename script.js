@@ -135,6 +135,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化柜me功能
     initCuime();
+
+    const startChatBtn = document.getElementById('startChatBtn');
+    if (startChatBtn) {
+        startChatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('开始对话按钮被点击');
+            
+            // 使用现有的导航系统切换到聊天页面
+            navigateTo('chat-section');
+            
+            // 更新导航菜单的活动状态
+            const navLinks = document.querySelectorAll('#sidebar a');
+            navLinks.forEach(link => {
+                link.classList.remove('active', 'bg-gray-100');
+                if (link.getAttribute('href') === '#chat-section') {
+                    link.classList.add('active', 'bg-gray-100');
+                }
+            });
+        });
+    }
 });
 
 // 侧边栏初始化和导航

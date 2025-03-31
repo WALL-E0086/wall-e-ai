@@ -74,9 +74,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#chat-section" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="chat-section" id="chat-nav-link">
-                                <i class="fas fa-comments w-5 text-center"></i>
-                                <span class="ml-3">瓦力哔哔机</span>
+                            <a href="#chat-section" id="chat-nav-link" class="nav-link flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                                <i class="fas fa-comments mr-3"></i>
+                                <span>瓦力哔哔机</span>
                             </a>
                         </li>
                         <li>
@@ -132,7 +132,7 @@
                     <div class="title-container text-center z-20">
                         <h1 class="text-4xl font-bold mb-2 text-blue-500">瓦力AI初号机</h1>
                         <p class="text-xl mb-8 text-blue-600">你的智能生活小管家</p>
-                        <button id="start-chat" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                        <button id="startChatBtn" class="bg-primary text-white px-8 py-3 rounded-full hover:bg-primaryDark transition-colors duration-300 transform hover:scale-105">
                             开始对话
                         </button>
                     </div>
@@ -468,7 +468,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 获取开始对话按钮
-            const startChatBtn = document.getElementById('start-chat');
+            const startChatBtn = document.getElementById('startChatBtn');
             if (startChatBtn) {
                 startChatBtn.addEventListener('click', function(e) {
                     e.preventDefault();
