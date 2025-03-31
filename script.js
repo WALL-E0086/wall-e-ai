@@ -33,6 +33,10 @@ const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*
 // 心知天气API密钥
 const SENIVERSE_API_KEY = 'Pn-ybB_zCFLxVzOGf';
 
+// IP定位API
+const IP_LOCATION_API = 'https://restapi.amap.com/v3/ip';
+const IP_LOCATION_API_KEY = '9d6935ba76e904ef6f0c9b0a548b2e8f'; // 高德地图开放平台API密钥
+
 // 添加电子音到文本
 function addElectronicSound(text) {
     const words = text.split(' ');
@@ -470,8 +474,55 @@ function initCuime() {
         });
     }
     
-    // 首次加载天气数据
-    fetchWeatherData();
+    // 尝试通过IP定位获取城市
+    autoDetectCity();
+}
+
+// IP地址自动定位城市
+function autoDetectCity() {
+    const cityInput = document.getElementById('city');
+    const savedPreferences = localStorage.getItem('cuime-preferences');
+    
+    // 如果用户已经设置了城市，优先使用已设置的城市
+    if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        if (preferences.city && cityInput) {
+            cityInput.value = preferences.city;
+            fetchWeatherData();
+            return;
+        }
+    }
+    
+    // 显示正在定位提示
+    if (cityInput) {
+        cityInput.value = "正在自动定位...";
+        cityInput.disabled = true;
+    }
+    
+    // 使用高德IP定位API获取城市
+    const url = `${IP_LOCATION_API}?key=${IP_LOCATION_API_KEY}&output=json`;
+    
+    // 先尝试使用高德IP定位API
+    fetchJSONP(url, function(data) {
+        if (data && data.status === '1' && data.city) {
+            if (cityInput) {
+                cityInput.value = data.city;
+                cityInput.disabled = false;
+                
+                // 保存城市到用户偏好
+                saveUserPreferences();
+                
+                // 获取天气数据
+                fetchWeatherData();
+            }
+        } else {
+            // 高德API失败，使用备用API
+            fallbackCityDetection();
+        }
+    }, function(error) {
+        console.error('IP定位失败:', error);
+        fallbackCityDetection();
+    });
 }
 
 // 加载用户偏好设置
@@ -479,12 +530,6 @@ function loadUserPreferences() {
     const savedPreferences = localStorage.getItem('cuime-preferences');
     if (savedPreferences) {
         const preferences = JSON.parse(savedPreferences);
-        
-        // 设置城市
-        const cityInput = document.getElementById('city');
-        if (cityInput && preferences.city) {
-            cityInput.value = preferences.city;
-        }
         
         // 设置穿衣风格
         const styleSelect = document.getElementById('style-preference');
@@ -499,6 +544,42 @@ function loadUserPreferences() {
                 sensitivityRadio.checked = true;
             }
         }
+    }
+}
+
+// 备用城市定位方法
+function fallbackCityDetection() {
+    // 备用API：使用ipapi.co的免费服务
+    fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+            const cityInput = document.getElementById('city');
+            if (cityInput && data.city) {
+                cityInput.value = data.city;
+                cityInput.disabled = false;
+                
+                // 保存城市到用户偏好
+                saveUserPreferences();
+                
+                // 获取天气数据
+                fetchWeatherData();
+            } else {
+                resetCityInput();
+            }
+        })
+        .catch(error => {
+            console.error('备用IP定位失败:', error);
+            resetCityInput();
+        });
+}
+
+// 重置城市输入框
+function resetCityInput() {
+    const cityInput = document.getElementById('city');
+    if (cityInput) {
+        cityInput.value = '北京'; // 默认城市
+        cityInput.disabled = false;
+        fetchWeatherData();
     }
 }
 
