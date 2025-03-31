@@ -30,8 +30,8 @@ const wallEResponses = {
 // 电子音符号
 const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*boop*'];
 
-// 心知天气API密钥
-const SENIVERSE_API_KEY = 'Pn-ybB_zCFLxVzOGf';
+// 心知天气API密钥 - 更新为新的有效密钥
+const SENIVERSE_API_KEY = 'Sqjlotw1PWdYOvY67'; // 新的API密钥
 
 // 默认城市
 const DEFAULT_CITY = '北京';
@@ -672,7 +672,7 @@ function fetchWeatherData() {
         cityInput.disabled = false;
     }
     
-    // 构建心知天气API URL - 添加域名相关参数
+    // 构建心知天气API URL
     const apiUrl = `https://api.seniverse.com/v3/weather/now.json`;
     const params = {
         key: SENIVERSE_API_KEY,
@@ -693,7 +693,7 @@ function fetchWeatherData() {
     // 设置超时保护
     const requestTimeout = setTimeout(() => {
         console.error('天气API请求超时');
-        showWeatherError();
+        showWeatherError('请求超时，请检查网络连接');
     }, 15000); // 15秒超时
     
     // 使用JSONP方式请求天气数据（绕过跨域限制）
@@ -710,17 +710,17 @@ function fetchWeatherData() {
             } else {
                 // 天气数据获取失败
                 console.error('天气数据无效', data);
-                showWeatherError();
+                showWeatherError('获取天气数据失败，请稍后重试');
             }
         }, function(error) {
             clearTimeout(requestTimeout); // 清除超时保护
             console.error('获取天气数据失败:', error);
-            showWeatherError();
+            showWeatherError('无法连接到天气服务，请稍后重试');
         });
     } catch (e) {
         clearTimeout(requestTimeout); // 清除超时保护
         console.error('fetchWeatherData发生异常:', e);
-        showWeatherError();
+        showWeatherError('天气服务出现异常，请稍后重试');
     }
 }
 
@@ -873,7 +873,7 @@ function showWeatherLoading(isLoading) {
 }
 
 // 显示天气错误信息
-function showWeatherError() {
+function showWeatherError(message = '获取天气数据失败，请检查城市名称后重试') {
     showWeatherLoading(false);
     
     const weatherIcon = document.getElementById('weather-icon');
@@ -890,7 +890,7 @@ function showWeatherError() {
     
     const descElement = document.getElementById('weather-desc');
     if (descElement) {
-        descElement.textContent = '获取天气信息失败，请检查网络或城市名称';
+        descElement.textContent = message;
         descElement.classList.remove('hidden');
     }
     
@@ -908,7 +908,7 @@ function showWeatherError() {
     const outfitLoading = document.getElementById('outfit-loading');
     const outfitContent = document.getElementById('outfit-content');
     if (outfitLoading) {
-        outfitLoading.textContent = '无法获取天气数据，请检查城市名称后重试';
+        outfitLoading.textContent = message;
         outfitLoading.classList.remove('hidden');
     }
     if (outfitContent) {
@@ -916,7 +916,7 @@ function showWeatherError() {
     }
     
     // 显示提示消息
-    showToast('获取天气数据失败，请检查城市名称后重试', 'error');
+    showToast(message, 'error');
 }
 
 // 根据天气数据生成穿搭建议
