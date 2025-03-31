@@ -11,6 +11,9 @@ body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
     background-color: #ffffff; /* 确保body背景为纯白色 */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 /* 黑洞容器样式 */
@@ -345,12 +348,26 @@ body {
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* 文字定位 - 固定在初始位置 */
+/* 主容器样式 */
+.main-container {
+    position: relative;
+    min-height: 100vh;
+    max-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+}
+
+/* 标题容器样式 */
 .title-container {
     position: relative;
-    z-index: 2;
     padding-top: 45vh;
+    width: 100%;
     text-align: center;
+    z-index: 20;
 }
 
 .title-container h1 {
@@ -366,11 +383,12 @@ body {
     margin-bottom: 2rem;
 }
 
-/* 功能展示部分 - 锁定位置 */
+/* 功能展示区域样式 */
 .max-w-6xl {
     margin-top: auto;
-    padding-top: 2rem;
-    background: transparent; /* 确保功能展示区域背景透明 */
+    padding: 2rem 1rem;
+    width: 100%;
+    background: transparent;
 }
 
 /* 功能卡片背景 */
@@ -383,7 +401,6 @@ body {
     .blackhole-container {
         width: min(40vw, 250px);
         height: min(40vw, 250px);
-        top: 20% !important;
     }
     
     .blackhole-core {
@@ -431,19 +448,6 @@ body {
     .max-w-6xl {
         margin-top: 2rem;
     }
-}
-
-/* 主容器样式 */
-.main-container {
-    position: relative;
-    min-height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem;
-    background: transparent; /* 移除背景色 */
 }
 
 /* 波纹效果 - 限制大小与黑洞吸积盘一致 */
