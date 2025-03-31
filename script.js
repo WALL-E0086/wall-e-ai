@@ -495,7 +495,7 @@ function autoDetectCity() {
     // 由于无法可靠地获取用户IP所在城市，直接使用默认城市
     if (cityInput) {
         cityInput.value = DEFAULT_CITY;
-        cityInput.disabled = false;
+        cityInput.disabled = false; // 确保输入框始终可用
         
         // 获取天气数据
         fetchWeatherData();
@@ -737,8 +737,29 @@ function showWeatherError() {
         descElement.classList.remove('hidden');
     }
     
+    // 确保城市输入框可用，不被禁用
+    const cityInput = document.getElementById('city');
+    if (cityInput) {
+        cityInput.disabled = false;
+        // 如果输入框为空，则填入默认城市
+        if (!cityInput.value.trim()) {
+            cityInput.value = DEFAULT_CITY;
+        }
+    }
+    
+    // 隐藏穿搭建议的加载状态，显示错误信息
+    const outfitLoading = document.getElementById('outfit-loading');
+    const outfitContent = document.getElementById('outfit-content');
+    if (outfitLoading) {
+        outfitLoading.textContent = '无法获取天气数据，请检查城市名称后重试';
+        outfitLoading.classList.remove('hidden');
+    }
+    if (outfitContent) {
+        outfitContent.classList.add('hidden');
+    }
+    
     // 显示提示消息
-    showToast('获取天气数据失败，请稍后重试', 'error');
+    showToast('获取天气数据失败，请检查城市名称后重试', 'error');
 }
 
 // 根据天气数据生成穿搭建议
