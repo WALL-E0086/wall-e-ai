@@ -1,0 +1,17 @@
+{
+  "name": "serve-mcp",
+  "version": "1.0.0",
+  "description": "MCP服务器启动工具",
+  "main": "cursor-mcp-server.js",
+  "bin": {
+    "serve-mcp": "./serve-mcp.js"
+  },
+  "scripts": {
+    "start": "node cursor-mcp-server.js",
+    "serve": "node serve-mcp.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}

@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+venv/
+ENV/
+env/
+
+# Flask
+instance/
+.webassets-cache
+
+# 编辑器和IDE文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 敏感信息
+*.env
+.env
+.env.*
+.flask_secret
+config.json
+
+# 日志文件
+*.log
+logs/
+
+# Cursor特定文件
+.cursor/
+
+# 测试API密钥
+start_server.bat
+
+# 忽略Node.js依赖
+node_modules/
+
+# 忽略MCP相关文件
+*mcp*.js
+*mcp*.json
+*mcp*.py
+*mcp*.bat
+*mcp*.sh
+*mcp*.txt
+
+# 忽略Cursor相关文件
+cursor-*
+CURSOR-*
+
+# 忽略服务器相关
+serve-*
+start_* 

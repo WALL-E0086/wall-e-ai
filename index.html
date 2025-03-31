@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<!-- Version 1.0.5 - 修复黑洞位置和层级问题 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="瓦力AI初号机 - 智能生活小管家">
+    <meta name="keywords" content="人工智能, 智能助手, 聊天机器人, AI助手">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>瓦力AI初号机</title>
+    
+    <!-- Version 1.0.6 - 修复灰色吸积盘阴影和波纹效果的位置与黑洞重合问题 -->
+    
+    <!-- 预加载关键字体以优化性能 -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    
+    <!-- 引入Tailwind和FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义样式，带时间戳防止缓存 -->
+    <script>
+        const timestamp = new Date().getTime();
+        document.write('<link rel="stylesheet" href="tailwind-styles.css?v=' + timestamp + '">');
+    </script>
+    
+    <style>
+        /* 关键样式优先内联以提升性能 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .delayed-fadeIn {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-md z-10 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="text-lg font-semibold">瓦力AI</h2>
+                            <p class="text-xs text-gray-500">智能生活小管家</p>
+                        </div>
+                    </div>
+                    <button id="close-sidebar" class="md:hidden text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <nav class="flex-grow py-6 px-4 overflow-y-auto">
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#home" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300 active" data-section="home">
+                                <i class="fas fa-home w-5 text-center"></i>
+                                <span class="ml-3">首页</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#chat-section" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="chat-section" id="chat-nav-link">
+                                <i class="fas fa-comments w-5 text-center"></i>
+                                <span class="ml-3">瓦力哔哔机</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#cuime" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="cuime-section">
+                                <i class="fas fa-tshirt w-5 text-center"></i>
+                                <span class="ml-3">柜me</span>
+                                <span class="ml-auto px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">新功能</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#time" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="time-section">
+                                <i class="fas fa-clock w-5 text-center"></i>
+                                <span class="ml-3">时綰</span>
+                                <span class="ml-auto px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">新功能</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#photo" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="photo-section">
+                                <i class="fas fa-image w-5 text-center"></i>
+                                <span class="ml-3">秒秒</span>
+                                <span class="ml-auto px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">新功能</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#about" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="about-section">
+                                <i class="fas fa-info-circle w-5 text-center"></i>
+                                <span class="ml-3">关于</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <div class="p-4 border-t border-gray-200">
+                    <button class="w-full px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300">
+                        <i class="fas fa-star mr-2 text-yellow-500"></i>
+                        评价我们
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单按钮 -->
+        <button id="menu-toggle" class="fixed top-4 left-4 md:hidden bg-white shadow z-20 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 md:ml-64 overflow-y-auto overflow-x-hidden relative">
+            <!-- 首页部分 -->
+            <section id="home" class="min-h-screen p-5 block">
+                <div class="main-container">
+                    <!-- 主要内容 -->
+                    <div class="title-container text-center z-20">
+                        <h1 class="text-4xl font-bold mb-2 text-blue-500">瓦力AI初号机</h1>
+                        <p class="text-xl mb-8 text-blue-600">你的智能生活小管家</p>
+                        <button id="start-chat" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                            开始对话
+                        </button>
+                    </div>
+                    
+                    <!-- 黑洞效果 - 位置与波纹和吸积盘100%重合 -->
+                    <div class="blackhole-container">
+                        <div class="blackhole-core">
+                            <div class="eyes">
+                                <div class="eye-container">
+                                    <div class="pupil" id="pupil-left">
+                                        <div class="highlight-small"></div>
+                                    </div>
+                                </div>
+                                <div class="eye-container">
+                                    <div class="pupil" id="pupil-right">
+                                        <div class="highlight-small"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accretion-disk">
+                            <div class="accretion-ring"></div>
+                            <div class="accretion-ring"></div>
+                            <div class="accretion-ring"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 波纹效果 - 与黑洞完全重合 -->
+                    <div class="ripple-effect"></div>
+                    
+                    <!-- 功能展示 -->
+                    <div class="max-w-6xl mx-auto px-4 py-16">
+                        <h2 class="text-3xl font-bold text-center mb-12">瓦力AI初号机能做什么？</h2>
+                        <div class="flex flex-wrap -mx-4 justify-center">
+                            <!-- 功能卡片 1 -->
+                            <div class="w-full md:w-1/3 px-4 mb-8">
+                                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+                                    <div class="text-blue-500 text-4xl mb-4">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold mb-2">瓦力哔哔机</h3>
+                                    <p class="text-gray-600">自然流畅的对话体验，理解您的需求，提供贴心的回应和建议。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 功能卡片 2 -->
+                            <div class="w-full md:w-1/3 px-4 mb-8">
+                                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+                                    <div class="text-blue-500 text-4xl mb-4">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold mb-2">知识问答</h3>
+                                    <p class="text-gray-600">拥有海量知识库，回答您的各类问题，从科学到历史，从技术到艺术。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 功能卡片 3 -->
+                            <div class="w-full md:w-1/3 px-4 mb-8">
+                                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+                                    <div class="text-blue-500 text-4xl mb-4">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold mb-2">创意助手</h3>
+                                    <p class="text-gray-600">激发您的创造力，协助生成创意文案、故事、诗歌和各类内容。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 对话部分 -->
+            <section id="chat-section" class="h-screen p-5 hidden">
+                <div class="h-full flex flex-col bg-white rounded-3xl shadow-md overflow-hidden">
+                    <div class="flex justify-between items-center p-5 bg-gray-50 border-b border-black/10">
+                        <h2 class="text-xl font-semibold">瓦力哔哔机</h2>
+                        <div class="flex gap-2">
+                            <button id="clear-chat" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-xl text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:bg-gray-300">
+                                <i class="fas fa-trash-alt mr-2"></i>清空
+                            </button>
+                            <button id="save-chat" class="py-2 px-4 bg-blue-500 text-white rounded-xl text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-300">
+                                <i class="fas fa-save mr-2"></i>保存
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex-grow p-5 overflow-y-auto flex flex-col gap-5" id="chat-history">
+                        <div class="max-w-[80%] flex flex-col self-start">
+                            <div class="p-4 rounded-3xl bg-blue-500 text-white relative break-words">
+                                你好！*beep* 我是瓦力AI，很高兴为你服务。*whirr* 有什么我能帮到你的吗？
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2.5 p-5 bg-gray-50 border-t border-black/10 md:flex-row flex-col">
+                        <div class="flex-1 flex gap-2">
+                            <input type="text" id="chat-input" placeholder="输入你的问题..." class="flex-1 p-4 border border-black/10 rounded-3xl text-base outline-none transition-all duration-300 focus:border-blue-500 focus:shadow focus:shadow-blue-100">
+                            <button id="upload-file" class="w-12 h-12 border-none rounded-full bg-gray-50 text-gray-800 cursor-pointer transition-all duration-300 flex items-center justify-center relative overflow-hidden hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-300">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <input type="file" id="file-input" accept=".doc,.docx,.pdf,.txt" class="hidden">
+                        </div>
+                        <button id="send-button" class="md:w-12 md:h-12 w-full h-12 border-none rounded-full bg-blue-500 text-white cursor-pointer transition-all duration-300 flex items-center justify-center relative overflow-hidden hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-300">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 柜me部分 -->
+            <section id="cuime-section" class="min-h-screen p-5 hidden">
+                <h2 class="text-2xl font-bold mb-6">柜me - 您的个人形象顾问</h2>
+                <p class="text-gray-600 mb-6">根据天气和您的个人特点，为您提供贴心的穿搭建议</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 天气信息卡片 -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold text-blue-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>今日天气
+                            </h3>
+                            <button id="refresh-weather" class="text-blue-500 hover:text-blue-700 transition-all">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        
+                        <div id="weather-container" class="flex flex-col items-center">
+                            <div class="text-center mb-4">
+                                <div id="loading-weather" class="animate-spin text-blue-500 text-2xl">
+                                    <i class="fas fa-circle-notch"></i>
+                                </div>
+                                <div id="weather-icon" class="text-5xl mb-2 hidden">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                                <div id="weather-temp" class="text-4xl font-bold hidden">--°C</div>
+                                <div id="weather-desc" class="text-gray-600 hidden">获取中...</div>
+                            </div>
+                            
+                            <div id="weather-details" class="grid grid-cols-2 gap-4 w-full hidden">
+                                <div class="flex items-center">
+                                    <i class="fas fa-tint text-blue-500 mr-2"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">湿度</div>
+                                        <div id="weather-humidity" class="font-medium">--%</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-wind text-blue-500 mr-2"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">风速</div>
+                                        <div id="weather-wind" class="font-medium">--km/h</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 穿搭建议卡片 -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-blue-600 mb-4">
+                            <i class="fas fa-tshirt mr-2"></i>今日穿搭建议
+                        </h3>
+                        <div id="outfit-suggestion" class="space-y-4">
+                            <p class="text-gray-500 text-center" id="outfit-loading">正在根据天气生成穿搭建议...</p>
+                            <div id="outfit-content" class="hidden">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-temperature-high text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">温度建议</div>
+                                        <div id="temperature-advice" class="font-medium">--</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-umbrella text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">降水建议</div>
+                                        <div id="precipitation-advice" class="font-medium">--</div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <h4 class="font-medium mb-2 text-gray-700">穿搭推荐</h4>
+                                    <p id="outfit-recommendation" class="text-gray-600">--</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 个人偏好设置 -->
+                <div class="mt-6 bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">
+                        <i class="fas fa-sliders-h mr-2"></i>个人偏好设置
+                    </h3>
+                    <form id="preferences-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 mb-2" for="city">城市</label>
+                            <div class="relative">
+                                <input type="text" id="city" placeholder="输入城市名称" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="">
+                                <small class="text-gray-500 mt-1 block">请输入准确的中国城市名称，如: 北京、上海、广州</small>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" for="style-preference">穿衣风格偏好</label>
+                            <select id="style-preference" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="casual">休闲风格</option>
+                                <option value="formal">正式风格</option>
+                                <option value="sporty">运动风格</option>
+                                <option value="minimalist">简约风格</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">冷热感知</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" id="cold-sensitive" name="temperature-sensitivity" value="cold" class="form-radio text-blue-500">
+                                <label for="cold-sensitive">怕冷</label>
+                                <input type="radio" id="normal-sensitive" name="temperature-sensitivity" value="normal" class="form-radio text-blue-500" checked>
+                                <label for="normal-sensitive">适中</label>
+                                <input type="radio" id="hot-sensitive" name="temperature-sensitivity" value="hot" class="form-radio text-blue-500">
+                                <label for="hot-sensitive">怕热</label>
+                            </div>
+                        </div>
+                        <div class="md:flex md:items-end">
+                            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
+                                <i class="fas fa-save mr-2"></i>保存偏好
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 时綰部分 -->
+            <section id="time-section" class="min-h-screen p-5 hidden">
+                <h2 class="text-2xl font-bold mb-6">时綰 - 您的人生故事记录官</h2>
+                <p class="text-gray-600 mb-6">通过语音交流，记录您的珍贵回忆</p>
+                
+                <!-- 待实现 -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <p class="text-center text-gray-500">功能开发中，敬请期待...</p>
+                </div>
+            </section>
+
+            <!-- 秒秒部分 -->
+            <section id="photo-section" class="min-h-screen p-5 hidden">
+                <h2 class="text-2xl font-bold mb-6">秒秒 - 照片修复与动态化</h2>
+                <p class="text-gray-600 mb-6">让您珍贵的老照片焕发新生</p>
+                
+                <!-- 待实现 -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <p class="text-center text-gray-500">功能开发中，敬请期待...</p>
+                </div>
+            </section>
+
+            <!-- 关于部分 -->
+            <section id="about-section" class="min-h-screen p-5 hidden">
+                <div class="h-full flex items-center justify-center p-5">
+                    <div class="grid md:grid-cols-2 grid-cols-1 gap-10 md:gap-15 items-center max-w-screen-lg w-full">
+                        <div class="md:order-1 order-2">
+                            <h2 class="text-4xl mb-5">关于瓦力AI</h2>
+                            <p class="text-gray-600 text-lg mb-7">瓦力AI是一个充满好奇心的智能助手，专注于为您提供高质量的问答服务和知识管理。无论是日常问题还是专业领域，瓦力AI都能成为您的得力助手。</p>
+                            <div class="space-y-4 mb-7">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-check-circle text-blue-500"></i>
+                                    <span>先进的自然语言处理能力</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-check-circle text-blue-500"></i>
+                                    <span>支持文档分析和信息提取</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-check-circle text-blue-500"></i>
+                                    <span>持续学习，不断进化</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative w-full max-w-md mx-auto md:order-2 order-1">
+                            <div class="w-full h-auto rounded-3xl shadow-2xl overflow-hidden">
+                                <div class="blackhole-container-small w-64 h-64 mx-auto my-8">
+                                    <div class="blackhole-core-small w-32 h-32">
+                                        <div class="eyes-small">
+                                            <div class="eye-container-small">
+                                                <div class="pupil-small"></div>
+                                            </div>
+                                            <div class="eye-container-small">
+                                                <div class="pupil-small"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-5 -right-5 bg-white p-4 rounded-2xl shadow-lg">
+                                <div class="text-sm font-semibold mb-1">版本信息</div>
+                                <div class="text-xs text-gray-600">瓦力AI v1.0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- 聊天界面弹出层 -->
+    <div id="chat-interface" class="fixed inset-0 bg-white z-50 flex flex-col hidden">
+        <div class="bg-blue-500 text-white py-4 px-6 flex justify-between items-center shadow-md">
+            <h2 class="text-xl font-semibold">瓦力AI 助手</h2>
+            <button id="close-chat" class="text-white hover:text-gray-200">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        
+        <div id="chat-messages" class="flex-grow overflow-y-auto p-4 flex flex-col space-y-4"></div>
+        
+        <div class="border-t border-gray-200 p-4 bg-white">
+            <div class="flex space-x-2">
+                <input id="user-input" type="text" placeholder="输入您的问题..." class="flex-grow px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="send-message" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full transition duration-300">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 动态加载JavaScript文件防止缓存 -->
+    <script>
+        document.write('<script src="zhipuai.js?v=' + timestamp + '"><\/script>');
+        document.write('<script src="script.js?v=' + timestamp + '"><\/script>');
+        document.write('<script src="force-update.js?v=' + timestamp + '"><\/script>');
+        document.write('<script src="static/js/zhipu-integration.js?v=' + timestamp + '"><\/script>');
+    </script>
+    
+    <!-- 直接添加开始对话按钮的事件处理 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取开始对话按钮
+            const startChatBtn = document.getElementById('start-chat');
+            if (startChatBtn) {
+                startChatBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('开始对话按钮被点击（内联处理）');
+                    
+                    // 直接切换到聊天部分
+                    const chatSection = document.getElementById('chat-section');
+                    if (chatSection) {
+                        // 隐藏所有部分
+                        const allSections = document.querySelectorAll('main > section');
+                        allSections.forEach(section => {
+                            section.classList.add('hidden');
+                        });
+                        
+                        // 显示聊天部分
+                        chatSection.classList.remove('hidden');
+                        
+                        // 更新导航菜单（可选）
+                        const navLinks = document.querySelectorAll('#sidebar a');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active', 'bg-blue-50');
+                            if (link.getAttribute('href') === '#chat-section') {
+                                link.classList.add('active', 'bg-blue-50');
+                            }
+                        });
+                    } else {
+                        console.error('无法找到聊天部分');
+                    }
+                });
+            } else {
+                console.error('无法找到开始对话按钮');
+            }
+        });
+    </script>
+</body>
+</html> 
