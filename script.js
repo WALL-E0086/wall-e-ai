@@ -30,11 +30,12 @@ const wallEResponses = {
 // 电子音符号
 const electronicSounds = ['*beep*', '*whirr*', '*click*', '*buzz*', '*ding*', '*boop*'];
 
-// 心知天气API密钥
-const SENIVERSE_API_KEY = 'Pn-ybB_zCFLxVzOGf'; // 用户提供的正确公钥
+// 高德地图API密钥
+const AMAP_API_KEY = 'a505bf9c8ea9216812c88adf18f1eb6b';
 
 // 默认城市
 const DEFAULT_CITY = '北京';
+const DEFAULT_ADCODE = '110000'; // 北京市的adcode
 
 // 添加电子音到文本
 function addElectronicSound(text) {
@@ -469,23 +470,17 @@ function initCuime() {
         preferencesForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // 先保存用户偏好设置
+            // 保存用户偏好设置
             const preferences = saveUserPreferences();
             
-            // 如果天气获取失败，至少展示用户设置的城市
-            const cityName = preferences.city;
+            // 确保UI显示用户选择的信息
+            updateUIWithUserPreferences(preferences.city);
             
-            // 直接更新基本的UI元素，确保用户看到自己设置的内容
-            updateUIWithUserPreferences(cityName);
+            // 尝试获取新的天气数据
+            fetchWeatherData();
             
-            // 尝试获取天气，但不影响保存功能
-            try {
-                fetchWeatherData();
-            } catch (error) {
-                console.error('获取天气数据时出错：', error);
-                // 已经显示了基本UI，这里只需要显示一个提示
-                showToast('偏好设置已保存，但获取天气数据失败', 'warning');
-            }
+            // 显示保存成功提示
+            showToast('个人偏好设置已保存', 'success');
         });
     }
     
@@ -504,14 +499,11 @@ function autoDetectCity(savedPreferences) {
             cityInput.disabled = false;
         }
         
-        // 尝试获取天气，如果失败也至少显示用户保存的设置
-        try {
-            fetchWeatherData();
-        } catch (error) {
-            console.error('获取天气数据时出错：', error);
-            // 如果获取天气失败，至少显示用户设置的城市
-            updateUIWithUserPreferences(savedPreferences.city);
-        }
+        // 确保即使没有天气数据也显示用户的城市
+        updateUIWithUserPreferences(savedPreferences.city);
+        
+        // 尝试获取天气数据
+        fetchWeatherData();
         return;
     }
     
@@ -520,61 +512,57 @@ function autoDetectCity(savedPreferences) {
         cityInput.value = DEFAULT_CITY;
         cityInput.disabled = false;
         
+        // 确保即使没有天气数据也显示默认城市
+        updateUIWithUserPreferences(DEFAULT_CITY);
+        
         // 获取天气数据
-        try {
-            fetchWeatherData();
-    } catch (error) {
-            console.error('获取天气数据时出错：', error);
-            // 如果获取天气失败，至少显示默认城市
-            updateUIWithUserPreferences(DEFAULT_CITY);
-        }
+        fetchWeatherData();
     }
 }
 
 // 使用用户偏好设置更新UI
 function updateUIWithUserPreferences(cityName) {
-    // 即使天气API调用失败，也至少显示用户设置的城市
+    // 确保城市输入框可用并显示正确的城市
+    const cityInput = document.getElementById('city');
+    if (cityInput) {
+        cityInput.disabled = false;
+        cityInput.value = cityName || DEFAULT_CITY;
+    }
+    
+    // 获取当前保存的样式偏好
+    const savedPreferences = loadUserPreferences();
+    const stylePreference = savedPreferences?.style || 'casual';
+    const tempSensitivity = savedPreferences?.temperatureSensitivity || 'normal';
+    
+    // 更新样式选择下拉框
+    const styleSelect = document.getElementById('style-preference');
+    if (styleSelect) {
+        styleSelect.value = stylePreference;
+    }
+    
+    // 更新温度敏感度单选按钮
+    const sensitivityRadio = document.querySelector(`input[name="temperature-sensitivity"][value="${tempSensitivity}"]`);
+    if (sensitivityRadio) {
+        sensitivityRadio.checked = true;
+    }
+    
+    // 如果天气数据加载失败，至少显示基本信息
     const weatherIcon = document.getElementById('weather-icon');
-    if (weatherIcon) {
+    if (weatherIcon && weatherIcon.classList.contains('hidden')) {
         weatherIcon.innerHTML = '<i class="fas fa-map-marker-alt text-blue-500"></i>';
         weatherIcon.classList.remove('hidden');
     }
     
     const tempElement = document.getElementById('weather-temp');
-    if (tempElement) {
+    if (tempElement && tempElement.classList.contains('hidden')) {
         tempElement.textContent = '--°C';
         tempElement.classList.remove('hidden');
     }
     
     const descElement = document.getElementById('weather-desc');
-    if (descElement) {
-        descElement.textContent = `${cityName} · 无法获取天气数据`;
+    if (descElement && descElement.classList.contains('hidden')) {
+        descElement.textContent = `${cityName} · 天气数据加载中...`;
         descElement.classList.remove('hidden');
-    }
-    
-    // 确保城市输入框可用
-    const cityInput = document.getElementById('city');
-    if (cityInput) {
-        cityInput.disabled = false;
-        cityInput.value = cityName;
-    }
-    
-    // 显示穿搭建议区域的用户设置信息
-    const outfitLoading = document.getElementById('outfit-loading');
-    if (outfitLoading) {
-        outfitLoading.textContent = '已保存您的偏好设置，但无法获取实时天气数据。您可以稍后点击刷新按钮重试。';
-        outfitLoading.classList.remove('hidden');
-    }
-    
-    const outfitContent = document.getElementById('outfit-content');
-    if (outfitContent) {
-        outfitContent.classList.add('hidden');
-    }
-    
-    // 显示一些基本信息
-    const detailsElement = document.getElementById('weather-details');
-    if (detailsElement) {
-        detailsElement.classList.remove('hidden');
     }
 }
 
@@ -618,28 +606,6 @@ function loadUserPreferences() {
     
     try {
         const preferences = JSON.parse(savedPreferences);
-        
-        // 设置城市
-        const cityInput = document.getElementById('city');
-        if (cityInput && preferences.city) {
-            cityInput.value = preferences.city;
-            cityInput.disabled = false;
-        }
-        
-        // 设置穿衣风格
-        const styleSelect = document.getElementById('style-preference');
-        if (styleSelect && preferences.style) {
-            styleSelect.value = preferences.style;
-        }
-        
-        // 设置冷热感知
-        if (preferences.temperatureSensitivity) {
-            const sensitivityRadio = document.querySelector(`input[name="temperature-sensitivity"][value="${preferences.temperatureSensitivity}"]`);
-            if (sensitivityRadio) {
-                sensitivityRadio.checked = true;
-            }
-        }
-        
         return preferences;
     } catch (e) {
         console.error('解析已保存的偏好设置时出错:', e);
@@ -657,7 +623,86 @@ function resetCityInput() {
     }
 }
 
-// 获取天气数据
+// 封装GET请求，使用JSONP解决跨域问题
+function getRequest(url, params, successCallback, errorCallback) {
+    // 添加公共参数
+    params.key = AMAP_API_KEY;
+    params.output = 'JSON';
+    
+    // 构建查询字符串
+    const queryString = Object.keys(params).map(key => {
+        return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
+    }).join('&');
+    
+    // 完整URL
+    const fullUrl = `${url}?${queryString}`;
+    console.log('请求URL:', fullUrl);
+    
+    // 使用JSONP发起请求
+    fetchJSONP(fullUrl, successCallback, errorCallback);
+}
+
+// 获取城市的adcode
+function getCityAdcode(cityName, callback) {
+    if (!cityName) {
+        console.error('城市名称不能为空');
+        callback(DEFAULT_ADCODE); // 返回默认adcode
+        return;
+    }
+    
+    const url = 'https://restapi.amap.com/v3/geocode/geo';
+    const params = {
+        address: cityName,
+        city: cityName
+    };
+    
+    getRequest(url, params, 
+        // 成功回调
+        function(data) {
+            console.log('地理编码结果:', data);
+            if (data && data.status === '1' && data.geocodes && data.geocodes.length > 0) {
+                const adcode = data.geocodes[0].adcode;
+                console.log(`成功获取${cityName}的adcode: ${adcode}`);
+                callback(adcode);
+            } else {
+                console.error('无法获取adcode，使用默认值');
+                callback(DEFAULT_ADCODE);
+            }
+        },
+        // 错误回调
+        function(error) {
+            console.error('获取adcode失败:', error);
+            callback(DEFAULT_ADCODE);
+        }
+    );
+}
+
+// 使用adcode获取天气数据
+function getWeatherByAdcode(adcode, callback) {
+    const url = 'https://restapi.amap.com/v3/weather/weatherInfo';
+    const params = {
+        city: adcode,
+        extensions: 'base'
+    };
+    
+    getRequest(url, params,
+        // 成功回调
+        function(data) {
+            console.log('天气数据:', data);
+            if (data && data.status === '1' && data.lives && data.lives.length > 0) {
+                callback(null, data);
+            } else {
+                callback(new Error(data.info || '获取天气数据失败'));
+            }
+        },
+        // 错误回调
+        function(error) {
+            callback(error);
+        }
+    );
+}
+
+// 获取天气数据（主函数）
 function fetchWeatherData() {
     // 显示加载状态
     showWeatherLoading(true);
@@ -673,55 +718,113 @@ function fetchWeatherData() {
     }
     
     try {
-        // 构建心知天气API URL - 使用直接密钥方式，简化调用
-        const apiUrl = 'https://api.seniverse.com/v3/weather/now.json';
-        
-        // 构建参数对象
-        const params = {
-            key: SENIVERSE_API_KEY,
-            location: city,
-            language: 'zh-Hans',
-            unit: 'c'
-        };
-        
-        // 构建最终请求URL
-        const queryString = Object.keys(params).map(key => {
-            return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
-        }).join('&');
-        
-        const url = `${apiUrl}?${queryString}`;
-        console.log('正在请求天气数据，URL为：', url);
-        
-        // 设置超时保护
-        const requestTimeout = setTimeout(() => {
-            console.error('天气API请求超时');
-            showWeatherError('请求超时，请检查网络连接');
-        }, 15000); // 15秒超时
-        
-        // 使用JSONP方式请求天气数据（绕过跨域限制）
-        fetchJSONP(url, function(data) {
-            clearTimeout(requestTimeout); // 清除超时保护
+        // 步骤1：先获取城市adcode
+        getCityAdcode(city, function(adcode) {
+            console.log(`正在使用adcode ${adcode} 获取 ${city} 的天气`);
             
-            if (data && data.results && data.results[0]) {
-                console.log('成功获取天气数据:', data);
-                const weatherData = data.results[0];
+            // 步骤2：使用adcode获取天气
+            getWeatherByAdcode(adcode, function(error, data) {
+                if (error) {
+                    console.error('获取天气数据失败:', error);
+                    showWeatherError('无法获取天气数据，请检查城市名称或网络连接');
+                    fallbackToMockData(city);
+                    return;
+                }
+                
+                console.log('成功获取高德天气数据:', data);
+                const weatherData = convertAmapDataToStandardFormat(data);
                 updateWeatherUI(weatherData);
                 generateOutfitSuggestion(weatherData);
                 showWeatherLoading(false);
-            } else {
-                // 天气数据获取失败
-                console.error('天气数据无效', data);
-                showWeatherError('获取天气数据失败，请稍后重试');
-            }
-        }, function(error) {
-            clearTimeout(requestTimeout); // 清除超时保护
-            console.error('获取天气数据失败:', error);
-            showWeatherError('无法连接到天气服务，请稍后重试');
+            });
         });
     } catch (e) {
         console.error('fetchWeatherData发生异常:', e);
         showWeatherError('天气服务出现异常，请稍后重试');
+        fallbackToMockData(city);
     }
+}
+
+// 将高德天气数据转换为标准格式
+function convertAmapDataToStandardFormat(amapData) {
+    const live = amapData.lives[0];
+    
+    // 天气代码映射表 - 高德天气转换为我们内部使用的代码
+    const weatherCodeMap = {
+        '晴': '0',
+        '多云': '1',
+        '阴': '3',
+        '小雨': '7',
+        '中雨': '8',
+        '大雨': '9',
+        '暴雨': '10',
+        '雷阵雨': '5',
+        '小雪': '11',
+        '中雪': '12',
+        '大雪': '13',
+        '雾': '14',
+        '霾': '15',
+        '沙尘暴': '16'
+    };
+    
+    const weatherCode = weatherCodeMap[live.weather] || '99'; // 99是未知天气
+    
+    return {
+        location: {
+            id: live.adcode,
+            name: live.city,
+            country: "CN",
+            path: `中国,${live.province},${live.city}`,
+            timezone: "Asia/Shanghai",
+            timezone_offset: "+08:00"
+        },
+        now: {
+            text: live.weather,
+            code: weatherCode,
+            temperature: live.temperature,
+            humidity: live.humidity || '50', // 高德有时不提供湿度
+            wind_direction: live.winddirection,
+            wind_scale: live.windpower
+        },
+        last_update: live.reporttime
+    };
+}
+
+// 使用模拟数据
+function fallbackToMockData(cityName) {
+    cityName = cityName || DEFAULT_CITY;
+    console.log(`正在为${cityName}使用模拟数据...`);
+    
+    // 创建模拟数据
+    const mockData = {
+        location: {
+            id: "mock_id",
+            name: cityName,
+            country: "CN",
+            path: `中国,${cityName}`,
+            timezone: "Asia/Shanghai",
+            timezone_offset: "+08:00"
+        },
+        now: {
+            text: "晴",
+            code: "0",
+            temperature: "22",
+            humidity: "40",
+            wind_direction: "西南",
+            wind_scale: "3"
+        },
+        last_update: new Date().toISOString()
+    };
+    
+    console.log('使用模拟数据:', mockData);
+    
+    // 更新UI
+    updateWeatherUI(mockData);
+    generateOutfitSuggestion(mockData);
+    showWeatherLoading(false);
+    
+    // 显示提示
+    showToast('使用了模拟天气数据，可能与实际情况不符', 'warning');
 }
 
 // JSONP请求辅助函数，增加错误处理
@@ -873,7 +976,7 @@ function showWeatherLoading(isLoading) {
 }
 
 // 显示天气错误信息
-function showWeatherError(message = '获取天气数据失败，请检查城市名称后重试') {
+function showWeatherError(message = '获取天气数据失败，请检查网络连接后重试') {
     showWeatherLoading(false);
     
     const weatherIcon = document.getElementById('weather-icon');
@@ -890,11 +993,15 @@ function showWeatherError(message = '获取天气数据失败，请检查城市�
     
     const descElement = document.getElementById('weather-desc');
     if (descElement) {
-        descElement.textContent = message;
+        // 获取当前城市
+        const cityInput = document.getElementById('city');
+        const cityName = cityInput && cityInput.value ? cityInput.value.trim() : DEFAULT_CITY;
+        
+        descElement.textContent = `${cityName} · ${message}`;
         descElement.classList.remove('hidden');
     }
     
-    // 确保城市输入框可用，不被禁用
+    // 确保城市输入框可用
     const cityInput = document.getElementById('city');
     if (cityInput) {
         cityInput.disabled = false;
@@ -908,15 +1015,35 @@ function showWeatherError(message = '获取天气数据失败，请检查城市�
     const outfitLoading = document.getElementById('outfit-loading');
     const outfitContent = document.getElementById('outfit-content');
     if (outfitLoading) {
-        outfitLoading.textContent = message;
+        outfitLoading.textContent = '无法获取天气数据，但您的偏好设置已保存。您可以点击刷新按钮重试或手动修改城市。';
         outfitLoading.classList.remove('hidden');
     }
     if (outfitContent) {
         outfitContent.classList.add('hidden');
     }
     
+    // 显示基本信息结构
+    const detailsElement = document.getElementById('weather-details');
+    if (detailsElement) {
+        detailsElement.classList.remove('hidden');
+    }
+    
+    // 使用模拟湿度和风速数据来保持UI的完整性
+    const humidityElement = document.getElementById('weather-humidity');
+    if (humidityElement) {
+        humidityElement.textContent = '暂无数据';
+    }
+    
+    const windElement = document.getElementById('weather-wind');
+    if (windElement) {
+        windElement.textContent = '暂无数据';
+    }
+    
+    // 控制台输出错误详情，方便调试
+    console.error('天气数据获取失败:', message);
+    
     // 显示提示消息
-    showToast(message, 'error');
+    showToast(message, 'warning');
 }
 
 // 根据天气数据生成穿搭建议
