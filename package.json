@@ -1,0 +1,31 @@
+{
+  "name": "wall-e-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node mcp-server.js",
+    "dev": "nodemon mcp-server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WALL-E0086/wall-e-ai.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WALL-E0086/wall-e-ai/issues"
+  },
+  "homepage": "https://github.com/WALL-E0086/wall-e-ai#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
