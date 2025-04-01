@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap">
+    <style>
+        .city-name {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .city-name i {
+            font-size: 1em;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -44,51 +57,44 @@
             <div class="weather-container">
                 <!-- 天气部分 -->
                 <section class="weather-section">
+                    <div class="city-name">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>定位中...</span>
+                    </div>
                     <div class="current-weather">
                         <h3>今日天气</h3>
                         <div class="weather-main">
-                            <div class="temperature">25°C</div>
-                            <div class="weather-desc">晴朗</div>
-                            <div class="humidity">湿度: 65%</div>
+                            <div class="temperature">加载中...</div>
+                            <div class="weather-desc">加载中...</div>
+                            <div class="humidity">湿度: 加载中...</div>
                         </div>
                         <div class="weather-indices">
                             <div class="index-item">
                                 <i class="fas fa-tshirt"></i>
-                                <span>穿衣指数</span>
+                                <span>穿衣指数: 加载中...</span>
                             </div>
                             <div class="index-item">
                                 <i class="fas fa-paint-brush"></i>
-                                <span>化妆指数</span>
-                            </div>
-                            <div class="index-item">
-                                <i class="fas fa-head-side-cough"></i>
-                                <span>感冒指数</span>
+                                <span>化妆指数: 加载中...</span>
                             </div>
                             <div class="index-item">
                                 <i class="fas fa-car"></i>
-                                <span>洗车指数</span>
+                                <span>洗车指数: 加载中...</span>
                             </div>
                             <div class="index-item">
                                 <i class="fas fa-running"></i>
-                                <span>运动指数</span>
+                                <span>运动指数: 加载中...</span>
                             </div>
                             <div class="index-item">
                                 <i class="fas fa-sun"></i>
-                                <span>紫外线指数</span>
+                                <span>紫外线指数: 加载中...</span>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="weather-forecast">
-                        <h3>未来天气</h3>
-                        <div class="forecast-list">
-                            <!-- 未来天气预报将通过JavaScript动态添加 -->
                         </div>
                     </div>
 
                     <div class="clothing-advice">
                         <h3>穿衣建议</h3>
-                        <div class="advice-section">
+                        <div class="advice-content">
                             <!-- 穿衣建议将通过JavaScript动态添加 -->
                         </div>
                     </div>
@@ -146,6 +152,14 @@
             </div>
         </main>
     </div>
+
+    <!-- 初始化天气数据 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const weatherData = await fetchWeatherData();
+            updateWeatherDisplay(weatherData);
+        });
+    </script>
     <script src="weather.js"></script>
 </body>
 </html> 

@@ -1,14 +1,56 @@
 // 天气API配置
-const WEATHER_API_URL = 'http://aider.meizu.com/app/weather/listWeather';
-const CITY_ID = '101240101'; // 默认城市ID
+const AMAP_WEATHER_API_URL = 'http://localhost:3000/mcp_amap_maps_maps_weather';
+const AMAP_IP_LOCATION_API_URL = 'http://localhost:3000/mcp_amap_maps_maps_ip_location';
+const DEFAULT_CITY = '杭州'; // 默认城市，当IP定位失败时使用
+
+// 获取用户IP定位信息
+async function getLocationByIP() {
+    try {
+        const response = await fetch(AMAP_IP_LOCATION_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ip: '' // 不传IP参数时会自动获取当前用户IP
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('IP定位失败');
+        }
+        
+        const data = await response.json();
+        if (data && data.city) {
+            return data.city;
+        }
+        throw new Error('无法获取城市信息');
+    } catch (error) {
+        console.error('IP定位错误:', error);
+        return DEFAULT_CITY;
+    }
+}
 
 // 获取天气数据
 async function fetchWeatherData() {
     try {
-        const response = await fetch(`${WEATHER_API_URL}?cityIds=${CITY_ID}`);
+        // 先获取用户所在城市
+        const city = await getLocationByIP();
+        
+        const response = await fetch(AMAP_WEATHER_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                city: city
+            })
+        });
+        
         if (!response.ok) {
             throw new Error('天气数据获取失败');
         }
+        
         const data = await response.json();
         return data;
     } catch (error) {
@@ -22,70 +64,113 @@ function updateWeatherDisplay(weatherData) {
     const currentWeather = document.querySelector('.current-weather');
     const forecastList = document.querySelector('.forecast-list');
     const adviceContent = document.querySelector('.advice-content');
+    const cityDisplay = document.querySelector('.city-name');
 
-    if (!weatherData) {
+    if (!weatherData || !weatherData.lives || weatherData.lives.length === 0) {
         currentWeather.innerHTML = '<p>无法获取天气数据</p>';
         return;
     }
 
     // 更新当前天气
-    const today = weatherData.value[0];
+    const today = weatherData.lives[0];
+    
+    // 更新城市名称
+    if (cityDisplay) {
+        cityDisplay.textContent = today.city;
+    }
+
     currentWeather.innerHTML = `
-        <h3>今日天气</h3>
+        <h3>${today.city}天气</h3>
         <div class="weather-main">
-            <div class="temperature">${today.temp}°C</div>
+            <div class="temperature">${today.temperature}°C</div>
             <div class="weather-desc">${today.weather}</div>
             <div class="humidity">湿度: ${today.humidity}%</div>
         </div>
         <div class="weather-indices">
             <div class="index-item">
                 <i class="fas fa-tshirt"></i>
-                <span>穿衣指数: ${today.dressingIndex}</span>
+                <span>穿衣指数: ${getDressingIndex(today.temperature)}</span>
             </div>
             <div class="index-item">
                 <i class="fas fa-magic"></i>
-                <span>化妆指数: ${today.makeupIndex}</span>
+                <span>化妆指数: ${getMakeupIndex(today.humidity, today.weather)}</span>
             </div>
             <div class="index-item">
                 <i class="fas fa-umbrella"></i>
-                <span>洗车指数: ${today.carWashingIndex}</span>
+                <span>洗车指数: ${getCarWashingIndex(today.weather)}</span>
             </div>
             <div class="index-item">
                 <i class="fas fa-running"></i>
-                <span>运动指数: ${today.sportIndex}</span>
+                <span>运动指数: ${getSportIndex(today.temperature, today.weather)}</span>
             </div>
             <div class="index-item">
                 <i class="fas fa-sun"></i>
-                <span>紫外线指数: ${today.uvIndex}</span>
+                <span>紫外线指数: ${getUVIndex(today.weather)}</span>
             </div>
         </div>
     `;
 
-    // 更新天气预报
-    forecastList.innerHTML = weatherData.value.slice(1, 3).map(day => `
-        <div class="forecast-item">
-            <div class="forecast-date">${day.date}</div>
-            <div class="forecast-temp">${day.temp}°C</div>
-            <div class="forecast-weather">${day.weather}</div>
-        </div>
-    `).join('');
+    // 更新天气预报（由于高德天气API实况数据不包含预报，这里暂时隐藏）
+    if (forecastList) {
+        forecastList.style.display = 'none';
+    }
 
     // 更新穿衣建议
-    adviceContent.innerHTML = `
-        <div class="advice-section">
-            <h4>今日穿衣建议</h4>
-            <p>${generateDressingAdvice(today)}</p>
-        </div>
-        <div class="advice-section">
-            <h4>防晒建议</h4>
-            <p>${generateSunProtectionAdvice(today.uvIndex)}</p>
-        </div>
-    `;
+    if (adviceContent) {
+        adviceContent.innerHTML = `
+            <div class="advice-section">
+                <h4>今日穿衣建议</h4>
+                <p>${generateDressingAdvice(today)}</p>
+            </div>
+            <div class="advice-section">
+                <h4>防晒建议</h4>
+                <p>${generateSunProtectionAdvice(getUVIndex(today.weather))}</p>
+            </div>
+        `;
+    }
+}
+
+// 根据温度获取穿衣指数
+function getDressingIndex(temperature) {
+    const temp = parseInt(temperature);
+    if (temp < 10) return '较冷';
+    if (temp < 20) return '舒适';
+    if (temp < 25) return '较热';
+    return '炎热';
+}
+
+// 根据湿度和天气获取化妆指数
+function getMakeupIndex(humidity, weather) {
+    if (weather.includes('雨')) return '较差';
+    if (parseInt(humidity) > 80) return '较差';
+    return '适宜';
+}
+
+// 根据天气获取洗车指数
+function getCarWashingIndex(weather) {
+    if (weather.includes('雨') || weather.includes('雪')) return '不宜';
+    if (weather.includes('阴')) return '较适宜';
+    return '适宜';
+}
+
+// 根据温度和天气获取运动指数
+function getSportIndex(temperature, weather) {
+    const temp = parseInt(temperature);
+    if (weather.includes('雨') || weather.includes('雪')) return '不宜';
+    if (temp < 10 || temp > 35) return '较差';
+    return '适宜';
+}
+
+// 根据天气获取紫外线指数
+function getUVIndex(weather) {
+    if (weather.includes('晴')) return '强';
+    if (weather.includes('阴') || weather.includes('雨')) return '弱';
+    return '中等';
 }
 
 // 生成穿衣建议
 function generateDressingAdvice(weather) {
-    const temp = parseInt(weather.temp);
+    const temp = parseInt(weather.temperature);
     let advice = '';
     
     if (temp < 10) {
