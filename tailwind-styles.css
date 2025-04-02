@@ -56,7 +56,7 @@ main {
 /* 黑洞容器样式 */
 .blackhole-container {
     position: absolute !important; /* 绝对定位 */
-    top: 40% !important; /* 调整位置至页面中上部 */
+    top: 40% !important; /* 固定垂直位置 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
     width: min(300px, 30vw); /* 减小黑洞容器大小 */
@@ -443,7 +443,7 @@ main > section {
 /* 响应式调整 - 移动设备 */
 @media (max-width: 768px) {
     .blackhole-container {
-        top: 25% !important;
+        top: 40% !important; /* 确保移动端位置一致 */
         width: min(250px, 70vw);
         height: min(250px, 70vw);
     }
@@ -456,14 +456,19 @@ main > section {
     .accretion-disk, 
     .accretion-ring:nth-child(1),
     .accretion-ring:nth-child(2),
-    .accretion-ring:nth-child(3),
+    .accretion-ring:nth-child(3) {
+        width: 220px;
+        height: 220px;
+    }
+    
     .ripple-effect {
+        top: 40% !important; /* 确保移动端位置一致 */
         width: 220px;
         height: 220px;
     }
     
     .title-container {
-        padding-top: 30px;
+        top: 65%; /* 调整移动端标题位置 */
     }
     
     .features-section, .max-w-6xl {
@@ -474,7 +479,7 @@ main > section {
 /* 波纹效果 - 与黑洞容器匹配 */
 .ripple-effect {
     position: absolute !important; /* 修改为绝对定位，与黑洞保持一致 */
-    top: 30% !important; /* 与黑洞保持相同位置 */
+    top: 40% !important; /* 与黑洞保持相同位置 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
     width: 280px; /* 与吸积盘大小匹配 */
@@ -761,7 +766,7 @@ button:hover .fas {
 /* 添加云朵梦境对话泡样式 */
 .dream-bubble-container {
     position: absolute;
-    top: 20%;
+    top: 15%; /* 调整到黑洞上方 */
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
@@ -860,4 +865,24 @@ button:hover .fas {
 @keyframes textFadeOut {
     0% { opacity: 1; }
     100% { opacity: 0; }
+}
+
+/* 黑洞相关元素绑定统一定位 */
+.blackhole-core, .accretion-disk, .eyes, .ripple-effect {
+    position: absolute;
+    z-index: auto; /* 保持原有的z-index */
+}
+
+/* 响应式调整 - 移动设备 */
+@media (max-width: 768px) {
+    .dream-bubble-container {
+        top: 15%; /* 调整移动设备上的位置 */
+        max-width: 280px;
+    }
+    
+    .blackhole-container {
+        top: 40% !important; /* 确保移动端位置一致 */
+        width: min(250px, 70vw);
+        height: min(250px, 70vw);
+    }
 } 
