@@ -9,29 +9,66 @@
 /* 基础样式 */
 body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    overflow-x: hidden;
+    overflow: hidden !important; /* 强制隐藏溢出内容 */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+html {
+    overflow: hidden;
+}
+
+/* 主要全局布局 */
+.flex.h-screen {
+    overflow: hidden !important; /* 确保无滚动条 */
+    width: 100%;
+    height: 100vh;
+}
+
+/* 主内容区域 */
+main {
+    overflow: hidden !important; /* 强制隐藏溢出内容 */
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+/* 主容器样式 */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* 从顶部开始排列 */
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+    overflow: hidden; /* 确保内容不溢出 */
 }
 
 /* 黑洞容器样式 */
 .blackhole-container {
     position: absolute !important; /* 绝对定位 */
-    top: 20% !important; /* 修正为页面上方约1/5处 */
+    top: 30% !important; /* 调整位置至页面中上部 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
-    width: min(40vw, 400px);
-    height: min(40vw, 400px);
+    width: min(300px, 30vw); /* 减小黑洞容器大小 */
+    height: min(300px, 30vw); /* 减小黑洞容器大小 */
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1 !important; /* 黑洞z-index: 1，确保在文字后面 */
-    margin-top: 0 !important; /* 移除内联样式的影响 */
+    margin: 0 !important; /* 移除所有边距影响 */
     overflow: visible !important; /* 允许内容溢出，避免旋转线条被裁剪 */
 }
 
-/* 黑洞核心样式 - 放大黑洞主体 */
+/* 黑洞核心样式 - 调整黑洞主体大小 */
 .blackhole-core {
-    width: 180px; /* 放大黑洞主体 */
-    height: 180px; /* 放大黑洞主体 */
+    width: 150px; /* 减小黑洞主体大小 */
+    height: 150px; /* 减小黑洞主体大小 */
     background-color: #000;
     border-radius: 50%;
     display: flex;
@@ -84,11 +121,11 @@ body {
     }
 }
 
-/* 吸积盘样式 - 保持大小不变 */
+/* 吸积盘样式 - 减小大小 */
 .accretion-disk {
     position: absolute;
-    width: 350px;
-    height: 350px;
+    width: 280px; /* 减小吸积盘大小 */
+    height: 280px; /* 减小吸积盘大小 */
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -99,7 +136,7 @@ body {
     transform: translate(-50%, -50%); /* 确保完全居中 */
 }
 
-/* 吸积盘光环 - 限制大小不超过吸积盘，调整位置使完全重合 */
+/* 吸积盘光环 - 调整与吸积盘大小匹配 */
 .accretion-ring {
     position: absolute;
     border-radius: 50%;
@@ -114,16 +151,16 @@ body {
 }
 
 .accretion-ring:nth-child(1) {
-    width: 350px; /* 设置固定宽度 */
-    height: 350px; /* 设置固定高度 */
+    width: 280px; /* 与吸积盘大小匹配 */
+    height: 280px; /* 与吸积盘大小匹配 */
     border-top-color: rgba(255, 165, 0, 0.7);
     border-left-color: rgba(255, 69, 0, 0.7);
     animation-duration: 8s;
 }
 
 .accretion-ring:nth-child(2) {
-    width: 350px; /* 设置固定宽度 */
-    height: 350px; /* 设置固定高度 */
+    width: 280px; /* 与吸积盘大小匹配 */
+    height: 280px; /* 与吸积盘大小匹配 */
     border-top-color: rgba(138, 43, 226, 0.6);
     border-right-color: rgba(75, 0, 130, 0.6);
     animation-duration: 12s;
@@ -131,8 +168,8 @@ body {
 }
 
 .accretion-ring:nth-child(3) {
-    width: 350px; /* 设置固定宽度 */
-    height: 350px; /* 设置固定高度 */
+    width: 280px; /* 与吸积盘大小匹配 */
+    height: 280px; /* 与吸积盘大小匹配 */
     border-bottom-color: rgba(0, 191, 255, 0.5);
     border-left-color: rgba(30, 144, 255, 0.5);
     animation-duration: 16s;
@@ -344,13 +381,12 @@ body {
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* 文字定位 - 固定在初始位置 */
+/* 标题容器 - 确保在黑洞上方 */
 .title-container {
     position: relative;
-    z-index: 2; /* 文字z-index: 2 */
-    color: #2563eb; /* 蓝色文字 */
-    margin-top: 300px; /* 调整为黑洞高度的9/10，让文字顶部与黑洞9/10部分对齐 */
-    padding-top: 20px; /* 增加一些顶部内边距 */
+    z-index: 10; /* 确保文字在黑洞上方 */
+    padding-top: 50px; /* 为黑洞留出空间 */
+    width: 100%;
 }
 
 .title-container h1 {
@@ -366,112 +402,73 @@ body {
     margin-bottom: 2rem;
 }
 
-/* 功能展示部分 - 锁定位置 */
-.max-w-6xl {
-    position: relative; /* 设置为相对定位 */
-    z-index: 2; /* 与文字相同层级 */
-    margin-top: 40px; /* 增加与文字的间距 */
+/* 功能展示部分 - 调整位置，避免与黑洞重叠 */
+.features-section, .max-w-6xl {
+    margin-top: 150px !important; /* 确保不与黑洞重叠 */
+    position: relative;
+    z-index: 5;
+    width: 100%;
 }
 
-/* 响应式设计 */
+/* 特定页面容器样式调整 */
+#home, #chat-section, #cuime-section, #time-section, #photo-section, #about-section {
+    overflow: hidden !important;
+    height: 100vh;
+    width: 100%;
+}
+
+/* 页面切换容器样式 */
+main > section {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+/* 响应式调整 - 移动设备 */
 @media (max-width: 768px) {
     .blackhole-container {
-        width: min(60vw, 280px);
-        height: min(60vw, 280px);
-        top: 20% !important; /* 移动端保持位置一致 */
+        top: 25% !important;
+        width: min(250px, 70vw);
+        height: min(250px, 70vw);
     }
     
     .blackhole-core {
-        width: 130px; /* 移动端调整黑洞主体大小 */
-        height: 130px; /* 移动端调整黑洞主体大小 */
+        width: 120px;
+        height: 120px;
     }
     
-    .eyes {
-        width: 70px; /* 调整移动端眼睛宽度 */
-        height: 35px; /* 调整移动端眼睛高度 */
-    }
-    
-    .eye-container {
-        width: 30px; /* 调整移动端眼球大小 */
-        height: 30px;
-    }
-    
-    .pupil {
-        width: 16px; /* 调整移动端瞳孔大小 */
-        height: 16px;
-    }
-    
-    .accretion-disk {
-        width: 250px;
-        height: 250px;
-    }
-    
+    .accretion-disk, 
     .accretion-ring:nth-child(1),
     .accretion-ring:nth-child(2),
-    .accretion-ring:nth-child(3) {
-        width: 250px; /* 设置固定宽度 */
-        height: 250px; /* 设置固定高度 */
-    }
-    
+    .accretion-ring:nth-child(3),
     .ripple-effect {
-        width: 250px; /* 与移动端吸积盘大小一致 */
-        height: 250px; /* 与移动端吸积盘大小一致 */
-        top: 20% !important; /* 移动端保持位置一致 */
+        width: 220px;
+        height: 220px;
     }
     
     .title-container {
-        margin-top: 200px; /* 移动端适当调整，对应黑洞9/10的位置 */
-        padding-top: 15px; /* 移动端调整内边距 */
+        padding-top: 30px;
     }
     
-    .title-container h1 {
-        font-size: 2rem;
-    }
-    
-    .title-container p {
-        font-size: 1rem;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.05); opacity: 1; }
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-    }
-    
-    .max-w-6xl {
-        margin-top: 30px; /* 移动端调整间距 */
+    .features-section, .max-w-6xl {
+        margin-top: 100px !important;
     }
 }
 
-/* 主容器样式 */
-.main-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* 从顶部开始排列 */
-    position: relative;
-    min-height: 100vh;
-    padding-top: 50px; /* 顶部padding */
-    padding-bottom: 100px; /* 为功能卡片留出空间 */
-    background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
-}
-
-/* 波纹效果 - 限制大小与黑洞吸积盘一致 */
+/* 波纹效果 - 与黑洞容器匹配 */
 .ripple-effect {
     position: absolute !important; /* 修改为绝对定位，与黑洞保持一致 */
-    top: 20% !important; /* 与黑洞保持相同位置 */
+    top: 30% !important; /* 与黑洞保持相同位置 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
-    width: 350px; /* 与吸积盘大小一致 */
-    height: 350px; /* 与吸积盘大小一致 */
+    width: 280px; /* 与吸积盘大小匹配 */
+    height: 280px; /* 与吸积盘大小匹配 */
     background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.1) 80%);
     border-radius: 50%;
     z-index: 0 !important; /* 波纹z-index: 0，确保在黑洞下方 */
-    margin-top: 0 !important; /* 移除内联样式的影响 */
+    margin: 0 !important; /* 移除所有边距影响 */
     overflow: hidden; /* 防止波纹效果溢出 */
 }
 
