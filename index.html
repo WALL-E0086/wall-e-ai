@@ -74,7 +74,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#chat" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="chat-section">
+                            <a href="#chat" id="chat-link" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="chat-section">
                                 <i class="fas fa-comments w-5 text-center"></i>
                                 <span class="ml-3">瓦力哔哔机</span>
                             </a>
@@ -456,10 +456,26 @@
         </div>
     </div>
     
-    <!-- 动态加载JavaScript文件防止缓存 -->
+    <!-- 动态加载JavaScript文件防止缓存并修复开始对话按钮 -->
     <script>
-        document.write('<script src="script.js?v=' + timestamp + '"><\/script>');
-        document.write('<script src="force-update.js?v=' + timestamp + '"><\/script>');
+        // 动态加载脚本，防止缓存
+        const scriptTimestamp = new Date().getTime();
+        document.write('<script src="script.js?v=' + scriptTimestamp + '"><\/script>');
+        document.write('<script src="force-update.js?v=' + scriptTimestamp + '"><\/script>');
+        
+        // 当文档加载完成后修复开始对话按钮
+        document.addEventListener('DOMContentLoaded', function() {
+            // 修复开始对话按钮
+            const startChatBtn = document.getElementById('start-chat');
+            const chatLink = document.getElementById('chat-link');
+            
+            if (startChatBtn && chatLink) {
+                startChatBtn.addEventListener('click', function() {
+                    // 模拟点击导航菜单中的聊天链接
+                    chatLink.click();
+                });
+            }
+        });
     </script>
 </body>
 </html> 
