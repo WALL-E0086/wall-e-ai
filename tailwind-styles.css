@@ -776,59 +776,78 @@ button:hover .fas {
     justify-content: center;
 }
 
+/* 手绘风格云朵对话框 */
 .dream-bubble {
     position: relative;
-    background-color: white;
-    border-radius: 30px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    opacity: 0;
-    transform: scale(0.5);
-    transition: all 0.5s ease-out;
-    max-width: 280px;
-    margin: 0 auto;
-    border: 2px solid #f0f0f0;
-    /* 创建云朵形状 */
-    background: radial-gradient(circle at top left, white 70%, transparent 70%),
-                radial-gradient(circle at top right, white 70%, transparent 70%),
-                radial-gradient(circle at bottom left, white 70%, transparent 70%),
-                radial-gradient(circle at bottom right, white 70%, transparent 70%);
-    background-size: 50% 50%;
-    background-position: top left, top right, bottom left, bottom right;
-    background-repeat: no-repeat;
-}
-
-.dream-bubble::before,
-.dream-bubble::after {
-    content: '';
-    position: absolute;
-    background-color: white;
+    display: inline-block;
+    padding: 20px 30px;
+    background: white;
+    border: 4px solid black;
     border-radius: 50%;
+    max-width: 250px;
+    text-align: center;
+    filter: drop-shadow(2px 2px 0px black) drop-shadow(-2px -2px 0px black);
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    opacity: 0;
+    transform: scale(0.1); /* 开始时非常小 */
+    transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 使用弹跳效果的过渡 */
 }
 
+/* 创建不规则边缘的效果 */
 .dream-bubble::before {
-    top: -15px;
-    left: 20%;
-    width: 40px;
-    height: 40px;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
     background: white;
-    border: 2px solid #f0f0f0;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border-radius: 60% 70% 65% 75%;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
 
+/* 添加手绘风格的小气泡 */
 .dream-bubble::after {
-    top: 10px;
-    right: -20px;
-    width: 30px;
-    height: 30px;
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    left: 20%;
+    width: 20px;
+    height: 20px;
     background: white;
-    border: 2px solid #f0f0f0;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border: 4px solid black;
+    border-radius: 50%;
+    filter: drop-shadow(1px 1px 0px black);
+}
+
+/* 额外添加两个装饰性的小云块 */
+.dream-bubble .cloud-puff-1 {
+    position: absolute;
+    top: -25px;
+    right: 30%;
+    width: 35px;
+    height: 35px;
+    background: white;
+    border: 4px solid black;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.dream-bubble .cloud-puff-2 {
+    position: absolute;
+    top: 20%;
+    right: -20px;
+    width: 25px;
+    height: 25px;
+    background: white;
+    border: 4px solid black;
+    border-radius: 50%;
+    z-index: -1;
 }
 
 .dream-bubble.show {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1); /* 完全显示时为原始大小 */
 }
 
 .bubble-text {
@@ -837,7 +856,7 @@ button:hover .fas {
     line-height: 1.5;
     margin: 0;
     opacity: 0;
-    transition: opacity 0.3s ease-in;
+    transition: opacity 0.5s ease-in;
     position: relative;
     z-index: 5;
 }
@@ -848,13 +867,14 @@ button:hover .fas {
 
 /* 梦境对话泡动画 */
 @keyframes bubbleFadeIn {
-    0% { opacity: 0; transform: scale(0.5); }
+    0% { opacity: 0; transform: scale(0.1); }
+    70% { opacity: 1; transform: scale(1.1); }
     100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes bubbleFadeOut {
     0% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 0; transform: scale(0.7); }
 }
 
 @keyframes textFadeIn {

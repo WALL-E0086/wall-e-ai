@@ -212,6 +212,8 @@
                     <!-- 对话泡功能展示 -->
                     <div id="dream-bubble-container" class="dream-bubble-container">
                         <div class="dream-bubble">
+                            <div class="cloud-puff-1"></div>
+                            <div class="cloud-puff-2"></div>
                             <p id="bubble-text" class="bubble-text"></p>
                         </div>
                     </div>
@@ -512,26 +514,31 @@
                 // 随机选择一条消息
                 const randomMessage = careMessages[Math.floor(Math.random() * careMessages.length)];
                 
-                // 显示对话泡
+                // 从小到大渐变显示对话泡
+                dreamBubble.style.animation = 'bubbleFadeIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
                 dreamBubble.classList.add('show');
+                
                 setTimeout(() => {
                     // 显示文字
                     bubbleText.textContent = randomMessage;
+                    bubbleText.style.animation = 'textFadeIn 0.5s ease-in forwards';
                     bubbleText.classList.add('show');
                     
                     // 文字显示一段时间后淡出
                     setTimeout(() => {
+                        bubbleText.style.animation = 'textFadeOut 0.5s ease-out forwards';
                         bubbleText.classList.remove('show');
                         
                         // 文字淡出后对话泡淡出
                         setTimeout(() => {
+                            dreamBubble.style.animation = 'bubbleFadeOut 0.7s ease-out forwards';
                             dreamBubble.classList.remove('show');
                             
                             // 对话泡淡出后等待一段时间再显示下一个
-                            setTimeout(showBubble, 1000);
+                            setTimeout(showBubble, 2000);
                         }, 500);
                     }, 4000); // 文字显示4秒
-                }, 500); // 对话泡出现0.5秒后文字出现
+                }, 800); // 对话泡出现0.8秒后文字出现
             }
             
             // 页面加载后延迟开始循环
