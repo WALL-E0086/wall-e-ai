@@ -56,7 +56,7 @@ main {
 /* 黑洞容器样式 */
 .blackhole-container {
     position: absolute !important; /* 绝对定位 */
-    top: 30% !important; /* 调整位置至页面中上部 */
+    top: 40% !important; /* 调整位置至页面中上部 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
     width: min(300px, 30vw); /* 减小黑洞容器大小 */
@@ -67,6 +67,12 @@ main {
     z-index: 1 !important; /* 黑洞z-index: 1，确保在文字后面 */
     margin: 0 !important; /* 移除所有边距影响 */
     overflow: visible !important; /* 允许内容溢出，避免旋转线条被裁剪 */
+    animation: breathe 6s ease-in-out infinite; /* 添加呼吸效果 */
+}
+
+@keyframes breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
 }
 
 /* 黑洞核心样式 - 调整黑洞主体大小 */
@@ -385,11 +391,13 @@ main {
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* 标题容器 - 确保在黑洞上方 */
+/* 标题容器 - 修改为黑洞下方显示 */
 .title-container {
-    position: relative;
+    position: absolute;
     z-index: 10; /* 确保文字在黑洞上方 */
-    padding-top: 50px; /* 为黑洞留出空间 */
+    top: 65%; /* 放置在黑洞下方 */
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
 }
 
@@ -748,4 +756,108 @@ button:hover .fas {
     background: blue;
     transform: translate(-50%, -50%);
     z-index: 9999;
+}
+
+/* 添加云朵梦境对话泡样式 */
+.dream-bubble-container {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 300px;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+}
+
+.dream-bubble {
+    position: relative;
+    background-color: white;
+    border-radius: 30px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.5s ease-out;
+    max-width: 280px;
+    margin: 0 auto;
+    border: 2px solid #f0f0f0;
+    /* 创建云朵形状 */
+    background: radial-gradient(circle at top left, white 70%, transparent 70%),
+                radial-gradient(circle at top right, white 70%, transparent 70%),
+                radial-gradient(circle at bottom left, white 70%, transparent 70%),
+                radial-gradient(circle at bottom right, white 70%, transparent 70%);
+    background-size: 50% 50%;
+    background-position: top left, top right, bottom left, bottom right;
+    background-repeat: no-repeat;
+}
+
+.dream-bubble::before,
+.dream-bubble::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.dream-bubble::before {
+    top: -15px;
+    left: 20%;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 2px solid #f0f0f0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.dream-bubble::after {
+    top: 10px;
+    right: -20px;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border: 2px solid #f0f0f0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.dream-bubble.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.bubble-text {
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+    position: relative;
+    z-index: 5;
+}
+
+.bubble-text.show {
+    opacity: 1;
+}
+
+/* 梦境对话泡动画 */
+@keyframes bubbleFadeIn {
+    0% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bubbleFadeOut {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+@keyframes textFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes textFadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 } 
