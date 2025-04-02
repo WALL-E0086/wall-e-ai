@@ -56,7 +56,7 @@ main {
 /* 黑洞容器样式 */
 .blackhole-container {
     position: absolute !important; /* 绝对定位 */
-    top: 40% !important; /* 固定垂直位置 */
+    top: 30% !important; /* 上移黑洞位置 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
     width: min(300px, 30vw); /* 减小黑洞容器大小 */
@@ -391,11 +391,11 @@ main {
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* 标题容器 - 修改为黑洞下方显示 */
+/* 标题容器 - 修改为页面居中显示 */
 .title-container {
     position: absolute;
     z-index: 10; /* 确保文字在黑洞上方 */
-    top: 65%; /* 放置在黑洞下方 */
+    top: 50% !important; /* 设置为居中位置 */
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
@@ -410,7 +410,7 @@ main {
 
 .title-container p {
     font-size: 1.25rem;
-    color: #3b82f6; /* 稍浅的蓝色副标题 */
+    color: #6B7280; /* 修改为灰色副标题，苹果风格 */
     margin-bottom: 2rem;
 }
 
@@ -443,7 +443,7 @@ main > section {
 /* 响应式调整 - 移动设备 */
 @media (max-width: 768px) {
     .blackhole-container {
-        top: 40% !important; /* 确保移动端位置一致 */
+        top: 30% !important; /* 确保移动端位置一致 */
         width: min(250px, 70vw);
         height: min(250px, 70vw);
     }
@@ -462,13 +462,13 @@ main > section {
     }
     
     .ripple-effect {
-        top: 40% !important; /* 确保移动端位置一致 */
+        top: 30% !important; /* 确保移动端位置一致 */
         width: 220px;
         height: 220px;
     }
     
     .title-container {
-        top: 65%; /* 调整移动端标题位置 */
+        top: 50% !important; /* 调整移动端标题位置居中 */
     }
     
     .features-section, .max-w-6xl {
@@ -479,7 +479,7 @@ main > section {
 /* 波纹效果 - 与黑洞容器匹配 */
 .ripple-effect {
     position: absolute !important; /* 修改为绝对定位，与黑洞保持一致 */
-    top: 40% !important; /* 与黑洞保持相同位置 */
+    top: 30% !important; /* 与黑洞保持相同位置 */
     left: 50% !important;
     transform: translate(-50%, -50%) !important; /* 修正为完全居中 */
     width: 280px; /* 与吸积盘大小匹配 */
@@ -766,7 +766,7 @@ button:hover .fas {
 /* 添加云朵梦境对话泡样式 */
 .dream-bubble-container {
     position: absolute;
-    top: 15%; /* 调整到黑洞上方 */
+    top: 10%; /* 上移调整到黑洞上方 */
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
@@ -876,12 +876,12 @@ button:hover .fas {
 /* 响应式调整 - 移动设备 */
 @media (max-width: 768px) {
     .dream-bubble-container {
-        top: 15%; /* 调整移动设备上的位置 */
+        top: 10%; /* 调整移动设备上的位置 */
         max-width: 280px;
     }
     
     .blackhole-container {
-        top: 40% !important; /* 确保移动端位置一致 */
+        top: 30% !important; /* 确保移动端位置一致 */
         width: min(250px, 70vw);
         height: min(250px, 70vw);
     }
