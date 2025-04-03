@@ -181,9 +181,6 @@
                         <button id="start-chat" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
                             叫醒瓦力
                         </button>
-                        <button id="test-bubble-btn" class="ml-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-                            测试对话泡
-                        </button>
                     </div>
                     
                     <!-- 黑洞效果 - 位置与波纹和吸积盘100%重合 -->
@@ -517,21 +514,28 @@
             function showRandomBubble(message) {
                 // 获取泡泡元素
                 const bubble = document.querySelector('.dream-bubble');
-                // 设置消息内容
-                bubble.textContent = message;
+                // 获取文本元素
+                const bubbleText = document.getElementById('bubble-text');
+                
+                // 设置消息内容到文本元素而不是气泡本身
+                if (bubbleText) {
+                    bubbleText.textContent = message;
+                }
                 
                 // 添加动画类
                 bubble.style.animation = 'bubbleAppear 0.5s forwards';
                 
                 // 随机等待时间后隐藏泡泡
-                const waitTime = 2000 + Math.random() * 2000; // 2-4秒之间随机
+                const waitTime = 5000 + Math.random() * 3000; // 5-8秒之间随机
                 setTimeout(() => {
                     bubble.style.animation = 'bubbleDisappear 0.5s forwards';
                     
                     // 在动画完成后重置状态
                     setTimeout(() => {
                         bubble.style.animation = 'none';
-                        bubble.textContent = '';
+                        if (bubbleText) {
+                            bubbleText.textContent = '';
+                        }
                     }, 500);
                 }, waitTime);
             }
@@ -565,60 +569,30 @@
             
             // 测试函数
             function testBubble() {
-                const messages = [
-                    "我在思考中...",
-                    "让我想想...",
-                    "有个好主意!",
-                    "嗯...这很有趣"
-                ];
-                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                showRandomBubble(randomMessage);
+                // 从预设的关心主人的文字数组中随机选择一条消息
+                const randomIndex = Math.floor(Math.random() * careMessages.length);
+                const message = careMessages[randomIndex];
+                showRandomBubble(message);
             }
             
-            // 给按钮添加点击事件
-            document.getElementById('test-bubble-btn').addEventListener('click', testBubble);
-            
-            // 添加自动显示对话泡的功能
+            // 直接调用自动显示对话泡的功能
             function autoShowBubble() {
                 // 从预设的关心主人的文字数组中随机选择一条消息
                 const randomIndex = Math.floor(Math.random() * careMessages.length);
                 const message = careMessages[randomIndex];
                 
-                // 显示对话泡
-                const bubbleText = document.getElementById('bubble-text');
-                if (bubbleText) {
-                    bubbleText.textContent = message;
-                }
-                
-                // 获取泡泡元素并添加动画
-                const bubble = document.querySelector('.dream-bubble');
-                if (bubble) {
-                    bubble.style.animation = 'bubbleAppear 0.5s forwards';
-                    
-                    // 5-8秒后隐藏泡泡
-                    const waitTime = 5000 + Math.random() * 3000;
-                    setTimeout(() => {
-                        bubble.style.animation = 'bubbleDisappear 0.5s forwards';
-                        
-                        // 在动画完成后重置状态
-                        setTimeout(() => {
-                            bubble.style.animation = 'none';
-                            if (bubbleText) {
-                                bubbleText.textContent = '';
-                            }
-                        }, 500);
-                    }, waitTime);
-                }
+                // 直接调用显示函数，传入预设的消息
+                showRandomBubble(message);
             }
             
-            // 页面加载后3秒自动显示第一个对话泡
-            setTimeout(autoShowBubble, 3000);
+            // 页面加载后立即显示第一个对话泡
+            setTimeout(autoShowBubble, 500);
             
-            // 设置定时器，每15-30秒随机显示一次对话泡
+            // 设置定时器，每8-12秒随机显示一次对话泡
             setInterval(() => {
-                const randomDelay = Math.random() * 15000 + 15000; // 15-30秒
+                const randomDelay = Math.random() * 4000 + 8000; // 8-12秒
                 setTimeout(autoShowBubble, randomDelay);
-            }, 30000);
+            }, 12000);
         });
     </script>
 </body>
