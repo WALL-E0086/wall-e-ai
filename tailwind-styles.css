@@ -780,69 +780,83 @@ button:hover .fas {
 .dream-bubble {
     position: relative;
     display: inline-block;
-    padding: 20px 30px;
+    padding: 25px 35px;
     background: white;
-    border: 4px solid black;
-    border-radius: 50%;
+    border: 3px solid black;
+    border-radius: 50% / 60%;  /* 创建椭圆形状 */
     max-width: 250px;
     text-align: center;
-    filter: drop-shadow(2px 2px 0px black) drop-shadow(-2px -2px 0px black);
     font-family: "Comic Sans MS", cursive, sans-serif;
     opacity: 0;
     transform: scale(0.1); /* 开始时非常小 */
     transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 使用弹跳效果的过渡 */
 }
 
-/* 创建不规则边缘的效果 */
+/* 创建不规则边缘的效果 - 改为模拟虚线边框 */
 .dream-bubble::before {
     content: "";
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: white;
-    border-radius: 60% 70% 65% 75%;
-    top: 0;
-    left: 0;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border: 2px dashed #ddd;
+    border-radius: 50% / 60%;
+    top: -5px;
+    left: -5px;
     z-index: -1;
 }
 
-/* 添加手绘风格的小气泡 */
+/* 添加手绘风格的小尾巴 */
 .dream-bubble::after {
     content: "";
     position: absolute;
     bottom: -15px;
-    left: 20%;
+    left: 30%;
+    width: 20px;
+    height: 15px;
+    border-left: 3px solid black;
+    border-bottom: 3px solid black;
+    border-radius: 0 0 0 8px;
+    transform: rotate(45deg);
+    background: white;
+}
+
+/* 小圆点装饰 - 顶部 */
+.dream-bubble .cloud-puff-1 {
+    position: absolute;
+    top: -10px;
+    right: 40%;
     width: 20px;
     height: 20px;
     background: white;
-    border: 4px solid black;
+    border: 3px solid black;
     border-radius: 50%;
-    filter: drop-shadow(1px 1px 0px black);
+    z-index: 1;
 }
 
-/* 额外添加两个装饰性的小云块 */
-.dream-bubble .cloud-puff-1 {
-    position: absolute;
-    top: -25px;
-    right: 30%;
-    width: 35px;
-    height: 35px;
-    background: white;
-    border: 4px solid black;
-    border-radius: 50%;
-    z-index: -1;
-}
-
+/* 小圆点装饰 - 右侧 */
 .dream-bubble .cloud-puff-2 {
     position: absolute;
-    top: 20%;
-    right: -20px;
-    width: 25px;
-    height: 25px;
+    top: 30%;
+    right: -10px;
+    width: 15px;
+    height: 15px;
     background: white;
-    border: 4px solid black;
+    border: 3px solid black;
     border-radius: 50%;
-    z-index: -1;
+    z-index: 1;
+}
+
+/* 新增小圆点装饰 - 底部 */
+.dream-bubble .cloud-puff-3 {
+    position: absolute;
+    bottom: -10px;
+    left: 40%;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border: 3px solid black;
+    border-radius: 50%;
+    z-index: 1;
 }
 
 .dream-bubble.show {
