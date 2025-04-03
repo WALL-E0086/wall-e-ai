@@ -783,7 +783,7 @@ button:hover .fas {
     padding: 20px 30px;
     background: white;
     border: 4px solid black;
-    border-radius: 50%;
+    border-radius: 70% 80% 70% 80%; /* 更不规则的圆形 */
     font-size: 16px;
     max-width: 250px;
     text-align: center;
@@ -792,6 +792,7 @@ button:hover .fas {
     opacity: 0;
     transform: scale(0);
     animation: none; /* 初始不带动画 */
+    transform-origin: bottom center; /* 从底部中心变形 */
 }
 
 /* 云朵自动显示隐藏动画 */
@@ -823,21 +824,22 @@ button:hover .fas {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10 50 Q 25 10, 50 20 T 90 50 T 50 80 T 10 50 Z" fill="none" stroke="black" stroke-width="4" stroke-dasharray="8,5"/></svg>') no-repeat;
-    background-size: cover;
+    background: white;
+    border-radius: 70% 80% 70% 80%;
     top: 0;
     left: 0;
     z-index: -1;
+    transform: rotate(-5deg); /* 轻微旋转增加手绘感 */
 }
 
 /* 添加手绘风格的小气泡 */
 .dream-bubble::after {
     content: "";
     position: absolute;
-    bottom: -15px;
-    left: 20%;
-    width: 20px;
-    height: 20px;
+    bottom: -10px;
+    left: 30%;
+    width: 15px;
+    height: 15px;
     background: white;
     border: 4px solid black;
     border-radius: 50%;
