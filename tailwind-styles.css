@@ -774,6 +774,7 @@ button:hover .fas {
     z-index: 20;
     display: flex;
     justify-content: center;
+    pointer-events: none; /* 避免阻挡用户点击 */
 }
 
 /* 手绘风格云朵对话框 */
