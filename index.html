@@ -517,30 +517,31 @@
                 // 获取文本元素
                 const bubbleText = document.getElementById('bubble-text');
                 
-                // 设置消息内容到文本元素而不是气泡本身
-                if (bubbleText) {
-                    bubbleText.textContent = message;
-                }
+                // 确保泡泡元素存在
+                if (!bubble || !bubbleText) return;
                 
-                // 添加动画类
-                bubble.style.animation = 'bubbleAppear 0.5s forwards';
+                // 设置消息内容
+                bubbleText.textContent = message;
+                bubbleText.style.display = 'block'; // 确保文本可见
                 
-                // 随机等待时间后隐藏泡泡
-                const waitTime = 5000 + Math.random() * 3000; // 5-8秒之间随机
+                // 确保泡泡可见
+                bubble.style.opacity = '1';
+                bubble.style.transform = 'scale(1) rotate(-5deg)';
+                bubble.style.animation = 'bubbleAppear 0.3s forwards';
+                
+                // 1-2秒后隐藏泡泡
+                const waitTime = 1500; // 固定显示1.5秒
                 setTimeout(() => {
-                    bubble.style.animation = 'bubbleDisappear 0.5s forwards';
+                    bubble.style.animation = 'bubbleDisappear 0.3s forwards';
                     
                     // 在动画完成后重置状态
                     setTimeout(() => {
                         bubble.style.animation = 'none';
-                        if (bubbleText) {
-                            bubbleText.textContent = '';
-                        }
-                    }, 500);
+                    }, 300);
                 }, waitTime);
             }
             
-            // 添加动画关键帧
+            // 添加动画关键帧，加快动画速度
             const styleSheet = document.createElement('style');
             styleSheet.type = 'text/css';
             styleSheet.innerHTML = `
@@ -564,6 +565,24 @@
                     opacity: 0;
                     transform: scale(0);
                 }
+            }
+            
+            /* 确保对话泡文字可见 */
+            .bubble-text {
+                color: black !important;
+                font-weight: bold !important;
+                font-size: 16px !important;
+                display: block !important;
+            }
+            
+            /* 确保对话泡始终可见 */
+            .dream-bubble {
+                background-color: white !important;
+                border: 4px solid black !important;
+                min-height: 60px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }`;
             document.head.appendChild(styleSheet);
             
@@ -586,13 +605,10 @@
             }
             
             // 页面加载后立即显示第一个对话泡
-            setTimeout(autoShowBubble, 500);
+            setTimeout(autoShowBubble, 300);
             
-            // 设置定时器，每8-12秒随机显示一次对话泡
-            setInterval(() => {
-                const randomDelay = Math.random() * 4000 + 8000; // 8-12秒
-                setTimeout(autoShowBubble, randomDelay);
-            }, 12000);
+            // 设置定时器，每1-2秒显示一次对话泡
+            setInterval(autoShowBubble, 2000); // 每2秒调用一次
         });
     </script>
 </body>
