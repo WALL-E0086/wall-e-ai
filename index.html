@@ -510,40 +510,36 @@
                 "主人最近常看的剧更新了，要我帮你下载吗？"
             ];
             
-            // 显示对话泡的函数
-            function showBubble() {
+            // 使用新的自动动画显示对话泡函数
+            function showRandomBubble() {
                 // 随机选择一条消息
                 const randomMessage = careMessages[Math.floor(Math.random() * careMessages.length)];
                 
-                // 从小到大渐变显示对话泡
-                dreamBubble.style.animation = 'bubbleFadeIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-                dreamBubble.classList.add('show');
+                // 设置文字内容
+                bubbleText.textContent = randomMessage;
                 
+                // 移除之前的动画类（如果有）
+                dreamBubble.classList.remove('auto-animate');
+                bubbleText.classList.remove('auto-animate');
+                
+                // 强制重新计算样式，以确保新动画能被触发
+                void dreamBubble.offsetWidth;
+                void bubbleText.offsetWidth;
+                
+                // 添加自动动画类
+                dreamBubble.classList.add('auto-animate');
+                bubbleText.classList.add('auto-animate');
+                
+                // 动画结束后，等待一段时间再显示下一个
                 setTimeout(() => {
-                    // 显示文字
-                    bubbleText.textContent = randomMessage;
-                    bubbleText.style.animation = 'textFadeIn 0.5s ease-in forwards';
-                    bubbleText.classList.add('show');
-                    
-                    // 文字显示一段时间后淡出
-                    setTimeout(() => {
-                        bubbleText.style.animation = 'textFadeOut 0.5s ease-out forwards';
-                        bubbleText.classList.remove('show');
-                        
-                        // 文字淡出后对话泡淡出
-                        setTimeout(() => {
-                            dreamBubble.style.animation = 'bubbleFadeOut 0.7s ease-out forwards';
-                            dreamBubble.classList.remove('show');
-                            
-                            // 对话泡淡出后等待一段时间再显示下一个
-                            setTimeout(showBubble, 2000);
-                        }, 500);
-                    }, 4000); // 文字显示4秒
-                }, 800); // 对话泡出现0.8秒后文字出现
+                    // 随机等待2-5秒再显示下一个
+                    const waitTime = 2000 + Math.random() * 3000;
+                    setTimeout(showRandomBubble, waitTime);
+                }, 3000); // 当前动画持续3秒
             }
             
             // 页面加载后延迟开始循环
-            setTimeout(showBubble, 1500);
+            setTimeout(showRandomBubble, 1500);
         });
     </script>
 </body>
