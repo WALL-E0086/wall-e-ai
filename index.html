@@ -101,12 +101,12 @@
         }
         
         /* 确保对话泡始终可见 */
-        .dream-bubble {
+        /* .dream-bubble {
             background-color: white !important;
             border: 2px solid black !important;
             min-height: 50px !important;
             min-width: 180px !important;
-            display: none !important; /* 初始状态为隐藏 */
+            display: none !important; 
             align-items: center !important;
             justify-content: center !important;
             position: absolute !important;
@@ -115,12 +115,12 @@
             border-radius: 20px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
             z-index: 100 !important;
-        }
+        } */
         
         /* 移除对话泡容器定位，让对话泡直接定位 */
-        .dream-bubble-container {
+        /* .dream-bubble-container {
             position: static !important;
-        }
+        } */
         
         /* 云朵梦境对话泡样式 */
         .dream-bubble-container {
@@ -672,9 +672,41 @@
                 });
             }
             
-            // 云朵梦境对话泡循环显示功能
-            const dreamBubble = document.querySelector('.dream-bubble');
-            const bubbleText = document.getElementById('bubble-text');
+            // 确保对话泡容器存在，如果不存在则创建
+            let bubbleContainer = document.getElementById('dream-bubble-container');
+            if (!bubbleContainer) {
+                console.log('对话泡容器不存在，创建新容器');
+                bubbleContainer = document.createElement('div');
+                bubbleContainer.id = 'dream-bubble-container';
+                bubbleContainer.className = 'dream-bubble-container';
+                document.querySelector('.main-container').appendChild(bubbleContainer);
+            }
+            
+            // 确保对话泡元素存在，如果不存在则创建
+            let dreamBubble = document.querySelector('.dream-bubble');
+            let bubbleText = document.getElementById('bubble-text');
+            
+            if (!dreamBubble) {
+                console.log('对话泡元素不存在，创建新对话泡');
+                dreamBubble = document.createElement('div');
+                dreamBubble.className = 'dream-bubble';
+                
+                // 创建云朵装饰
+                const puff1 = document.createElement('div');
+                puff1.className = 'cloud-puff-1';
+                dreamBubble.appendChild(puff1);
+                
+                const puff2 = document.createElement('div');
+                puff2.className = 'cloud-puff-2';
+                dreamBubble.appendChild(puff2);
+                
+                bubbleText = document.createElement('p');
+                bubbleText.id = 'bubble-text';
+                bubbleText.className = 'bubble-text';
+                dreamBubble.appendChild(bubbleText);
+                
+                bubbleContainer.appendChild(dreamBubble);
+            }
             
             // 关心主人的功能介绍文字数组
             const careMessages = [
@@ -691,8 +723,29 @@
             
             // 使用新的自动动画显示对话泡函数
             function showRandomBubble() {
+                // 检查元素是否存在
+                if (!dreamBubble || !bubbleText) {
+                    console.error('对话气泡元素不存在！dreamBubble:', dreamBubble, 'bubbleText:', bubbleText);
+                    
+                    // 尝试重新获取元素
+                    const reloadedBubble = document.querySelector('.dream-bubble');
+                    const reloadedText = document.getElementById('bubble-text');
+                    console.log('重新获取元素结果:', reloadedBubble, reloadedText);
+                    
+                    // 如果重新获取成功，则更新引用
+                    if (reloadedBubble && reloadedText) {
+                        dreamBubble = reloadedBubble;
+                        bubbleText = reloadedText;
+                    } else {
+                        // 创建一个定时器，1秒后再次尝试
+                        setTimeout(showRandomBubble, 1000);
+                        return;
+                    }
+                }
+                
                 // 随机选择一条消息
                 const randomMessage = careMessages[Math.floor(Math.random() * careMessages.length)];
+                console.log('显示新消息:', randomMessage);
                 
                 // 设置文字内容
                 bubbleText.textContent = randomMessage;
@@ -705,19 +758,27 @@
                 void dreamBubble.offsetWidth;
                 void bubbleText.offsetWidth;
                 
+                // 确保气泡可见
+                dreamBubble.style.display = 'inline-block';
+                
                 // 添加自动动画类
                 dreamBubble.classList.add('auto-animate');
                 bubbleText.classList.add('auto-animate');
+                console.log('已添加动画类，当前气泡类名:', dreamBubble.className);
                 
                 // 动画结束后，等待一段时间再显示下一个
                 setTimeout(() => {
                     // 随机等待2-5秒再显示下一个
                     const waitTime = 2000 + Math.random() * 3000;
+                    console.log('计划下一次显示，等待时间:', waitTime, 'ms');
                     setTimeout(showRandomBubble, waitTime);
                 }, 5000); // 当前动画持续5秒
             }
             
             // 页面加载后延迟开始循环
+            console.log('页面加载完成，准备显示对话气泡');
+            console.log('云朵对话泡元素:', dreamBubble);
+            console.log('气泡文本元素:', bubbleText);
             setTimeout(showRandomBubble, 1500);
         });
     </script>
