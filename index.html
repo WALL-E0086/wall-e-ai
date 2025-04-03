@@ -121,6 +121,153 @@
         .dream-bubble-container {
             position: static !important;
         }
+        
+        /* 云朵梦境对话泡样式 */
+        .dream-bubble-container {
+            position: absolute;
+            top: 10%; /* 上移调整到黑洞上方 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 300px;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 手绘风格云朵对话框 */
+        .dream-bubble {
+            position: relative;
+            display: inline-block;
+            padding: 20px 30px;
+            background: white;
+            border: 4px solid black;
+            border-radius: 50%;
+            max-width: 250px;
+            text-align: center;
+            filter: drop-shadow(2px 2px 0px black) drop-shadow(-2px -2px 0px black);
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        /* 云朵自动显示隐藏动画 */
+        .dream-bubble.auto-animate {
+            animation: bubbleAnimation 5s ease-in-out forwards;
+        }
+        
+        @keyframes bubbleAnimation {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            20% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            30%, 70% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            90% {
+                opacity: 0.3;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
+        
+        /* 创建不规则边缘的效果 */
+        .dream-bubble::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 60% 70% 65% 75%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        /* 添加手绘风格的小气泡 */
+        .dream-bubble::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 20%;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 4px solid black;
+            border-radius: 50%;
+            filter: drop-shadow(1px 1px 0px black);
+        }
+        
+        /* 额外添加两个装饰性的小云块 */
+        .dream-bubble .cloud-puff-1 {
+            position: absolute;
+            top: -25px;
+            right: 30%;
+            width: 35px;
+            height: 35px;
+            background: white;
+            border: 4px solid black;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .dream-bubble .cloud-puff-2 {
+            position: absolute;
+            top: 20%;
+            right: -20px;
+            width: 25px;
+            height: 25px;
+            background: white;
+            border: 4px solid black;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        /* 保留原来控制显示的类，用于手动控制 */
+        .dream-bubble.show {
+            opacity: 1;
+            transform: scale(1); /* 完全显示时为原始大小 */
+        }
+        
+        .bubble-text {
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .bubble-text.show {
+            opacity: 1;
+        }
+        
+        /* 文字自动动画效果 */
+        .bubble-text.auto-animate {
+            animation: textAnimation 5s ease-in-out forwards;
+        }
+        
+        @keyframes textAnimation {
+            0%, 10% {
+                opacity: 0;
+            }
+            20%, 70% {
+                opacity: 1;
+            }
+            90%, 100% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800 overflow-hidden">
@@ -542,235 +689,36 @@
                 "主人最近常看的剧更新了，要我帮你下载吗？"
             ];
             
-            // 显示对话泡泡的函数
-            function showRandomBubble(message) {
-                // 获取泡泡元素
-                const bubble = document.querySelector('.dream-bubble');
-                // 获取文本元素
-                const bubbleText = document.getElementById('bubble-text');
+            // 使用新的自动动画显示对话泡函数
+            function showRandomBubble() {
+                // 随机选择一条消息
+                const randomMessage = careMessages[Math.floor(Math.random() * careMessages.length)];
                 
-                // 确保泡泡元素存在
-                if (!bubble || !bubbleText) {
-                    console.error("对话泡或文本元素不存在");
-                    return;
-                }
+                // 设置文字内容
+                bubbleText.textContent = randomMessage;
                 
-                console.log("显示对话泡:", message); // 调试信息
+                // 移除之前的动画类（如果有）
+                dreamBubble.classList.remove('auto-animate');
+                bubbleText.classList.remove('auto-animate');
                 
-                // 设置消息内容
-                bubbleText.textContent = message;
+                // 强制重新计算样式，以确保新动画能被触发
+                void dreamBubble.offsetWidth;
+                void bubbleText.offsetWidth;
                 
-                // 重置样式确保每次都正确显示
-                bubble.style.cssText = `
-                    display: flex !important;
-                    opacity: 1 !important;
-                    transform: scale(1) !important;
-                    visibility: visible !important;
-                    background-color: white !important;
-                    border: 2px solid black !important;
-                    border-radius: 20px !important;
-                    position: absolute !important;
-                    top: 10% !important;
-                    right: 10% !important;
-                    z-index: 100 !important;
-                    min-height: 50px !important;
-                    min-width: 180px !important;
-                    transition: opacity 0.3s ease, transform 0.3s ease;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-                `;
+                // 添加自动动画类
+                dreamBubble.classList.add('auto-animate');
+                bubbleText.classList.add('auto-animate');
                 
-                bubbleText.style.cssText = `
-                    display: block !important;
-                    padding: 10px !important;
-                    color: black !important;
-                    font-weight: bold !important;
-                    font-size: 16px !important;
-                    text-align: center !important;
-                `;
-                
-                // 隐藏云朵装饰
-                document.querySelectorAll('.cloud-puff-1, .cloud-puff-2, .cloud-puff-3').forEach(el => {
-                    if (el) el.style.display = 'none';
-                });
-                
-                // 显示4秒后隐藏，给足时间阅读
-                const waitTime = 4000;
+                // 动画结束后，等待一段时间再显示下一个
                 setTimeout(() => {
-                    bubble.style.opacity = '0';
-                    bubble.style.transform = 'scale(0.8)';
-                    
-                    // 完全隐藏
-                    setTimeout(() => {
-                        bubble.style.display = 'none';
-                    }, 300);
-                }, waitTime);
+                    // 随机等待2-5秒再显示下一个
+                    const waitTime = 2000 + Math.random() * 3000;
+                    setTimeout(showRandomBubble, waitTime);
+                }, 5000); // 当前动画持续5秒
             }
             
-            // 添加对话泡尾巴样式
-            const bubbleTailStyle = document.createElement('style');
-            bubbleTailStyle.textContent = `
-            .dream-bubble:after {
-                content: '';
-                position: absolute;
-                bottom: -10px;
-                right: 20px;
-                border-width: 10px 10px 0;
-                border-style: solid;
-                border-color: white transparent transparent;
-                display: block;
-                width: 0;
-            }
-            `;
-            document.head.appendChild(bubbleTailStyle);
-            
-            // 直接调用自动显示对话泡的功能
-            function autoShowBubble() {
-                // 从预设的关心主人的文字数组中随机选择一条消息
-                const randomIndex = Math.floor(Math.random() * careMessages.length);
-                const message = careMessages[randomIndex];
-                
-                // 直接调用显示函数，传入预设的消息
-                showRandomBubble(message);
-            }
-            
-            // 页面加载后2秒后显示第一个对话泡，给页面充分加载时间
-            setTimeout(autoShowBubble, 2000);
-            
-            // 设置更长的间隔，每8秒显示一次对话泡，避免频繁打扰用户
-            setInterval(autoShowBubble, 8000);
-        });
-
-        // 当文档加载完成后执行所有功能初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 修复开始对话按钮
-            const startChatBtn = document.getElementById('start-chat');
-            const chatLink = document.getElementById('chat-link');
-            
-            if (startChatBtn && chatLink) {
-                startChatBtn.addEventListener('click', function() {
-                    // 模拟点击导航菜单中的聊天链接
-                    chatLink.click();
-                });
-            }
-            
-            // 设置对话气泡功能 
-            (function setupBubble() {
-                // 获取气泡元素
-                const bubble = document.querySelector('.dream-bubble');
-                const bubbleText = document.getElementById('bubble-text');
-                
-                // 检查元素是否存在
-                if (!bubble || !bubbleText) {
-                    console.error("找不到对话气泡元素!");
-                    return;
-                }
-                
-                // 关心主人的功能介绍文字数组
-                const careMessages = [
-                    "明天天气有点冷，主人衣服穿够了吗？",
-                    "上次给主人推荐的发型方案主人满意吗？",
-                    "主人的肤色真的很适合昨天试的那套衣服啊！",
-                    "主人今天看起来有点累，需要我整理一下日程安排吗？",
-                    "主人的搭配今天真好看，我记下来了！",
-                    "主人最近睡眠质量怎么样？需要我调整室内温度吗？",
-                    "主人的购物清单我已经准备好了，需要现在看看吗？",
-                    "我查了下日历，主人明天有重要会议，要提前准备哦！",
-                    "主人最近常看的剧更新了，要我帮你下载吗？"
-                ];
-                
-                // 隐藏云朵装饰
-                document.querySelectorAll('.cloud-puff-1, .cloud-puff-2, .cloud-puff-3').forEach(el => {
-                    if (el) el.style.display = 'none';
-                });
-                
-                // 添加气泡尾巴样式
-                const bubbleStyle = document.createElement('style');
-                bubbleStyle.textContent = `
-                .dream-bubble {
-                    transition: opacity 0.3s ease, transform 0.3s ease;
-                    position: absolute !important;
-                    top: 10% !important;
-                    right: 10% !important;
-                    border-radius: 20px !important;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-                    z-index: 100 !important;
-                }
-                
-                .dream-bubble:after {
-                    content: '';
-                    position: absolute;
-                    bottom: -10px;
-                    right: 20px;
-                    border-width: 10px 10px 0;
-                    border-style: solid;
-                    border-color: white transparent transparent;
-                    display: block;
-                    width: 0;
-                }
-                `;
-                document.head.appendChild(bubbleStyle);
-                
-                // 显示对话泡的函数
-                function showBubble(message) {
-                    console.log("显示对话泡:", message);
-                    
-                    // 设置消息文本
-                    bubbleText.textContent = message;
-                    
-                    // 设置样式
-                    bubble.style.cssText = `
-                        display: flex !important;
-                        opacity: 1 !important;
-                        transform: scale(1) !important;
-                        visibility: visible !important;
-                        background-color: white !important;
-                        border: 2px solid black !important;
-                        min-height: 50px !important;
-                        min-width: 180px !important;
-                        align-items: center !important;
-                        justify-content: center !important;
-                        position: absolute !important;
-                        top: 10% !important;
-                        right: 10% !important;
-                        border-radius: 20px !important;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-                        z-index: 100 !important;
-                    `;
-                    
-                    bubbleText.style.cssText = `
-                        display: block !important;
-                        padding: 10px !important;
-                        color: black !important;
-                        font-weight: bold !important;
-                        font-size: 16px !important;
-                        text-align: center !important;
-                    `;
-                    
-                    // 4秒后隐藏对话泡
-                    setTimeout(() => {
-                        bubble.style.opacity = '0';
-                        bubble.style.transform = 'scale(0.8)';
-                        
-                        // 完全隐藏
-                        setTimeout(() => {
-                            bubble.style.display = 'none';
-                        }, 300);
-                    }, 4000);
-                }
-                
-                // 定时显示对话泡
-                function autoShowBubble() {
-                    const randomIndex = Math.floor(Math.random() * careMessages.length);
-                    const message = careMessages[randomIndex];
-                    showBubble(message);
-                }
-                
-                // 页面加载2秒后显示第一条消息
-                setTimeout(autoShowBubble, 2000);
-                
-                // 每8秒显示一次对话泡
-                setInterval(autoShowBubble, 8000);
-            })();
+            // 页面加载后延迟开始循环
+            setTimeout(showRandomBubble, 1500);
         });
     </script>
 </body>
