@@ -89,6 +89,32 @@
         section {
             background-color: white !important;
         }
+        
+        /* 确保对话泡文字可见 */
+        .bubble-text {
+            color: black !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+            display: block !important;
+        }
+        
+        /* 确保对话泡始终可见 */
+        .dream-bubble {
+            background-color: white !important;
+            border: 4px solid black !important;
+            min-height: 60px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        /* 确保对话泡容器正确定位 */
+        .dream-bubble-container {
+            position: absolute !important;
+            top: 20% !important;
+            right: 10% !important;
+            z-index: 98 !important;
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800 overflow-hidden">
@@ -520,24 +546,29 @@
                 // 确保泡泡元素存在
                 if (!bubble || !bubbleText) return;
                 
+                console.log("显示对话泡:", message); // 调试信息
+                
                 // 设置消息内容
                 bubbleText.textContent = message;
                 bubbleText.style.display = 'block'; // 确保文本可见
                 
-                // 确保泡泡可见
+                // 直接设置样式而不使用动画
                 bubble.style.opacity = '1';
                 bubble.style.transform = 'scale(1) rotate(-5deg)';
-                bubble.style.animation = 'bubbleAppear 0.3s forwards';
+                bubble.style.display = 'flex';
+                bubble.style.visibility = 'visible';
                 
-                // 1-2秒后隐藏泡泡
-                const waitTime = 1500; // 固定显示1.5秒
+                // 增加显示时间至3秒
+                const waitTime = 3000; // 固定显示3秒
                 setTimeout(() => {
-                    bubble.style.animation = 'bubbleDisappear 0.3s forwards';
+                    // 直接隐藏，不使用动画
+                    bubble.style.opacity = '0';
+                    bubble.style.transform = 'scale(0)';
                     
-                    // 在动画完成后重置状态
+                    // 确保完全隐藏
                     setTimeout(() => {
-                        bubble.style.animation = 'none';
-                    }, 300);
+                        bubble.style.display = 'none';
+                    }, 500);
                 }, waitTime);
             }
             
@@ -604,11 +635,11 @@
                 showRandomBubble(message);
             }
             
-            // 页面加载后立即显示第一个对话泡
-            setTimeout(autoShowBubble, 300);
+            // 页面加载后1秒后显示第一个对话泡，给页面充分加载时间
+            setTimeout(autoShowBubble, 1000);
             
-            // 设置定时器，每1-2秒显示一次对话泡
-            setInterval(autoShowBubble, 2000); // 每2秒调用一次
+            // 只设置一个定时器，每5秒显示一次对话泡
+            setInterval(autoShowBubble, 5000); // 每5秒调用一次
         });
     </script>
 </body>
