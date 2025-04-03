@@ -794,28 +794,38 @@ button:hover .fas {
     transform: scale(0);
     animation: none; /* 初始不带动画 */
     transform-origin: bottom center; /* 从底部中心变形 */
+    color: black; /* 确保文本是黑色 */
+    z-index: 30; /* 确保气泡在最上层 */
 }
 
-/* 云朵自动显示隐藏动画 */
-.dream-bubble.auto-animate {
-    animation: bubbleAnimation 3s ease-in-out forwards;
+/* 气泡内的文本样式 */
+.bubble-text {
+    position: relative;
+    z-index: 31; /* 比气泡更高一层 */
+    color: black;
+    font-weight: 600;
+    font-size: 14px;
 }
 
-@keyframes bubbleAnimation {
+@keyframes bubbleAppear {
     0% {
         opacity: 0;
         transform: scale(0);
     }
-    50% {
+    100% {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) rotate(-5deg);
     }
-    70% {
+}
+
+@keyframes bubbleDisappear {
+    0% {
         opacity: 1;
+        transform: scale(1) rotate(-5deg);
     }
     100% {
         opacity: 0;
-        transform: scale(1.1);
+        transform: scale(0);
     }
 }
 

@@ -577,6 +577,48 @@
             
             // 给按钮添加点击事件
             document.getElementById('test-bubble-btn').addEventListener('click', testBubble);
+            
+            // 添加自动显示对话泡的功能
+            function autoShowBubble() {
+                // 从预设的关心主人的文字数组中随机选择一条消息
+                const randomIndex = Math.floor(Math.random() * careMessages.length);
+                const message = careMessages[randomIndex];
+                
+                // 显示对话泡
+                const bubbleText = document.getElementById('bubble-text');
+                if (bubbleText) {
+                    bubbleText.textContent = message;
+                }
+                
+                // 获取泡泡元素并添加动画
+                const bubble = document.querySelector('.dream-bubble');
+                if (bubble) {
+                    bubble.style.animation = 'bubbleAppear 0.5s forwards';
+                    
+                    // 5-8秒后隐藏泡泡
+                    const waitTime = 5000 + Math.random() * 3000;
+                    setTimeout(() => {
+                        bubble.style.animation = 'bubbleDisappear 0.5s forwards';
+                        
+                        // 在动画完成后重置状态
+                        setTimeout(() => {
+                            bubble.style.animation = 'none';
+                            if (bubbleText) {
+                                bubbleText.textContent = '';
+                            }
+                        }, 500);
+                    }, waitTime);
+                }
+            }
+            
+            // 页面加载后3秒自动显示第一个对话泡
+            setTimeout(autoShowBubble, 3000);
+            
+            // 设置定时器，每15-30秒随机显示一次对话泡
+            setInterval(() => {
+                const randomDelay = Math.random() * 15000 + 15000; // 15-30秒
+                setTimeout(autoShowBubble, randomDelay);
+            }, 30000);
         });
     </script>
 </body>
