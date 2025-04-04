@@ -1,0 +1,142 @@
+/* WALL-E 眼睛样式 - 更贴近原版设计 */
+
+/* 眼睛容器 - 整体布局 */
+.eyes {
+    width: 100px;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 3;
+}
+
+/* 眼睛轮廓 - 白色圆环 */
+.eye-container {
+    width: 42px;
+    height: 42px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 
+        0 0 0 2px rgba(200, 200, 200, 0.9),
+        0 0 5px rgba(255, 255, 255, 0.9) inset,
+        0 0 10px rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+}
+
+/* 瞳孔 - 黑色主体 */
+.pupil {
+    width: 24px;
+    height: 24px;
+    background-color: #000;
+    border-radius: 50%;
+    position: relative;
+    transition: transform 0.15s ease-out;
+    transform: translate(0, 0);
+    overflow: visible;
+}
+
+/* WALL-E 特有的 X 形图案 */
+.pupil::before,
+.pupil::after {
+    content: '';
+    position: absolute;
+    background: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* X 的水平线 */
+.pupil::before {
+    width: 18px;
+    height: 2px;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* X 的垂直线 */
+.pupil::after {
+    width: 18px;
+    height: 2px;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* 主高光点 */
+.highlight-main {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    top: 4px;
+    right: 4px;
+    opacity: 0.9;
+}
+
+/* 次高光点 */
+.highlight-small {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    bottom: 5px;
+    left: 3px;
+    opacity: 0.75;
+}
+
+/* 眨眼动画 - 更自然的眨眼效果 */
+@keyframes blink-natural {
+    0%, 90%, 100% {
+        transform: scaleY(1);
+    }
+    92%, 95% {
+        transform: scaleY(0.1);
+    }
+}
+
+/* 应用眨眼动画 */
+.eye-container {
+    animation: blink-natural 4s ease-in-out infinite;
+}
+
+/* 错开左右眼眨眼时间 */
+.eye-container:first-child {
+    animation-delay: 0.1s;
+}
+
+/* 瞳孔随机移动动画 */
+@keyframes look-around {
+    0%, 10%, 90%, 100% {
+        transform: translate(0, 0);
+    }
+    20%, 25% {
+        transform: translate(2px, 1px);
+    }
+    40%, 45% {
+        transform: translate(-2px, -2px);
+    }
+    60%, 65% {
+        transform: translate(1px, -1px);
+    }
+    80%, 85% {
+        transform: translate(-1px, 2px);
+    }
+}
+
+/* 应用瞳孔移动动画 */
+.pupil {
+    animation: look-around 8s ease-in-out infinite;
+}
+
+/* 错开左右眼移动时间 */
+#pupil-left {
+    animation-delay: 0.3s;
+}
+
+#pupil-right {
+    animation-delay: 0s;
+}

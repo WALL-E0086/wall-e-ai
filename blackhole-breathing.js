@@ -50,11 +50,17 @@ window.addEventListener('load', function() {
         // 应用到黑洞核心
         setImportantStyle(blackholeCore, 'transform', transformValue);
         
-        // 如果眼睛元素存在，也应用相同的缩放
-        if (eyes) {
-            // 眼睛需要保持在黑洞核心中央，所以使用相同的缩放
-            setImportantStyle(eyes, 'transform', `scale(${scale})`);
-        }
+        // 不再修改眼睛的transform属性，让它保持原生动画
+        // 眼睛容器会自动随着黑洞核心缩放，并保持原有动画
+        
+        // 确保眼睛高光有正确的大小比例
+        const highlights = document.querySelectorAll('.highlight-main, .highlight-small');
+        highlights.forEach(highlight => {
+            // 通过调整高光透明度而不是大小来适应呼吸效果
+            // 这样可以保持X形瞳孔设计的完整性
+            const opacityScale = 0.8 + (scale - 1) * 0.4; // 根据缩放调整透明度
+            setImportantStyle(highlight, 'opacity', opacityScale.toString());
+        });
     }
 
     // 呼吸动画函数
