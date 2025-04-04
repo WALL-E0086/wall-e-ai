@@ -96,57 +96,50 @@ function addMessage(content, type) {
 
 // 导航处理函数
 function handleNavigation(element) {
+    if (!element) return;
+    
     // 获取所有导航链接和部分
     const navLinks = document.querySelectorAll('#sidebar a');
     const sections = document.querySelectorAll('main > section');
     
     // 获取目标部分ID
-    const targetId = element.getAttribute('href').substring(1);
-    console.log('导航目标:', targetId);
+    const targetId = element.getAttribute('href');
+    if (!targetId) return;
+    
+    const sectionId = targetId.substring(1); // 移除#前缀
+    console.log('导航目标:', sectionId);
     
     // 移除所有活动状态
-    navLinks.forEach(l => l.classList.remove('active'));
+    navLinks.forEach(l => l.classList.remove('active', 'bg-gray-100'));
     sections.forEach(s => s.classList.add('hidden'));
     
     // 添加当前活动状态
-    element.classList.add('active');
-    const targetSection = document.getElementById(targetId);
+    element.classList.add('active', 'bg-gray-100');
+    const targetSection = document.getElementById(sectionId);
     
     if (targetSection) {
         targetSection.classList.remove('hidden');
         // 确保滚动到顶部
         targetSection.scrollTop = 0;
+        
+        // 触发自定义导航事件
+        const navigatedEvent = new CustomEvent('navigated', {
+            detail: {
+                target: sectionId
+            }
+        });
+        document.dispatchEvent(navigatedEvent);
     }
-    
-    // 触发自定义导航事件
-    const navigatedEvent = new CustomEvent('navigated', {
-        detail: {
-            target: targetId
-        }
-    });
-    document.dispatchEvent(navigatedEvent);
     
     // 在移动设备上关闭侧边栏
     if (window.innerWidth < 768) {
-        document.getElementById('sidebar').classList.remove('translate-x-0');
-        document.getElementById('sidebar').classList.add('-translate-x-full');
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+            sidebar.classList.remove('translate-x-0');
+            sidebar.classList.add('-translate-x-full');
+        }
     }
 }
-
-// 页面初始化
-document.addEventListener('DOMContentLoaded', function() {
-    // 初始化侧边栏
-    initSidebar();
-    
-    // 初始化黑洞眼睛
-    initBlackholeEyes();
-    
-    // 初始化聊天功能
-    initChat();
-    
-    // 初始化柜me功能
-    initCuime();
-});
 
 // 侧边栏初始化和导航
 function initSidebar() {
@@ -155,75 +148,16 @@ function initSidebar() {
     const navLinks = document.querySelectorAll('#sidebar a');
     
     // 汉堡菜单切换
-    if (menuToggle) {
+    if (menuToggle && sidebar) {
         menuToggle.addEventListener('click', function() {
             sidebar.classList.toggle('-translate-x-full');
         });
     }
     
-    // 初始状态：显示首页
-    document.getElementById('home').classList.remove('hidden');
-    
-    // 导航链接点击事件
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 移除所有链接的active类
-            navLinks.forEach(l => l.classList.remove('active', 'bg-gray-100'));
-            
-            // 为当前点击的链接添加active类
-            this.classList.add('active', 'bg-gray-100');
-            
-            // 导航到目标页面
-            const target = this.getAttribute('href').substring(1);
-            navigateTo(target);
-            
-            // 在移动设备上，点击后关闭侧边栏
-            if (window.innerWidth < 768) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        });
-    });
-}
-
-// 导航到指定页面
-function navigateTo(target) {
-    // 隐藏所有页面
-    const sections = document.querySelectorAll('main section');
-    sections.forEach(section => section.classList.add('hidden'));
-    
-    // 移除所有导航链接的激活状态
-    const navLinks = document.querySelectorAll('#sidebar a');
-    navLinks.forEach(link => link.classList.remove('active'));
-    
-    // 找到对应的导航链接并激活
-    const targetLink = document.querySelector(`#sidebar a[href="#${target}"]`);
-    if (targetLink) {
-        targetLink.classList.add('active');
-    }
-    
-    // 显示目标页面
-    const targetSection = document.getElementById(target);
-    if (targetSection) {
-        targetSection.classList.remove('hidden');
-        
-        // 触发自定义导航事件
-        const navigatedEvent = new CustomEvent('navigated', {
-            detail: {
-                target: target
-            }
-        });
-        document.dispatchEvent(navigatedEvent);
-        
-        // 特殊处理 - 每次进入柜me页面时刷新天气数据
-        if (target === 'cuime-section') {
-            fetchWeatherData();
-        }
-    } else {
-        console.error(`未找到目标部分: ${target}`);
-        // 默认显示首页
-        document.getElementById('home').classList.remove('hidden');
+    // 初始状态：显示首页，并触发导航事件
+    const homeSection = document.getElementById('home');
+    if (homeSection) {
+        homeSection.classList.remove('hidden');
         
         // 触发导航到首页的事件
         const navigatedEvent = new CustomEvent('navigated', {
@@ -232,6 +166,75 @@ function navigateTo(target) {
             }
         });
         document.dispatchEvent(navigatedEvent);
+    }
+    
+    // 导航链接点击事件
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 获取目标链接
+            const targetHref = this.getAttribute('href');
+            if (!targetHref) return;
+            
+            // 处理导航
+            handleNavigation(this);
+        });
+    });
+}
+
+// 导航到指定页面
+function navigateTo(target) {
+    if (!target) return;
+    
+    // 隐藏所有页面
+    const sections = document.querySelectorAll('main section');
+    sections.forEach(section => section.classList.add('hidden'));
+    
+    // 移除所有导航链接的激活状态
+    const navLinks = document.querySelectorAll('#sidebar a');
+    navLinks.forEach(link => link.classList.remove('active', 'bg-gray-100'));
+    
+    // 找到对应的导航链接并激活
+    const targetLink = document.querySelector(`#sidebar a[href="#${target}"]`);
+    if (targetLink) {
+        targetLink.classList.add('active', 'bg-gray-100');
+    }
+    
+    // 显示目标页面
+    const targetSection = document.getElementById(target);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        
+        // 特殊处理 - 每次进入柜me页面时刷新天气数据
+        if (target === 'cuime-section') {
+            if (typeof fetchWeatherData === 'function') {
+                fetchWeatherData();
+            }
+        }
+        
+        // 触发自定义导航事件
+        const navigatedEvent = new CustomEvent('navigated', {
+            detail: {
+                target: target
+            }
+        });
+        document.dispatchEvent(navigatedEvent);
+    } else {
+        console.error(`未找到目标部分: ${target}`);
+        // 默认显示首页
+        const homeSection = document.getElementById('home');
+        if (homeSection) {
+            homeSection.classList.remove('hidden');
+            
+            // 触发导航到首页的事件
+            const navigatedEvent = new CustomEvent('navigated', {
+                detail: {
+                    target: 'home'
+                }
+            });
+            document.dispatchEvent(navigatedEvent);
+        }
     }
 }
 
@@ -1253,4 +1256,19 @@ function showToast(message, type = 'info') {
             document.body.removeChild(toast);
         }, 300);
     }, 3000);
-} 
+}
+
+// 页面初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化侧边栏
+    initSidebar();
+    
+    // 初始化黑洞眼睛
+    initBlackholeEyes();
+    
+    // 初始化聊天功能
+    initChat();
+    
+    // 初始化柜me功能
+    initCuime();
+}); 

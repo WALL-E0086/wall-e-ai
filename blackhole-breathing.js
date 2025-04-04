@@ -18,7 +18,7 @@ window.addEventListener('load', function() {
         pauseTime: 500,         // 暂停时间 (ms)
         minScale: 1,            // 最小缩放比例
         maxScale: 1.12,         // 最大缩放比例
-        awakeScale: 1.5,        // 唤醒时的缩放比例 (增大了)
+        awakeScale: 1.5,        // 唤醒时的缩放比例
         idleTimeout: 5000,      // 恢复到待机状态的时间（毫秒）
         easing: (p) => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2,  // 缓动函数
         awakeAnimationTime: 800, // 唤醒动画时间
@@ -92,6 +92,9 @@ window.addEventListener('load', function() {
 
     // 设置待机状态（睡眠状态）
     function setIdleState() {
+        // 如果正在过渡动画中，不执行
+        if (isTransitioning) return;
+        
         console.log("进入待机状态（睡眠）");
         isAwake = false;
         
@@ -99,7 +102,7 @@ window.addEventListener('load', function() {
         blackholeCore.classList.remove('awake');
         
         // 设置眼睛为闭眼状态
-        if (!eyes.classList.contains('sleeping-eyes')) {
+        if (eyes && !eyes.classList.contains('sleeping-eyes')) {
             eyes.classList.add('sleeping-eyes');
         }
         
@@ -109,7 +112,6 @@ window.addEventListener('load', function() {
         }
         
         // 显示ZZZ符号
-        const zzzContainer = document.querySelector('.zzz-container');
         if (zzzContainer) {
             zzzContainer.style.display = 'block';
         }
@@ -121,11 +123,18 @@ window.addEventListener('load', function() {
         // 启用对话气泡
         enableDreamBubble();
         
-        // 恢复呼吸动画
-        if (!animationId) {
-            stateStartTime = 0;
-            animationId = requestAnimationFrame(breathe);
+        // 确保当前没有呼吸动画在运行，再启动新的
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
         }
+        
+        // 恢复呼吸动画
+        stateStartTime = 0;
+        state = 'inhale';
+        currentScale = config.minScale;
+        applyScaleToCore(currentScale); // 立即应用初始比例
+        animationId = requestAnimationFrame(breathe);
     }
     
     // 苏醒动画效果
@@ -135,7 +144,7 @@ window.addEventListener('load', function() {
         const targetScale = config.awakeScale;
         const startTime = performance.now();
         
-        // 添加awake类名以保持放大状态 - 在动画开始前就添加类名
+        // 添加awake类名以保持放大状态
         blackholeCore.classList.add('awake');
         
         function animate(currentTime) {
@@ -164,6 +173,7 @@ window.addEventListener('load', function() {
     
     // 设置唤醒状态
     function setAwakeState(navigateToChat = false) {
+        // 如果正在过渡动画中，不执行
         if (isTransitioning) return;
         
         console.log("唤醒黑洞！", "是否将跳转:", navigateToChat);
@@ -173,6 +183,7 @@ window.addEventListener('load', function() {
         // 清除当前待机超时
         if (idleTimeoutId) {
             clearTimeout(idleTimeoutId);
+            idleTimeoutId = null;
         }
         
         // 设置新的待机超时 (除非要导航到聊天页面)
@@ -184,13 +195,14 @@ window.addEventListener('load', function() {
         }
         
         // 移除睡眠状态
-        eyes.classList.remove('sleeping-eyes');
+        if (eyes) {
+            eyes.classList.remove('sleeping-eyes');
+        }
         
         // 重置瞳孔位置到中心
         resetPupilsPosition();
         
         // 隐藏ZZZ符号
-        const zzzContainer = document.querySelector('.zzz-container');
         if (zzzContainer) {
             zzzContainer.style.display = 'none';
         }
@@ -219,6 +231,7 @@ window.addEventListener('load', function() {
             // 如果需要导航到聊天页面，则在动画完成后延迟跳转
             if (navigateToChat && chatLink) {
                 setTimeout(() => {
+                    console.log("唤醒动画完成，执行跳转");
                     chatLink.click();
                 }, config.transitionToChat);
             }
@@ -242,13 +255,17 @@ window.addEventListener('load', function() {
         });
     }
     
-    // 处理点击黑洞的事件
-    function handleBlackholeClick() {
+    // 处理点击黑洞的事件 - 只唤醒黑洞，不跳转
+    function handleBlackholeClick(e) {
+        // 阻止事件冒泡
+        e.stopPropagation();
+        
+        // 如果正在过渡动画中，不执行
         if (isTransitioning) return;
         
         if (!isAwake) {
-            // 如果当前不是唤醒状态，则唤醒
-            setAwakeState(false); // 传入false表示不需要在唤醒后跳转到聊天页面
+            // 如果当前不是唤醒状态，则唤醒（无需跳转）
+            setAwakeState(false); 
         } else {
             // 如果已经唤醒，增加点击次数
             tapCount++;
@@ -256,6 +273,7 @@ window.addEventListener('load', function() {
             // 清除当前待机超时
             if (idleTimeoutId) {
                 clearTimeout(idleTimeoutId);
+                idleTimeoutId = null;
             }
             
             // 设置新的待机超时
@@ -394,9 +412,6 @@ window.addEventListener('load', function() {
             return;
         }
         
-        // 获取黑洞容器位置
-        const containerRect = blackholeContainer.getBoundingClientRect();
-        
         // 设置吸积盘位置与黑洞容器完全一致
         setImportantStyle(accretionDisk, 'position', 'absolute');
         setImportantStyle(accretionDisk, 'top', '50%');
@@ -409,57 +424,36 @@ window.addEventListener('load', function() {
     // 初始化状态
     setIdleState();
     
-    // 监听唤醒并跳转的自定义事件
-    document.addEventListener('wakeUpAndTransition', function() {
+    // 监听唤醒并跳转的自定义事件 - 处理"叫醒瓦力"按钮点击
+    document.addEventListener('wakeUpAndTransition', function(e) {
         console.log("收到唤醒并跳转事件");
+        
+        // 如果正在过渡动画中，不执行
         if (isTransitioning) return;
         
-        // 如果已经处于唤醒状态，直接跳转到聊天页面
-        if (isAwake) {
-            console.log("已经处于唤醒状态，直接跳转");
-            if (chatLink) {
-                chatLink.click();
-            }
-        } else {
-            // 否则先唤醒再跳转
-            setAwakeState(true);
-        }
+        // 无论是否已经唤醒，都执行唤醒并跳转
+        // 如果已经唤醒，会跳过动画直接跳转
+        setAwakeState(true);
     });
     
-    // 监听导航事件，在切换到首页时设置为睡眠状态
-    document.addEventListener('navigated', function(e) {
-        const targetSection = e.detail.target;
-        console.log("导航到:", targetSection);
-        
-        // 如果不是导航到home，则不处理
-        if (targetSection !== 'home') return;
-        
-        // 如果当前不在首页导航到首页，设置为睡眠状态
-        setIdleState();
-    });
-    
-    // 添加点击事件监听器
+    // 添加点击事件监听器 - 只对黑洞核心生效
     if (blackholeCore) {
         blackholeCore.addEventListener('click', handleBlackholeClick);
-        
-        // 确保黑洞核心可以被点击
         blackholeCore.style.cursor = 'pointer';
     }
     
     // 确保黑洞容器也可以点击
     if (blackholeContainer) {
         blackholeContainer.addEventListener('click', function(e) {
-            // 如果点击是直接在容器上，而不是子元素，则触发核心点击
+            // 只有当点击事件的目标是容器本身时才触发，避免冒泡导致的重复触发
             if (e.target === blackholeContainer) {
-                handleBlackholeClick();
+                handleBlackholeClick(e);
             }
         });
-        
-        // 设置指针样式
         blackholeContainer.style.cursor = 'pointer';
     }
     
-    // 启动黑洞呼吸动画并设置为待机状态
+    // 启动黑洞呼吸动画
     setTimeout(() => {
         // 首先确保吸积盘与黑洞容器对齐
         alignAccretionDisk();
@@ -471,11 +465,37 @@ window.addEventListener('load', function() {
         setImportantStyle(blackholeCore, 'transform', 'translate(-50%, -50%)');
         
         console.log("启动黑洞核心呼吸动画");
-        animationId = requestAnimationFrame(breathe);
         
-        // 不需要再次调用setIdleState，因为我们已经在加载时设置了睡眠状态
-        // setIdleState();
+        // 确保当前没有动画在运行
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+        
+        // 启动新的呼吸动画
+        stateStartTime = 0;
+        state = 'inhale';
+        currentScale = config.minScale;
+        animationId = requestAnimationFrame(breathe);
     }, 1000); // 延迟一秒启动，确保页面加载完成
+
+    // 监听导航事件 - 确保从其他页面回到首页时黑洞处于睡眠状态
+    document.addEventListener('navigated', function(e) {
+        if (!e.detail || !e.detail.target) return;
+        
+        const targetSection = e.detail.target;
+        console.log("导航到:", targetSection);
+        
+        // 如果不是导航到home，则不处理
+        if (targetSection !== 'home') return;
+        
+        // 如果导航到首页，设置为睡眠状态
+        // 允许稍微延迟执行，确保其他导航逻辑已完成
+        setTimeout(() => {
+            if (targetSection === 'home') {
+                setIdleState();
+            }
+        }, 100);
+    });
 
     // 当页面隐藏或关闭时取消动画
     document.addEventListener('visibilitychange', () => {
@@ -493,9 +513,18 @@ window.addEventListener('load', function() {
 
     // 页面卸载时清理
     window.addEventListener('beforeunload', () => {
-        if (animationId) cancelAnimationFrame(animationId);
-        if (idleTimeoutId) clearTimeout(idleTimeoutId);
-        if (blushTimeout) clearTimeout(blushTimeout);
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+        if (idleTimeoutId) {
+            clearTimeout(idleTimeoutId);
+            idleTimeoutId = null;
+        }
+        if (blushTimeout) {
+            clearTimeout(blushTimeout);
+            blushTimeout = null;
+        }
     });
 
     // 在控制台打印初始化完成信息
