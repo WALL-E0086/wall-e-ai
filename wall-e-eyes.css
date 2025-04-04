@@ -250,8 +250,8 @@
 
 .zzz-container {
     position: absolute;
-    top: 20%;
-    left: -60%;
+    top: 30%;
+    right: -20px;
     width: 80px;
     height: 80px;
     z-index: 10;
@@ -287,51 +287,30 @@
     animation: zzzFloat 3s infinite 1s;
 }
 
-/* 脸红效果 - 简单线条样式 */
+/* 脸红效果 */
 .blush {
     position: absolute;
-    width: 30px;
-    height: 15px;
+    width: 40px;
+    height: 20px;
+    background-color: rgba(255, 100, 100, 0.5);
+    border-radius: 50%;
     z-index: 1;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
-.blush::before,
-.blush::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    opacity: 0.85;
-}
-
-/* 使用多条斜线模拟手绘效果 */
-.blush::before {
-    background-image: linear-gradient(90deg, transparent 20%, #ff6666 20%, #ff6666 22%, transparent 22%),
-                      linear-gradient(90deg, transparent 30%, #ff6666 30%, #ff6666 32%, transparent 32%),
-                      linear-gradient(90deg, transparent 40%, #ff6666 40%, #ff6666 42%, transparent 42%),
-                      linear-gradient(90deg, transparent 50%, #ff6666 50%, #ff6666 52%, transparent 52%),
-                      linear-gradient(90deg, transparent 60%, #ff6666 60%, #ff6666 62%, transparent 62%),
-                      linear-gradient(90deg, transparent 70%, #ff6666 70%, #ff6666 72%, transparent 72%);
-}
-
 .blush-left {
     top: 65%;
-    left: 20%;
-    transform: rotate(15deg);
+    left: 15%;
+    transform: translateY(-50%);
 }
 
 .blush-right {
     top: 65%;
-    right: 20%;
-    transform: rotate(-15deg);
+    right: 15%;
+    transform: translateY(-50%);
 }
 
 .blush.show {
-    opacity: 1;
+    opacity: 0.7;
 }
