@@ -108,37 +108,39 @@
     animation-delay: 0.1s;
 }
 
-/* 瞳孔随机移动动画 */
+/* 瞳孔随机移动动画 - 更平滑的版本 */
 @keyframes look-around {
-    0%, 10%, 90%, 100% {
+    0%, 100% {
         transform: translate(0, 0);
     }
-    20%, 25% {
+    25% {
         transform: translate(2px, 1px);
     }
-    40%, 45% {
-        transform: translate(-2px, -2px);
+    50% {
+        transform: translate(-1px, -1px);
     }
-    60%, 65% {
+    75% {
         transform: translate(1px, -1px);
-    }
-    80%, 85% {
-        transform: translate(-1px, 2px);
     }
 }
 
 /* 应用瞳孔移动动画 */
 .pupil {
     animation: look-around 8s ease-in-out infinite;
+    /* 确保瞳孔始终居中 */
+    transform-origin: center center;
 }
 
-/* 错开左右眼移动时间 */
-#pupil-left {
-    animation-delay: 0.3s;
-}
-
+/* 确保两只眼睛同步移动，移除不同的延迟时间 */
+#pupil-left, 
 #pupil-right {
     animation-delay: 0s;
+}
+
+/* 修改眼睛状态切换的过渡效果 */
+.eye-container, 
+.pupil {
+    transition: all 0.3s ease-out;
 }
 
 /* 睡眠状态的眼睛 */

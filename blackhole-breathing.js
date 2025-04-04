@@ -121,6 +121,9 @@ window.addEventListener('load', function() {
         // 移除睡眠状态
         eyes.classList.remove('sleeping-eyes');
         
+        // 重置瞳孔位置到中心
+        resetPupilsPosition();
+        
         // 隐藏ZZZ符号
         const zzzContainer = document.querySelector('.zzz-container');
         if (zzzContainer) {
@@ -148,6 +151,23 @@ window.addEventListener('load', function() {
         
         // 应用唤醒时的缩放效果
         applyScaleToCore(config.awakeScale);
+    }
+    
+    // 重置瞳孔位置到中心
+    function resetPupilsPosition() {
+        const pupils = document.querySelectorAll('.pupil');
+        pupils.forEach(pupil => {
+            // 暂停动画
+            pupil.style.animationPlayState = 'paused';
+            
+            // 重置位置
+            pupil.style.transform = 'translate(0, 0)';
+            
+            // 延迟后重新启动动画
+            setTimeout(() => {
+                pupil.style.animationPlayState = 'running';
+            }, 100);
+        });
     }
     
     // 处理点击黑洞的事件
