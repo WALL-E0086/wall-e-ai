@@ -135,6 +135,9 @@ window.addEventListener('load', function() {
         const targetScale = config.awakeScale;
         const startTime = performance.now();
         
+        // 添加awake类名以保持放大状态 - 在动画开始前就添加类名
+        blackholeCore.classList.add('awake');
+        
         function animate(currentTime) {
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / config.awakeAnimationTime, 1);
@@ -163,7 +166,7 @@ window.addEventListener('load', function() {
     function setAwakeState(navigateToChat = false) {
         if (isTransitioning) return;
         
-        console.log("唤醒黑洞！");
+        console.log("唤醒黑洞！", "是否将跳转:", navigateToChat);
         isAwake = true;
         tapCount = 1; // 初始化点击计数
         
@@ -213,9 +216,6 @@ window.addEventListener('load', function() {
         
         // 播放唤醒动画
         animateWakeUp(() => {
-            // 添加awake类名以保持放大状态
-            blackholeCore.classList.add('awake');
-            
             // 如果需要导航到聊天页面，则在动画完成后延迟跳转
             if (navigateToChat && chatLink) {
                 setTimeout(() => {
@@ -414,8 +414,28 @@ window.addEventListener('load', function() {
         console.log("收到唤醒并跳转事件");
         if (isTransitioning) return;
         
-        // 调用setAwakeState并传入true，表示需要在唤醒后跳转到聊天页面
-        setAwakeState(true);
+        // 如果已经处于唤醒状态，直接跳转到聊天页面
+        if (isAwake) {
+            console.log("已经处于唤醒状态，直接跳转");
+            if (chatLink) {
+                chatLink.click();
+            }
+        } else {
+            // 否则先唤醒再跳转
+            setAwakeState(true);
+        }
+    });
+    
+    // 监听导航事件，在切换到首页时设置为睡眠状态
+    document.addEventListener('navigated', function(e) {
+        const targetSection = e.detail.target;
+        console.log("导航到:", targetSection);
+        
+        // 如果不是导航到home，则不处理
+        if (targetSection !== 'home') return;
+        
+        // 如果当前不在首页导航到首页，设置为睡眠状态
+        setIdleState();
     });
     
     // 添加点击事件监听器

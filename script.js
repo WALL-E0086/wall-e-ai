@@ -100,13 +100,16 @@ function handleNavigation(element) {
     const navLinks = document.querySelectorAll('#sidebar a');
     const sections = document.querySelectorAll('main > section');
     
+    // 获取目标部分ID
+    const targetId = element.getAttribute('href').substring(1);
+    console.log('导航目标:', targetId);
+    
     // 移除所有活动状态
     navLinks.forEach(l => l.classList.remove('active'));
     sections.forEach(s => s.classList.add('hidden'));
     
     // 添加当前活动状态
     element.classList.add('active');
-    const targetId = element.getAttribute('href').substring(1);
     const targetSection = document.getElementById(targetId);
     
     if (targetSection) {
@@ -114,6 +117,14 @@ function handleNavigation(element) {
         // 确保滚动到顶部
         targetSection.scrollTop = 0;
     }
+    
+    // 触发自定义导航事件
+    const navigatedEvent = new CustomEvent('navigated', {
+        detail: {
+            target: targetId
+        }
+    });
+    document.dispatchEvent(navigatedEvent);
     
     // 在移动设备上关闭侧边栏
     if (window.innerWidth < 768) {
@@ -182,30 +193,45 @@ function navigateTo(target) {
     const sections = document.querySelectorAll('main section');
     sections.forEach(section => section.classList.add('hidden'));
     
+    // 移除所有导航链接的激活状态
+    const navLinks = document.querySelectorAll('#sidebar a');
+    navLinks.forEach(link => link.classList.remove('active'));
+    
+    // 找到对应的导航链接并激活
+    const targetLink = document.querySelector(`#sidebar a[href="#${target}"]`);
+    if (targetLink) {
+        targetLink.classList.add('active');
+    }
+    
     // 显示目标页面
-    switch(target) {
-        case 'home':
-            document.getElementById('home').classList.remove('hidden');
-            break;
-        case 'chat-section':
-            document.getElementById('chat-section').classList.remove('hidden');
-            break;
-        case 'cuime-section':
-            document.getElementById('cuime-section').classList.remove('hidden');
-            // 每次进入柜me页面时刷新天气数据
+    const targetSection = document.getElementById(target);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        
+        // 触发自定义导航事件
+        const navigatedEvent = new CustomEvent('navigated', {
+            detail: {
+                target: target
+            }
+        });
+        document.dispatchEvent(navigatedEvent);
+        
+        // 特殊处理 - 每次进入柜me页面时刷新天气数据
+        if (target === 'cuime-section') {
             fetchWeatherData();
-            break;
-        case 'time-section':
-            document.getElementById('time-section').classList.remove('hidden');
-            break;
-        case 'photo-section':
-            document.getElementById('photo-section').classList.remove('hidden');
-            break;
-        case 'about-section':
-            document.getElementById('about-section').classList.remove('hidden');
-            break;
-        default:
-            document.getElementById('home').classList.remove('hidden');
+        }
+    } else {
+        console.error(`未找到目标部分: ${target}`);
+        // 默认显示首页
+        document.getElementById('home').classList.remove('hidden');
+        
+        // 触发导航到首页的事件
+        const navigatedEvent = new CustomEvent('navigated', {
+            detail: {
+                target: 'home'
+            }
+        });
+        document.dispatchEvent(navigatedEvent);
     }
 }
 
