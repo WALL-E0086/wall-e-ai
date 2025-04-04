@@ -398,7 +398,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#chat" id="chat-link" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="chat-section">
+                            <a href="#chat-section" id="chat-link" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="chat-section">
                                 <i class="fas fa-comments w-5 text-center"></i>
                                 <span class="ml-3">瓦力哔哔机</span>
                             </a>
@@ -776,20 +776,19 @@
         
         // 当文档加载完成后修复开始对话按钮
         document.addEventListener('DOMContentLoaded', function() {
-            // 修复开始对话按钮 - 点击叫醒瓦力按钮时，触发黑洞核心点击事件
+            // 修复开始对话按钮 - 点击叫醒瓦力按钮时，获取blackhole-breathing.js中的函数进行处理
             const startChatBtn = document.getElementById('start-chat');
             const chatLink = document.getElementById('chat-link');
             const blackholeCore = document.querySelector('.blackhole-core');
             
             if (startChatBtn && chatLink) {
                 startChatBtn.addEventListener('click', function() {
-                    if (blackholeCore) {
-                        // 模拟点击黑洞核心，触发唤醒动画
-                        blackholeCore.click();
-                    } else {
-                        // 如果找不到黑洞核心，则直接跳转
-                        chatLink.click();
-                    }
+                    // 防止多次点击
+                    startChatBtn.disabled = true;
+                    
+                    // 创建一个自定义事件，通知blackhole-breathing.js执行唤醒并跳转
+                    const wakeUpEvent = new CustomEvent('wakeUpAndTransition');
+                    document.dispatchEvent(wakeUpEvent);
                 });
             }
             

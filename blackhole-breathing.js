@@ -174,7 +174,10 @@ window.addEventListener('load', function() {
         
         // 设置新的待机超时 (除非要导航到聊天页面)
         if (!navigateToChat) {
+            console.log("设置5秒后返回睡眠状态的计时器");
             idleTimeoutId = setTimeout(setIdleState, config.idleTimeout);
+        } else {
+            console.log("跳转模式，不设置自动返回睡眠");
         }
         
         // 移除睡眠状态
@@ -245,7 +248,7 @@ window.addEventListener('load', function() {
         
         if (!isAwake) {
             // 如果当前不是唤醒状态，则唤醒
-            setAwakeState(true); // 传入true表示需要在唤醒后跳转到聊天页面
+            setAwakeState(false); // 传入false表示不需要在唤醒后跳转到聊天页面
         } else {
             // 如果已经唤醒，增加点击次数
             tapCount++;
@@ -406,6 +409,15 @@ window.addEventListener('load', function() {
     // 初始化状态
     setIdleState();
     
+    // 监听唤醒并跳转的自定义事件
+    document.addEventListener('wakeUpAndTransition', function() {
+        console.log("收到唤醒并跳转事件");
+        if (isTransitioning) return;
+        
+        // 调用setAwakeState并传入true，表示需要在唤醒后跳转到聊天页面
+        setAwakeState(true);
+    });
+    
     // 添加点击事件监听器
     if (blackholeCore) {
         blackholeCore.addEventListener('click', handleBlackholeClick);
@@ -427,12 +439,6 @@ window.addEventListener('load', function() {
         blackholeContainer.style.cursor = 'pointer';
     }
     
-    // 也为"叫醒瓦力"按钮添加事件监听
-    const startChatButton = document.getElementById('start-chat');
-    if (startChatButton) {
-        startChatButton.addEventListener('click', setAwakeState);
-    }
-
     // 启动黑洞呼吸动画并设置为待机状态
     setTimeout(() => {
         // 首先确保吸积盘与黑洞容器对齐

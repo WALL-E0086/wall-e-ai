@@ -187,21 +187,21 @@ function navigateTo(target) {
         case 'home':
             document.getElementById('home').classList.remove('hidden');
             break;
-        case 'chat':
+        case 'chat-section':
             document.getElementById('chat-section').classList.remove('hidden');
             break;
-        case 'cuime':
+        case 'cuime-section':
             document.getElementById('cuime-section').classList.remove('hidden');
             // 每次进入柜me页面时刷新天气数据
             fetchWeatherData();
             break;
-        case 'time':
+        case 'time-section':
             document.getElementById('time-section').classList.remove('hidden');
             break;
-        case 'photo':
+        case 'photo-section':
             document.getElementById('photo-section').classList.remove('hidden');
             break;
-        case 'about':
+        case 'about-section':
             document.getElementById('about-section').classList.remove('hidden');
             break;
         default:
