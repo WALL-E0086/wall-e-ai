@@ -18,9 +18,11 @@ window.addEventListener('load', function() {
         pauseTime: 500,         // 暂停时间 (ms)
         minScale: 1,            // 最小缩放比例
         maxScale: 1.12,         // 最大缩放比例
-        awakeScale: 1.3,        // 唤醒时的缩放比例
+        awakeScale: 1.5,        // 唤醒时的缩放比例 (增大了)
         idleTimeout: 5000,      // 恢复到待机状态的时间（毫秒）
-        easing: (p) => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2  // 缓动函数
+        easing: (p) => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2,  // 缓动函数
+        awakeAnimationTime: 800, // 唤醒动画时间
+        transitionToChat: 1200   // 苏醒后跳转到对话页面的延迟
     };
 
     // 状态管理
@@ -32,6 +34,7 @@ window.addEventListener('load', function() {
     let idleTimeoutId = null;       // 恢复待机状态的超时ID
     let isAwake = false;            // 是否处于唤醒状态
     let tapCount = 0;               // 点击次数，用于脸红效果
+    let isTransitioning = false;    // 是否正在执行过渡动画
     
     // 获取眼睛和鼻涕泡元素
     const eyes = document.querySelector('.eyes');
@@ -39,6 +42,7 @@ window.addEventListener('load', function() {
     const blushLeft = document.querySelector('.blush-left');
     const blushRight = document.querySelector('.blush-right');
     const dreamBubble = document.querySelector('.dream-bubble');
+    const chatLink = document.getElementById('chat-link');
     
     console.log("黑洞核心和眼睛元素:", blackholeCore, eyes);
 
@@ -91,6 +95,9 @@ window.addEventListener('load', function() {
         console.log("进入待机状态（睡眠）");
         isAwake = false;
         
+        // 移除awake类名
+        blackholeCore.classList.remove('awake');
+        
         // 设置眼睛为闭眼状态
         if (!eyes.classList.contains('sleeping-eyes')) {
             eyes.classList.add('sleeping-eyes');
@@ -121,8 +128,41 @@ window.addEventListener('load', function() {
         }
     }
     
+    // 苏醒动画效果
+    function animateWakeUp(callback) {
+        isTransitioning = true;
+        const startScale = config.minScale;
+        const targetScale = config.awakeScale;
+        const startTime = performance.now();
+        
+        function animate(currentTime) {
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / config.awakeAnimationTime, 1);
+            
+            // 使用缓动函数使动画更自然
+            const easedProgress = config.easing(progress);
+            const newScale = startScale + (targetScale - startScale) * easedProgress;
+            
+            // 应用缩放
+            applyScaleToCore(newScale);
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                isTransitioning = false;
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
     // 设置唤醒状态
-    function setAwakeState() {
+    function setAwakeState(navigateToChat = false) {
+        if (isTransitioning) return;
+        
         console.log("唤醒黑洞！");
         isAwake = true;
         tapCount = 1; // 初始化点击计数
@@ -132,8 +172,10 @@ window.addEventListener('load', function() {
             clearTimeout(idleTimeoutId);
         }
         
-        // 设置新的待机超时
-        idleTimeoutId = setTimeout(setIdleState, config.idleTimeout);
+        // 设置新的待机超时 (除非要导航到聊天页面)
+        if (!navigateToChat) {
+            idleTimeoutId = setTimeout(setIdleState, config.idleTimeout);
+        }
         
         // 移除睡眠状态
         eyes.classList.remove('sleeping-eyes');
@@ -166,8 +208,18 @@ window.addEventListener('load', function() {
             animationId = null;
         }
         
-        // 应用唤醒时的缩放效果
-        applyScaleToCore(config.awakeScale);
+        // 播放唤醒动画
+        animateWakeUp(() => {
+            // 添加awake类名以保持放大状态
+            blackholeCore.classList.add('awake');
+            
+            // 如果需要导航到聊天页面，则在动画完成后延迟跳转
+            if (navigateToChat && chatLink) {
+                setTimeout(() => {
+                    chatLink.click();
+                }, config.transitionToChat);
+            }
+        });
     }
     
     // 重置瞳孔位置到中心
@@ -189,9 +241,11 @@ window.addEventListener('load', function() {
     
     // 处理点击黑洞的事件
     function handleBlackholeClick() {
+        if (isTransitioning) return;
+        
         if (!isAwake) {
             // 如果当前不是唤醒状态，则唤醒
-            setAwakeState();
+            setAwakeState(true); // 传入true表示需要在唤醒后跳转到聊天页面
         } else {
             // 如果已经唤醒，增加点击次数
             tapCount++;
@@ -242,72 +296,89 @@ window.addEventListener('load', function() {
     
     // 禁用对话气泡
     function disableDreamBubble() {
-        // 隐藏当前显示的气泡
-        const bubble = document.querySelector('.dream-bubble');
-        if (bubble) {
-            bubble.classList.remove('auto-animate', 'show');
-        }
-        
-        // 隐藏气泡容器
+        // 隐藏整个对话气泡容器
         const bubbleContainer = document.getElementById('dream-bubble-container');
         if (bubbleContainer) {
             bubbleContainer.style.display = 'none';
         }
+        
+        // 隐藏当前显示的气泡
+        const bubble = document.querySelector('.dream-bubble');
+        if (bubble) {
+            bubble.classList.remove('auto-animate', 'show');
+            bubble.style.opacity = '0';
+            bubble.style.transform = 'scale(0)';
+        }
+        
+        // 隐藏气泡文本
+        const bubbleText = document.getElementById('bubble-text');
+        if (bubbleText) {
+            bubbleText.classList.remove('auto-animate', 'show');
+            bubbleText.style.opacity = '0';
+        }
     }
 
-    // 呼吸动画函数
+    // 呼吸动画帧
     function breathe(timestamp) {
-        if (!stateStartTime) stateStartTime = timestamp;
-        const elapsed = timestamp - stateStartTime;
-
+        // 如果状态开始时间未初始化，则初始化
+        if (stateStartTime === 0) {
+            stateStartTime = timestamp;
+        }
+        
+        // 计算状态持续时间
+        const stateDuration = timestamp - stateStartTime;
+        
+        // 根据当前状态和持续时间计算缩放比例
         switch (state) {
             case 'inhale':
-                if (elapsed < config.inhaleTime) {
-                    // 吸气过程中，缩放从小变大
-                    const progress = elapsed / config.inhaleTime;
-                    currentScale = config.minScale + config.easing(progress) * (config.maxScale - config.minScale);
+                if (stateDuration < config.inhaleTime) {
+                    // 吸气阶段 - 从小到大
+                    const progress = stateDuration / config.inhaleTime;
+                    const easedProgress = config.easing(progress);
+                    currentScale = config.minScale + (config.maxScale - config.minScale) * easedProgress;
                 } else {
-                    // 吸气完成，切换到暂停状态
-                    state = 'pause-after-inhale';
+                    // 吸气完成，进入暂停阶段
+                    state = 'pause-inhaled';
                     stateStartTime = timestamp;
                     currentScale = config.maxScale;
                 }
                 break;
                 
-            case 'pause-after-inhale':
-                if (elapsed >= config.pauseTime) {
-                    // 暂停结束，切换到呼气状态
+            case 'pause-inhaled':
+                if (stateDuration >= config.pauseTime) {
+                    // 暂停完成，进入呼气阶段
                     state = 'exhale';
                     stateStartTime = timestamp;
                 }
                 break;
                 
             case 'exhale':
-                if (elapsed < config.exhaleTime) {
-                    // 呼气过程中，缩放从大变小
-                    const progress = elapsed / config.exhaleTime;
-                    currentScale = config.maxScale - config.easing(progress) * (config.maxScale - config.minScale);
+                if (stateDuration < config.exhaleTime) {
+                    // 呼气阶段 - 从大到小
+                    const progress = stateDuration / config.exhaleTime;
+                    const easedProgress = config.easing(progress);
+                    currentScale = config.maxScale - (config.maxScale - config.minScale) * easedProgress;
                 } else {
-                    // 呼气完成，切换到暂停状态
-                    state = 'pause-after-exhale';
+                    // 呼气完成，进入暂停阶段
+                    state = 'pause-exhaled';
                     stateStartTime = timestamp;
                     currentScale = config.minScale;
                 }
                 break;
                 
-            case 'pause-after-exhale':
-                if (elapsed >= config.pauseTime) {
-                    // 暂停结束，重新开始吸气
+            case 'pause-exhaled':
+                if (stateDuration >= config.pauseTime) {
+                    // 暂停完成，重新开始呼吸周期
                     state = 'inhale';
                     stateStartTime = timestamp;
                 }
                 break;
         }
-
-        // 应用当前缩放值到黑洞核心和眼睛
+        
+        // 应用当前缩放比例
         applyScaleToCore(currentScale);
         
-        // 继续动画循环
+        // 继续下一帧
         animationId = requestAnimationFrame(breathe);
     }
 
@@ -332,13 +403,28 @@ window.addEventListener('load', function() {
         console.log("已对齐吸积盘与黑洞容器");
     }
 
+    // 初始化状态
+    setIdleState();
+    
     // 添加点击事件监听器
     if (blackholeCore) {
         blackholeCore.addEventListener('click', handleBlackholeClick);
+        
+        // 确保黑洞核心可以被点击
+        blackholeCore.style.cursor = 'pointer';
     }
     
+    // 确保黑洞容器也可以点击
     if (blackholeContainer) {
-        blackholeContainer.addEventListener('click', handleBlackholeClick);
+        blackholeContainer.addEventListener('click', function(e) {
+            // 如果点击是直接在容器上，而不是子元素，则触发核心点击
+            if (e.target === blackholeContainer) {
+                handleBlackholeClick();
+            }
+        });
+        
+        // 设置指针样式
+        blackholeContainer.style.cursor = 'pointer';
     }
     
     // 也为"叫醒瓦力"按钮添加事件监听
@@ -385,4 +471,7 @@ window.addEventListener('load', function() {
         if (idleTimeoutId) clearTimeout(idleTimeoutId);
         if (blushTimeout) clearTimeout(blushTimeout);
     });
+
+    // 在控制台打印初始化完成信息
+    console.log("黑洞呼吸和互动效果初始化完成");
 });
