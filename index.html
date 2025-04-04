@@ -45,6 +45,43 @@
             animation-delay: 0.3s;
         }
         
+        /* 初始状态样式 - 确保页面一加载就是睡眠状态 */
+        .sleeping-eyes .eye-container {
+            transform: scaleY(1) !important;
+            animation: none !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+            border: none !important;
+        }
+        
+        .sleeping-eyes .pupil {
+            display: none !important;
+        }
+        
+        .sleeping-eyes .eye-container::before {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 10px;
+            background: transparent;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-bottom: 3px solid #999;
+            border-radius: 50%;
+        }
+        
+        /* 强制初始状态为睡眠状态 */
+        .eyes {
+            position: relative;
+            z-index: 3;
+        }
+        
+        .eyes.sleeping-eyes {
+            display: block !important;
+        }
+        
         /* 修复滚动问题 */
         html, body {
             overflow: hidden !important;
@@ -366,7 +403,7 @@
                     <!-- 黑洞效果 - 位置与波纹和吸积盘100%重合 -->
                     <div class="blackhole-container">
                         <div class="blackhole-core">
-                            <div class="eyes">
+                            <div class="eyes sleeping-eyes">
                                 <div class="eye-container">
                                     <div class="pupil" id="pupil-left">
                                         <!-- X形图案通过CSS生成 -->
@@ -383,12 +420,12 @@
                                 </div>
                             </div>
                             <!-- 添加鼻涕泡元素 -->
-                            <div class="nose-bubble"></div>
+                            <div class="nose-bubble active"></div>
                             <!-- 添加脸红元素 -->
                             <div class="blush blush-left"></div>
                             <div class="blush blush-right"></div>
                             <!-- 添加ZZZ睡眠符号 -->
-                            <div class="zzz-container">
+                            <div class="zzz-container" style="display: block;">
                                 <div class="zzz zzz-1">Z</div>
                                 <div class="zzz zzz-2">Z</div>
                                 <div class="zzz zzz-3">Z</div>
