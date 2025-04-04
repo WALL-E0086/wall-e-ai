@@ -144,7 +144,19 @@
 }
 
 /* 睡眠状态的眼睛 */
+.sleeping-eyes {
+    width: 100px;
+    height: 50px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-direction: row !important;
+}
+
 .sleeping-eyes .eye-container {
+    width: 42px;
+    height: 42px;
+    margin: 0 3px;
     transform: scaleY(1) !important;
     animation: none !important;
     background-color: transparent !important;
