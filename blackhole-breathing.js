@@ -10,7 +10,7 @@ window.addEventListener('load', function() {
     console.log("初始化黑洞呼吸效果");
 
     // 禁用可能存在的CSS动画
-    blackhole.style.animation = 'none';
+    blackhole.style.animation = 'none !important';
 
     // 配置参数
     const config = {
@@ -28,8 +28,18 @@ window.addEventListener('load', function() {
     let animationId = null;         // 动画帧ID
     let stateStartTime = 0;         // 当前状态开始时间
 
+    // 获取黑洞内部元素，以确保它们不受呼吸效果的影响
+    const blackholeCore = document.querySelector('.blackhole-core');
+    const accretionDisk = document.querySelector('.accretion-disk');
+    const eyes = document.querySelector('.eyes');
+
+    console.log("黑洞内部元素:", blackholeCore, accretionDisk, eyes);
+
     // 保存原始样式和位置信息
-    const originalTransform = window.getComputedStyle(blackhole).transform;
+    let originalTransform = window.getComputedStyle(blackhole).transform;
+    // 如果transform是none，设置为空字符串避免后续拼接出错
+    if (originalTransform === 'none') originalTransform = '';
+    
     const isMatrix = originalTransform && originalTransform !== 'none' && originalTransform.includes('matrix');
     
     // 检查元素是否已经居中定位
@@ -38,32 +48,34 @@ window.addEventListener('load', function() {
                              (style.left === '50%' || style.top === '50%') && 
                              style.transform.includes('translate');
     
-    // 调整元素样式以支持动画
-    if (!isAlreadyCentered) {
-        console.log("调整黑洞元素定位");
-        blackhole.style.position = 'absolute';
-        blackhole.style.left = '50%';
-        blackhole.style.top = '50%';
-        // 保留原有的transform属性，只添加translate部分
-        blackhole.style.transform = isMatrix 
-            ? `${originalTransform} translate(-50%, -50%)` 
-            : 'translate(-50%, -50%)';
+    console.log("原始transform:", originalTransform);
+    console.log("已经居中:", isAlreadyCentered);
+
+    // 将样式属性强制设置为!important
+    function setImportantStyle(element, property, value) {
+        element.style.setProperty(property, value, 'important');
     }
 
-    // 应用初始缩放
-    applyTransform(currentScale);
-
-    // 应用变换，保留元素居中效果
+    // 为黑洞元素应用transform
     function applyTransform(scale) {
+        // 构建包含缩放的transform字符串
+        let transformValue;
+        
         if (isAlreadyCentered) {
-            // 如果已经居中，只添加缩放效果
-            blackhole.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            // 如果已经居中，保留translate，添加缩放
+            // 正则表达式找到translate部分，然后添加scale
+            const translateMatch = originalTransform.match(/translate\([^)]+\)/);
+            const translatePart = translateMatch ? translateMatch[0] : 'translate(-50%, -50%)';
+            transformValue = `${translatePart} scale(${scale})`;
         } else {
-            // 否则需要组合原有变换
-            blackhole.style.transform = isMatrix
+            // 如果没有居中，添加居中和缩放
+            transformValue = isMatrix
                 ? `${originalTransform} translate(-50%, -50%) scale(${scale})`
                 : `translate(-50%, -50%) scale(${scale})`;
         }
+        
+        console.log("应用transform:", transformValue);
+        setImportantStyle(blackhole, 'transform', transformValue);
     }
 
     // 呼吸动画函数
@@ -118,16 +130,21 @@ window.addEventListener('load', function() {
         // 应用当前缩放值
         applyTransform(currentScale);
         
-        // 调试信息
-        // console.log(`状态: ${state}, 缩放: ${currentScale.toFixed(3)}`);
-        
         // 继续动画循环
         animationId = requestAnimationFrame(breathe);
     }
 
-    // 启动动画
-    console.log("启动黑洞呼吸动画");
-    animationId = requestAnimationFrame(breathe);
+    // 启动黑洞呼吸动画前的初始化设置
+    setTimeout(() => {
+        // 确保position和定位属性设置正确
+        setImportantStyle(blackhole, 'position', 'absolute');
+        setImportantStyle(blackhole, 'left', '50%');
+        setImportantStyle(blackhole, 'top', '30%');
+        setImportantStyle(blackhole, 'animation', 'none');
+        
+        console.log("启动黑洞呼吸动画");
+        animationId = requestAnimationFrame(breathe);
+    }, 1000); // 延迟一秒启动，确保页面其他元素已加载
 
     // 当页面隐藏或关闭时取消动画
     document.addEventListener('visibilitychange', () => {

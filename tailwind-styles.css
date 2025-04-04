@@ -67,12 +67,6 @@ main {
     z-index: 1 !important; /* 黑洞z-index: 1，确保在文字后面 */
     margin: 0 !important; /* 移除所有边距影响 */
     overflow: visible !important; /* 允许内容溢出，避免旋转线条被裁剪 */
-    animation: breathe 6s ease-in-out infinite; /* 添加呼吸效果 */
-}
-
-@keyframes breathe {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.05); }
 }
 
 /* 黑洞核心样式 - 调整黑洞主体大小 */
