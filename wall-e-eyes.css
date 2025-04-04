@@ -140,3 +140,106 @@
 #pupil-right {
     animation-delay: 0s;
 }
+
+/* 睡眠状态的眼睛 */
+.sleeping-eyes .eye-container {
+    transform: scaleY(0.1) !important;
+    animation: none !important;
+}
+
+/* 鼻涕泡样式 */
+.nose-bubble {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 2px solid #000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 20px) scale(0);
+    opacity: 0;
+    z-index: 10;
+    display: none;
+}
+
+.nose-bubble.active {
+    display: block;
+    animation: noseBubbleBreathing 4s ease-in-out infinite;
+}
+
+@keyframes noseBubbleBreathing {
+    0%, 100% {
+        transform: translate(-50%, 20px) scale(0.6);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, 20px) scale(1);
+        opacity: 0.9;
+    }
+}
+
+.nose-bubble::after {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 2px solid #000;
+    border-radius: 50%;
+    bottom: -5px;
+    left: -8px;
+}
+
+.nose-bubble-pop {
+    animation: bubblePop 0.5s ease-out forwards !important;
+}
+
+@keyframes bubblePop {
+    0% {
+        transform: translate(-50%, 20px) scale(1);
+        opacity: 0.9;
+    }
+    20% {
+        transform: translate(-50%, 20px) scale(1.1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate(-50%, 20px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* 脸红效果 */
+.blush {
+    position: absolute;
+    width: 40px;
+    height: 20px;
+    background-color: rgba(255, 100, 100, 0.5);
+    border-radius: 50%;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.blush-left {
+    top: 50%;
+    left: 20%;
+    transform: translateY(-50%);
+}
+
+.blush-right {
+    top: 50%;
+    right: 20%;
+    transform: translateY(-50%);
+}
+
+.blush.show {
+    opacity: 0.7;
+}
+
+/* 增强眼睛可见性 */
+.eye-container {
+    animation: blink-natural 4s ease-in-out infinite;
+    border: 2px solid #000;
+}
