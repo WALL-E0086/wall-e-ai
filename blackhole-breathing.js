@@ -137,6 +137,21 @@ window.addEventListener('load', function() {
         animationId = requestAnimationFrame(breathe);
     }
     
+    // 导出给外部调用的函数 - 强制进入睡眠状态
+    // 使其在window对象上可用
+    window.setIdleStateExternal = function() {
+        console.log("外部调用: 强制进入睡眠状态");
+        
+        // 清除当前待机超时
+        if (idleTimeoutId) {
+            clearTimeout(idleTimeoutId);
+            idleTimeoutId = null;
+        }
+        
+        // 调用内部的设置待机状态函数
+        setIdleState();
+    };
+    
     // 苏醒动画效果
     function animateWakeUp(callback) {
         isTransitioning = true;

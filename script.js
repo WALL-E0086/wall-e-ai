@@ -185,17 +185,27 @@ function initSidebar() {
 
 // 导航到指定页面
 function navigateTo(target) {
-    if (!target) return;
+    // 检查是否有自定义导航处理器（wake-up-transition.js）
+    if (window.customNavigationActive) {
+        console.log("使用自定义导航处理器");
+        return; // 让wake-up-transition.js处理导航
+    }
+    
+    console.log("使用原始导航处理器");
     
     // 隐藏所有页面
     const sections = document.querySelectorAll('main section');
-    sections.forEach(section => section.classList.add('hidden'));
+    sections.forEach(section => {
+        section.classList.add('hidden');
+    });
     
-    // 移除所有导航链接的激活状态
+    // 移除所有导航链接的活动状态
     const navLinks = document.querySelectorAll('#sidebar a');
-    navLinks.forEach(link => link.classList.remove('active', 'bg-gray-100'));
+    navLinks.forEach(link => {
+        link.classList.remove('active', 'bg-gray-100');
+    });
     
-    // 找到对应的导航链接并激活
+    // 为目标链接添加活动状态
     const targetLink = document.querySelector(`#sidebar a[href="#${target}"]`);
     if (targetLink) {
         targetLink.classList.add('active', 'bg-gray-100');
@@ -1256,6 +1266,42 @@ function showToast(message, type = 'info') {
             document.body.removeChild(toast);
         }, 300);
     }, 3000);
+}
+
+// 初始化应用
+function init() {
+    console.log("初始化瓦力AI应用...");
+    
+    // 初始化侧边栏和导航
+    initSidebar();
+    initNavigation();
+    
+    // 设置导航处理兼容性标志 - 允许wake-up-transition.js检测是否需要接管导航
+    window.customNavigationActive = true;
+    
+    // 初始化黑洞眼睛动画
+    initBlackholeEyes();
+    
+    // 初始化聊天功能
+    initChat();
+    
+    // 初始化柜me页面功能
+    initCuime();
+    
+    // 加载上次的偏好设置
+    loadPreferences();
+    
+    // 初始化黑洞动画（不直接调用，由黑洞脚本自行初始化）
+    
+    // 默认导航到首页
+    navigateTo('home');
+    
+    console.log("应用初始化完成!");
+    
+    // 显示欢迎消息
+    setTimeout(function() {
+        showToast("欢迎使用瓦力AI助手！", "success");
+    }, 500);
 }
 
 // 页面初始化

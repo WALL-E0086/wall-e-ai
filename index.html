@@ -773,6 +773,7 @@
         document.write('<script src="script.js?v=' + scriptTimestamp + '"><\/script>');
         document.write('<script src="force-update.js?v=' + scriptTimestamp + '"><\/script>');
         document.write('<script src="blackhole-breathing.js?v=' + scriptTimestamp + '"><\/script>');
+        document.write('<script src="wake-up-transition.js?v=' + scriptTimestamp + '"><\/script>');
         
         // 当文档加载完成后修复开始对话按钮
         document.addEventListener('DOMContentLoaded', function() {
@@ -780,24 +781,8 @@
             const startChatBtn = document.getElementById('start-chat');
             
             if (startChatBtn) {
-                startChatBtn.addEventListener('click', function(e) {
-                    // 防止按钮默认行为和事件冒泡
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // 防止多次点击
-                    startChatBtn.disabled = true;
-                    
-                    // 创建并触发自定义事件，通知blackhole-breathing.js执行唤醒并跳转
-                    console.log("点击了叫醒瓦力按钮，触发唤醒并跳转事件");
-                    const wakeUpEvent = new CustomEvent('wakeUpAndTransition');
-                    document.dispatchEvent(wakeUpEvent);
-                    
-                    // 2秒后重新启用按钮
-                    setTimeout(() => {
-                        startChatBtn.disabled = false;
-                    }, 2000);
-                });
+                // 由于我们在wake-up-transition.js中已经处理了这个按钮，这里不再重复添加事件监听器
+                console.log("开始对话按钮初始化，将由wake-up-transition.js管理");
             }
             
             // 确保对话泡容器存在，如果不存在则创建
