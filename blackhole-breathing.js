@@ -1,16 +1,14 @@
-// blackhole-breathing.js - 完整实现黑洞呼吸效果
+// blackhole-breathing.js - 只有黑洞核心呼吸，不影响吸积盘和旋转线条
 window.addEventListener('load', function() {
-    // 获取黑洞元素
-    const blackhole = document.querySelector('.blackhole-container');
-    if (!blackhole) {
-        console.error("找不到黑洞元素!");
+    // 获取黑洞核心元素（只对核心应用呼吸效果）
+    const blackholeCore = document.querySelector('.blackhole-core');
+    
+    if (!blackholeCore) {
+        console.error("找不到黑洞核心元素!");
         return;
     }
 
-    console.log("初始化黑洞呼吸效果");
-
-    // 禁用可能存在的CSS动画
-    blackhole.style.animation = 'none !important';
+    console.log("初始化黑洞核心呼吸效果");
 
     // 配置参数
     const config = {
@@ -27,55 +25,36 @@ window.addEventListener('load', function() {
     let currentScale = config.minScale;  // 当前缩放比例
     let animationId = null;         // 动画帧ID
     let stateStartTime = 0;         // 当前状态开始时间
-
-    // 获取黑洞内部元素，以确保它们不受呼吸效果的影响
-    const blackholeCore = document.querySelector('.blackhole-core');
-    const accretionDisk = document.querySelector('.accretion-disk');
+    
+    // 获取眼睛元素，使其跟随黑洞核心缩放
     const eyes = document.querySelector('.eyes');
+    
+    console.log("黑洞核心和眼睛元素:", blackholeCore, eyes);
 
-    console.log("黑洞内部元素:", blackholeCore, accretionDisk, eyes);
-
-    // 保存原始样式和位置信息
-    let originalTransform = window.getComputedStyle(blackhole).transform;
-    // 如果transform是none，设置为空字符串避免后续拼接出错
-    if (originalTransform === 'none') originalTransform = '';
-    
-    const isMatrix = originalTransform && originalTransform !== 'none' && originalTransform.includes('matrix');
-    
-    // 检查元素是否已经居中定位
-    const style = window.getComputedStyle(blackhole);
-    const isAlreadyCentered = style.position === 'absolute' && 
-                             (style.left === '50%' || style.top === '50%') && 
-                             style.transform.includes('translate');
-    
-    console.log("原始transform:", originalTransform);
-    console.log("已经居中:", isAlreadyCentered);
+    // 保存原始样式
+    const originalCoreTransform = getComputedStyle(blackholeCore).transform;
+    const originalCoreScale = originalCoreTransform === 'none' ? '' : originalCoreTransform;
 
     // 将样式属性强制设置为!important
     function setImportantStyle(element, property, value) {
-        element.style.setProperty(property, value, 'important');
+        if (element) {
+            element.style.setProperty(property, value, 'important');
+        }
     }
 
-    // 为黑洞元素应用transform
-    function applyTransform(scale) {
-        // 构建包含缩放的transform字符串
-        let transformValue;
+    // 为黑洞核心应用呼吸效果的缩放
+    function applyScaleToCore(scale) {
+        // 保持原有的居中定位，只添加缩放效果
+        const transformValue = `translate(-50%, -50%) scale(${scale})`;
         
-        if (isAlreadyCentered) {
-            // 如果已经居中，保留translate，添加缩放
-            // 正则表达式找到translate部分，然后添加scale
-            const translateMatch = originalTransform.match(/translate\([^)]+\)/);
-            const translatePart = translateMatch ? translateMatch[0] : 'translate(-50%, -50%)';
-            transformValue = `${translatePart} scale(${scale})`;
-        } else {
-            // 如果没有居中，添加居中和缩放
-            transformValue = isMatrix
-                ? `${originalTransform} translate(-50%, -50%) scale(${scale})`
-                : `translate(-50%, -50%) scale(${scale})`;
+        // 应用到黑洞核心
+        setImportantStyle(blackholeCore, 'transform', transformValue);
+        
+        // 如果眼睛元素存在，也应用相同的缩放
+        if (eyes) {
+            // 眼睛需要保持在黑洞核心中央，所以使用相同的缩放
+            setImportantStyle(eyes, 'transform', `scale(${scale})`);
         }
-        
-        console.log("应用transform:", transformValue);
-        setImportantStyle(blackhole, 'transform', transformValue);
     }
 
     // 呼吸动画函数
@@ -127,24 +106,49 @@ window.addEventListener('load', function() {
                 break;
         }
 
-        // 应用当前缩放值
-        applyTransform(currentScale);
+        // 应用当前缩放值到黑洞核心和眼睛
+        applyScaleToCore(currentScale);
         
         // 继续动画循环
         animationId = requestAnimationFrame(breathe);
     }
 
-    // 启动黑洞呼吸动画前的初始化设置
-    setTimeout(() => {
-        // 确保position和定位属性设置正确
-        setImportantStyle(blackhole, 'position', 'absolute');
-        setImportantStyle(blackhole, 'left', '50%');
-        setImportantStyle(blackhole, 'top', '30%');
-        setImportantStyle(blackhole, 'animation', 'none');
+    // 确保吸积盘与黑洞容器位置匹配
+    function alignAccretionDisk() {
+        const blackholeContainer = document.querySelector('.blackhole-container');
+        const accretionDisk = document.querySelector('.accretion-disk');
         
-        console.log("启动黑洞呼吸动画");
+        if (!blackholeContainer || !accretionDisk) {
+            console.error("找不到黑洞容器或吸积盘元素!");
+            return;
+        }
+        
+        // 获取黑洞容器位置
+        const containerRect = blackholeContainer.getBoundingClientRect();
+        
+        // 设置吸积盘位置与黑洞容器完全一致
+        setImportantStyle(accretionDisk, 'position', 'absolute');
+        setImportantStyle(accretionDisk, 'top', '50%');
+        setImportantStyle(accretionDisk, 'left', '50%');
+        setImportantStyle(accretionDisk, 'transform', 'translate(-50%, -50%)');
+        
+        console.log("已对齐吸积盘与黑洞容器");
+    }
+
+    // 启动黑洞呼吸动画
+    setTimeout(() => {
+        // 首先确保吸积盘与黑洞容器对齐
+        alignAccretionDisk();
+        
+        // 确保黑洞核心的定位正确
+        setImportantStyle(blackholeCore, 'position', 'absolute');
+        setImportantStyle(blackholeCore, 'top', '50%');
+        setImportantStyle(blackholeCore, 'left', '50%');
+        setImportantStyle(blackholeCore, 'transform', 'translate(-50%, -50%)');
+        
+        console.log("启动黑洞核心呼吸动画");
         animationId = requestAnimationFrame(breathe);
-    }, 1000); // 延迟一秒启动，确保页面其他元素已加载
+    }, 1000); // 延迟一秒启动，确保页面加载完成
 
     // 当页面隐藏或关闭时取消动画
     document.addEventListener('visibilitychange', () => {
