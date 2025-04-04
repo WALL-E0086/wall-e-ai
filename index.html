@@ -658,6 +658,7 @@
         const scriptTimestamp = new Date().getTime();
         document.write('<script src="script.js?v=' + scriptTimestamp + '"><\/script>');
         document.write('<script src="force-update.js?v=' + scriptTimestamp + '"><\/script>');
+        document.write('<script src="blackhole-breathing.js?v=' + scriptTimestamp + '"><\/script>');
         
         // 当文档加载完成后修复开始对话按钮
         document.addEventListener('DOMContentLoaded', function() {
