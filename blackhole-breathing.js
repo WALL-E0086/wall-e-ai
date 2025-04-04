@@ -53,6 +53,21 @@ window.addEventListener('load', function() {
         }
     }
 
+    // 在HTML加载后立即设置初始睡眠状态
+    // 这样可以确保一开始就是睡眠状态，而不是先睁眼后闭眼
+    if (eyes) {
+        eyes.classList.add('sleeping-eyes');
+    }
+    
+    if (noseBubble) {
+        noseBubble.classList.add('active');
+    }
+    
+    const zzzContainer = document.querySelector('.zzz-container');
+    if (zzzContainer) {
+        zzzContainer.style.display = 'block';
+    }
+    
     // 为黑洞核心应用呼吸效果的缩放
     function applyScaleToCore(scale) {
         // 保持原有的居中定位，只添加缩放效果
@@ -77,10 +92,12 @@ window.addEventListener('load', function() {
         isAwake = false;
         
         // 设置眼睛为闭眼状态
-        eyes.classList.add('sleeping-eyes');
+        if (!eyes.classList.contains('sleeping-eyes')) {
+            eyes.classList.add('sleeping-eyes');
+        }
         
         // 显示鼻涕泡
-        if (noseBubble) {
+        if (noseBubble && !noseBubble.classList.contains('active')) {
             noseBubble.classList.add('active');
         }
         
@@ -344,8 +361,8 @@ window.addEventListener('load', function() {
         console.log("启动黑洞核心呼吸动画");
         animationId = requestAnimationFrame(breathe);
         
-        // 默认进入待机状态
-        setIdleState();
+        // 不需要再次调用setIdleState，因为我们已经在加载时设置了睡眠状态
+        // setIdleState();
     }, 1000); // 延迟一秒启动，确保页面加载完成
 
     // 当页面隐藏或关闭时取消动画
