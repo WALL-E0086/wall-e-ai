@@ -232,28 +232,29 @@
     }
 }
 
-/* 脸红效果 */
+/* 脸红效果 - 蜡笔风格 */
 .blush {
     position: absolute;
-    width: 40px;
-    height: 20px;
-    background-color: rgba(255, 100, 100, 0.5);
+    width: 28px;
+    height: 12px;
     border-radius: 50%;
     z-index: 1;
     opacity: 0;
     transition: opacity 0.3s ease;
+    background-color: transparent;
+    border: 3px solid #ff6666;
 }
 
 .blush-left {
-    top: 60%;
+    top: 70%;
     left: 15%;
-    transform: translateY(-50%);
+    transform: rotate(15deg);
 }
 
 .blush-right {
-    top: 60%;
+    top: 70%;
     right: 15%;
-    transform: translateY(-50%);
+    transform: rotate(-15deg);
 }
 
 .blush.show {
@@ -268,18 +269,18 @@
     }
     50% {
         opacity: 1;
-        transform: scale(1) translate(-10px, -10px);
+        transform: scale(1) translate(10px, -10px);
     }
     100% {
         opacity: 0;
-        transform: scale(1.2) translate(-20px, -20px);
+        transform: scale(1.2) translate(20px, -20px);
     }
 }
 
 .zzz-container {
     position: absolute;
     top: 30%;
-    right: 0;
+    left: 10%;
     width: 80px;
     height: 80px;
     z-index: 10;
@@ -297,20 +298,20 @@
 .zzz-1 {
     font-size: 16px;
     bottom: 0;
-    right: 5px;
+    left: 5px;
     animation: zzzFloat 3s infinite 0s;
 }
 
 .zzz-2 {
     font-size: 20px;
     bottom: 5px;
-    right: 20px;
+    left: 20px;
     animation: zzzFloat 3s infinite 0.5s;
 }
 
 .zzz-3 {
     font-size: 24px;
     bottom: 10px;
-    right: 35px;
+    left: 35px;
     animation: zzzFloat 3s infinite 1s;
 }
