@@ -84,6 +84,12 @@ window.addEventListener('load', function() {
             noseBubble.classList.add('active');
         }
         
+        // 显示ZZZ符号
+        const zzzContainer = document.querySelector('.zzz-container');
+        if (zzzContainer) {
+            zzzContainer.style.display = 'block';
+        }
+        
         // 移除脸红效果
         if (blushLeft) blushLeft.classList.remove('show');
         if (blushRight) blushRight.classList.remove('show');
@@ -114,6 +120,12 @@ window.addEventListener('load', function() {
         
         // 移除睡眠状态
         eyes.classList.remove('sleeping-eyes');
+        
+        // 隐藏ZZZ符号
+        const zzzContainer = document.querySelector('.zzz-container');
+        if (zzzContainer) {
+            zzzContainer.style.display = 'none';
+        }
         
         // 移除鼻涕泡并播放破裂动画
         if (noseBubble && noseBubble.classList.contains('active')) {
