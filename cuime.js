@@ -4,6 +4,9 @@
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
+    // 初始化全局状态
+    initializeGlobalState();
+    
     // 初始化页面
     initializePage();
 
@@ -13,12 +16,129 @@ document.addEventListener('DOMContentLoaded', function() {
     // 加载用户信息
     loadUserProfile();
     
+    // 加载位置数据
+    loadLocationData();
+    
     // 获取天气数据
     fetchWeatherData();
     
     // 加载衣橱数据
     loadWardrobeData();
 });
+
+/**
+ * 初始化全局状态
+ */
+function initializeGlobalState() {
+    // 如果全局状态对象不存在，则创建
+    if (!window.globalState) {
+        window.globalState = {};
+    }
+    
+    // 初始化用户配置文件
+    window.globalState.userProfile = {
+        name: '',
+        avatar: '',
+        gender: '',
+        height: '',
+        weight: '',
+        age: '',
+        style: 'casual', // 默认休闲风格
+        favoriteColors: [],
+        bodyShape: '',
+        skinTone: '',
+        occasions: []
+    };
+    
+    // 初始化位置信息
+    window.globalState.userLocation = {
+        city: '',
+        province: '',
+        district: '',
+        source: 'auto', // auto自动获取，manual手动设置
+        manuallySet: false
+    };
+    
+    // 初始化天气数据
+    window.globalState.weatherData = null;
+    
+    // 初始化衣橱数据
+    window.globalState.wardrobeData = {
+        tops: [],
+        bottoms: [],
+        shoes: [],
+        outerwear: [],
+        accessories: []
+    };
+    
+    // 初始化穿搭推荐
+    window.globalState.outfitRecommendations = {
+        current: null,
+        history: []
+    };
+    
+    // 初始化推送设置
+    window.globalState.pushNotifications = {
+        enabled: false,
+        weatherAlerts: true,
+        dailyOutfitRecommendation: true,
+        specialEvents: true,
+        lastNotificationTime: 0,
+        notificationHistory: []
+    };
+    
+    // 初始化工具对象
+    if (!window.utils) {
+        window.utils = {
+            // 格式化日期
+            formatDate: function(date) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+                return date.toLocaleDateString('zh-CN', options);
+            },
+            
+            // 格式化温度
+            formatTemp: function(temp) {
+                return `${Math.round(temp)}°`;
+            },
+            
+            // 存储工具
+            storage: {
+                // 保存数据到本地存储
+                save: function(key, data) {
+                    try {
+                        localStorage.setItem(key, JSON.stringify(data));
+                        return true;
+                    } catch (error) {
+                        console.error('保存数据失败:', error);
+                        return false;
+                    }
+                },
+                
+                // 从本地存储加载数据
+                load: function(key) {
+                    try {
+                        const data = localStorage.getItem(key);
+                        return data ? JSON.parse(data) : null;
+                    } catch (error) {
+                        console.error('加载数据失败:', error);
+                        return null;
+                    }
+                },
+                
+                // 从本地存储删除数据
+                remove: function(key) {
+                    try {
+                        localStorage.removeItem(key);
+                        return true;
+                    } catch (error) {
+                        console.error('删除数据失败:', error);
+                        return false;
+                    }
+                }
+            }
+        };
+    }
+}
 
 /**
  * 初始化页面
@@ -69,6 +189,83 @@ function setupEventListeners() {
             showNotification('衣橱功能正在开发中...', 'info');
         });
     }
+    
+    // 切换位置按钮
+    const changeLocationBtn = document.getElementById('change-location');
+    if (changeLocationBtn) {
+        changeLocationBtn.addEventListener('click', function() {
+            openLocationModal();
+        });
+    }
+    
+    // 头像上传按钮
+    const avatarUploadBtn = document.getElementById('avatar-upload');
+    if (avatarUploadBtn) {
+        avatarUploadBtn.addEventListener('change', handleAvatarUpload);
+    }
+    
+    // 保存个人信息按钮
+    const saveProfileBtn = document.getElementById('save-profile');
+    if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', saveProfile);
+    }
+    
+    // 关闭个人信息编辑器按钮
+    const closeProfileBtn = document.getElementById('close-profile-editor');
+    if (closeProfileBtn) {
+        closeProfileBtn.addEventListener('click', closeProfileEditor);
+    }
+    
+    // 点击天气卡片查看详情
+    const weatherCard = document.querySelector('.card.bg-white:first-child');
+    if (weatherCard) {
+        weatherCard.addEventListener('click', function() {
+            const weatherContent = document.getElementById('weather-content');
+            if (weatherContent) {
+                if (weatherContent.classList.contains('hidden')) {
+                    weatherContent.classList.remove('hidden');
+                    const weatherLoader = document.getElementById('weather-loader');
+                    if (weatherLoader) {
+                        weatherLoader.classList.add('hidden');
+                    }
+                }
+            }
+        });
+    }
+    
+    // 设置位置相关事件
+    setupLocationEvents();
+    
+    // 设置季节选择器事件
+    const seasonOptions = document.querySelectorAll('.season-option');
+    seasonOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            seasonOptions.forEach(opt => opt.classList.remove('bg-blue-500', 'text-white'));
+            this.classList.add('bg-blue-500', 'text-white');
+            
+            // 根据季节更新穿搭推荐
+            const season = this.getAttribute('data-season');
+            if (season) {
+                showNotification(`已切换到${getSeasionName(season)}装搭配`, 'info');
+                // TODO: 实现基于季节的搭配推荐
+            }
+        });
+    });
+}
+
+/**
+ * 获取季节名称
+ * @param {string} season - 季节代码
+ * @returns {string} 季节名称
+ */
+function getSeasionName(season) {
+    const seasonMap = {
+        'spring': '春季',
+        'summer': '夏季',
+        'autumn': '秋季',
+        'winter': '冬季'
+    };
+    return seasonMap[season] || '四季';
 }
 
 /**
@@ -168,11 +365,445 @@ function updateProfileUI() {
 }
 
 /**
+ * 加载位置数据
+ */
+function loadLocationData() {
+    try {
+        // 从本地存储加载位置信息
+        const savedLocation = window.utils.storage.load('userLocation');
+        if (savedLocation) {
+            window.globalState.userLocation = { ...window.globalState.userLocation, ...savedLocation };
+        }
+        
+        // 如果没有位置信息或没有手动设置过，尝试通过IP获取
+        if (!window.globalState.userLocation.city || !window.globalState.userLocation.manuallySet) {
+            // 我们会在fetchWeatherData中处理位置获取
+        }
+        
+        // 设置位置相关事件
+        setupLocationEvents();
+    } catch (error) {
+        console.error('加载位置数据时出错:', error);
+    }
+}
+
+/**
+ * 设置位置选择相关事件
+ */
+function setupLocationEvents() {
+    try {
+        // 关闭按钮
+        const closeLocationBtn = document.getElementById('close-location-modal');
+        if (closeLocationBtn) {
+            closeLocationBtn.addEventListener('click', closeLocationModal);
+        }
+        
+        // 当前位置按钮
+        const useCurrentLocationBtn = document.getElementById('use-current-location');
+        if (useCurrentLocationBtn) {
+            useCurrentLocationBtn.addEventListener('click', function() {
+                // 使用IP定位获取当前城市
+                getLocationByIP();
+                closeLocationModal();
+            });
+        }
+        
+        // 热门城市按钮
+        const cityOptions = document.querySelectorAll('.city-option');
+        cityOptions.forEach(button => {
+            button.addEventListener('click', function() {
+                const cityName = this.getAttribute('data-city');
+                if (cityName) {
+                    setUserLocation(cityName, 'manual');
+                    closeLocationModal();
+                    fetchWeatherData();
+                }
+            });
+        });
+        
+        // 城市搜索
+        const searchCityInput = document.getElementById('search-city');
+        if (searchCityInput) {
+            searchCityInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const cityName = searchCityInput.value.trim();
+                    if (cityName) {
+                        setUserLocation(cityName, 'manual');
+                        closeLocationModal();
+                        fetchWeatherData();
+                        searchCityInput.value = '';
+                    }
+                }
+            });
+        }
+    } catch (error) {
+        console.error('设置位置选择事件时出错:', error);
+    }
+}
+
+/**
+ * 打开位置选择模态框
+ */
+function openLocationModal() {
+    try {
+        const locationModal = document.getElementById('location-modal');
+        if (locationModal) {
+            // 获取当前位置
+            getLocationByIP();
+            
+            // 显示模态框
+            locationModal.classList.remove('hidden');
+        }
+    } catch (error) {
+        console.error('打开位置选择模态框时出错:', error);
+    }
+}
+
+/**
+ * 关闭位置选择模态框
+ */
+function closeLocationModal() {
+    try {
+        const locationModal = document.getElementById('location-modal');
+        if (locationModal) {
+            locationModal.classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('关闭位置选择模态框时出错:', error);
+    }
+}
+
+/**
+ * 通过IP获取当前位置
+ */
+function getLocationByIP() {
+    try {
+        // 显示加载状态
+        const autoLocationEl = document.getElementById('auto-location');
+        if (autoLocationEl) {
+            autoLocationEl.textContent = '正在获取位置...';
+        }
+        
+        // 如果已经有缓存的位置信息，先显示
+        const cachedLocation = window.utils.storage.load('userLocation');
+        if (cachedLocation && cachedLocation.city) {
+            if (autoLocationEl) {
+                autoLocationEl.textContent = cachedLocation.city;
+            }
+        }
+        
+        // 使用IP-API获取位置
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                // 成功获取位置
+                const city = data.city || '未知城市';
+                const province = data.region || '';
+                
+                // 更新显示
+                if (autoLocationEl) {
+                    autoLocationEl.textContent = data.city ? `${data.city}${data.region ? ', ' + data.region : ''}` : '未知城市';
+                }
+                
+                // 设置位置
+                setUserLocation(city, 'auto', province);
+                
+                // 如果用户没有手动设置位置，则获取天气
+                if (!window.globalState.userLocation.manuallySet) {
+                    fetchWeatherData();
+                }
+            })
+            .catch(error => {
+                console.error('通过IP获取位置出错:', error);
+                if (autoLocationEl) {
+                    autoLocationEl.textContent = '无法获取位置';
+                }
+                
+                // 使用默认位置
+                setUserLocation('北京市', 'auto');
+                fetchWeatherData();
+            });
+    } catch (error) {
+        console.error('获取IP位置时出错:', error);
+        // 使用默认位置
+        setUserLocation('北京市', 'auto');
+    }
+}
+
+/**
+ * 设置用户位置
+ * @param {string} city - 城市名称
+ * @param {string} source - 来源 ('auto' | 'manual')
+ * @param {string} province - 省份名称
+ */
+function setUserLocation(city, source = 'auto', province = '') {
+    try {
+        // 设置用户位置
+        window.globalState.userLocation = {
+            city: city,
+            province: province,
+            district: '',
+            source: source,
+            manuallySet: source === 'manual'
+        };
+        
+        // 保存到本地存储
+        window.utils.storage.save('userLocation', window.globalState.userLocation);
+    } catch (error) {
+        console.error('设置用户位置时出错:', error);
+    }
+}
+
+/**
+ * 通过地址获取天气
+ * @param {string} address - 地址
+ */
+function getWeatherByAddress(address) {
+    try {
+        // 假设将地址转换为城市名称
+        // 这里可以使用地理编码API，比如百度或高德等
+        const simplifiedCity = address.replace(/市$/, '').replace(/省$/, '');
+        
+        // 将简化后的地址设置为用户位置
+        setUserLocation(simplifiedCity, 'manual');
+        
+        // 获取天气
+        fetchWeatherData();
+    } catch (error) {
+        console.error('通过地址获取天气时出错:', error);
+    }
+}
+
+/**
  * 打开个人信息编辑器
  */
 function openProfileEditor() {
-    showNotification('个人信息编辑功能正在开发中...', 'info');
-    // 这里可以添加打开模态框的代码
+    try {
+        // 获取模态框元素
+        const profileModal = document.getElementById('profile-modal');
+        if (!profileModal) {
+            console.error('找不到个人信息模态框元素');
+            showNotification('无法打开个人信息编辑器', 'error');
+            return;
+        }
+        
+        // 填充当前用户数据
+        fillProfileForm();
+        
+        // 显示模态框
+        profileModal.classList.remove('hidden');
+        
+        // 添加事件监听器（只添加一次）
+        if (!window.profileEventListenersSet) {
+            // 关闭按钮
+            const closeBtn = document.getElementById('close-profile-modal');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeProfileEditor);
+            }
+            
+            // 保存按钮
+            const saveBtn = document.getElementById('save-profile');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', saveProfile);
+            }
+            
+            // 头像上传
+            const avatarUpload = document.getElementById('avatar-upload');
+            if (avatarUpload) {
+                avatarUpload.addEventListener('change', handleAvatarUpload);
+            }
+            
+            window.profileEventListenersSet = true;
+        }
+    } catch (error) {
+        console.error('打开个人信息编辑器时出错:', error);
+        showNotification('无法打开个人信息编辑器', 'error');
+    }
+}
+
+/**
+ * 关闭个人信息编辑器
+ */
+function closeProfileEditor() {
+    try {
+        const profileModal = document.getElementById('profile-modal');
+        if (profileModal) {
+            profileModal.classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('关闭个人信息编辑器时出错:', error);
+    }
+}
+
+/**
+ * 填充个人信息表单
+ */
+function fillProfileForm() {
+    try {
+        const profile = window.globalState.userProfile;
+        
+        // 设置用户名
+        const nameInput = document.getElementById('profile-name');
+        if (nameInput) {
+            nameInput.value = profile.name || '';
+        }
+        
+        // 设置性别
+        const genderInputs = document.getElementsByName('profile-gender');
+        if (genderInputs && genderInputs.length > 0) {
+            for (const input of genderInputs) {
+                input.checked = input.value === profile.gender;
+            }
+        }
+        
+        // 设置身高和体重
+        const heightInput = document.getElementById('profile-height');
+        if (heightInput) {
+            heightInput.value = profile.height || '';
+        }
+        
+        const weightInput = document.getElementById('profile-weight');
+        if (weightInput) {
+            weightInput.value = profile.weight || '';
+        }
+        
+        // 设置年龄
+        const ageInput = document.getElementById('profile-age');
+        if (ageInput) {
+            ageInput.value = profile.age || '';
+        }
+        
+        // 设置风格偏好
+        const styleInputs = document.getElementsByName('profile-style');
+        if (styleInputs && styleInputs.length > 0) {
+            for (const input of styleInputs) {
+                input.checked = profile.styles && profile.styles.includes(input.value);
+            }
+        }
+        
+        // 设置地址
+        const addressInput = document.getElementById('profile-address');
+        if (addressInput) {
+            addressInput.value = profile.address || '';
+        }
+        
+        // 设置头像
+        const avatarPreview = document.getElementById('avatar-preview');
+        if (avatarPreview && profile.avatar) {
+            avatarPreview.innerHTML = `<img src="${profile.avatar}" alt="用户头像" class="w-full h-full object-cover">`;
+        }
+    } catch (error) {
+        console.error('填充个人信息表单时出错:', error);
+    }
+}
+
+/**
+ * 处理头像上传
+ * @param {Event} event - 上传事件
+ */
+function handleAvatarUpload(event) {
+    try {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        // 检查文件类型
+        if (!file.type.startsWith('image/')) {
+            showNotification('请选择图片文件', 'error');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // 更新预览
+            const avatarPreview = document.getElementById('avatar-preview');
+            if (avatarPreview) {
+                avatarPreview.innerHTML = `<img src="${e.target.result}" alt="用户头像" class="w-full h-full object-cover">`;
+            }
+            
+            // 保存到临时变量，等用户点击保存才正式保存
+            window.tempAvatar = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } catch (error) {
+        console.error('处理头像上传时出错:', error);
+        showNotification('头像上传失败', 'error');
+    }
+}
+
+/**
+ * 保存个人信息
+ */
+function saveProfile() {
+    try {
+        // 收集表单数据
+        const name = document.getElementById('profile-name').value;
+        
+        // 收集性别
+        let gender = '';
+        const genderInputs = document.getElementsByName('profile-gender');
+        for (const input of genderInputs) {
+            if (input.checked) {
+                gender = input.value;
+                break;
+            }
+        }
+        
+        // 收集身高体重
+        const height = document.getElementById('profile-height').value;
+        const weight = document.getElementById('profile-weight').value;
+        
+        // 收集年龄
+        const age = document.getElementById('profile-age').value;
+        
+        // 收集风格偏好
+        const styles = [];
+        const styleInputs = document.getElementsByName('profile-style');
+        for (const input of styleInputs) {
+            if (input.checked) {
+                styles.push(input.value);
+            }
+        }
+        
+        // 收集地址
+        const address = document.getElementById('profile-address').value;
+        
+        // 更新全局状态
+        window.globalState.userProfile = {
+            ...window.globalState.userProfile,
+            name,
+            gender,
+            height,
+            weight,
+            age,
+            styles,
+            address,
+            // 如果有临时头像，则更新
+            avatar: window.tempAvatar || window.globalState.userProfile.avatar
+        };
+        
+        // 清除临时头像
+        delete window.tempAvatar;
+        
+        // 保存到本地存储
+        window.utils.storage.save('userProfile', window.globalState.userProfile);
+        
+        // 更新UI
+        updateProfileUI();
+        
+        // 关闭模态框
+        closeProfileEditor();
+        
+        // 显示通知
+        showNotification('个人信息保存成功', 'success');
+        
+        // 如果填写了地址，尝试获取该地址的天气
+        if (address) {
+            getWeatherByAddress(address);
+        }
+    } catch (error) {
+        console.error('保存个人信息时出错:', error);
+        showNotification('保存个人信息失败', 'error');
+    }
 }
 
 /**
@@ -180,55 +811,117 @@ function openProfileEditor() {
  */
 function fetchWeatherData() {
     try {
-        // 模拟天气数据 (实际项目中应从API获取)
+        // 检查天气缓存
+        const lastWeatherUpdate = window.utils.storage.load('lastWeatherUpdate') || 0;
+        const weatherData = window.utils.storage.load('weatherData');
+        const cachedCity = weatherData?.city || '';
+        const currentCity = window.globalState.userLocation.city || '北京市';
+        const now = Date.now();
+        
+        // 如果有缓存并且城市相同且不超过30分钟，使用缓存
+        if (weatherData && cachedCity === currentCity && (now - lastWeatherUpdate < 30 * 60 * 1000)) {
+            updateWeatherUI(weatherData);
+            generateOutfitBasedOnWeather(weatherData);
+            generateWeatherSuggestions(weatherData);
+            calculateCarWashDates(weatherData);
+            return;
+        }
+        
+        // 显示加载状态
+        const weatherContainer = document.getElementById('weather-container');
+        if (weatherContainer) {
+            weatherContainer.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin text-2xl text-blue-500"></i><p class="mt-2">正在获取天气数据...</p></div>';
+        }
+        
+        // 如果没有位置信息，先尝试获取位置
+        if (!currentCity || currentCity === '未知城市') {
+            getLocationByIP();
+            return;
+        }
+        
+        // 使用模拟天气数据（实际项目中应从API获取）
         setTimeout(function() {
+            // 创建更详细的天气数据模型
             const mockWeatherData = {
-                city: '北京市',
+                city: currentCity,
                 current: {
-                    temp: 18,
-                    desc: '晴',
-                    icon: 'sun',
-                    humidity: 45,
-                    windSpeed: 3.5,
-                    uv: 'low'
+                    temp: Math.floor(Math.random() * 10) + 15, // 15-25度
+                    desc: ['晴', '多云', '阴', '小雨', '大雨'][Math.floor(Math.random() * 5)],
+                    icon: ['sun', 'cloud-sun', 'cloud', 'cloud-rain', 'cloud-showers-heavy'][Math.floor(Math.random() * 5)],
+                    humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
+                    windSpeed: Math.floor(Math.random() * 5) + 1, // 1-6级风
+                    windDirection: ['东风', '南风', '西风', '北风'][Math.floor(Math.random() * 4)],
+                    uv: ['低', '中等', '高'][Math.floor(Math.random() * 3)],
+                    pressure: Math.floor(Math.random() * 20) + 1000, // 1000-1020hPa
+                    feelsLike: Math.floor(Math.random() * 10) + 15 - 2 // 比实际温度低2度
                 },
-                forecast: [
-                    {
-                        date: new Date(),
-                        temp: 18,
-                        desc: '晴',
-                        icon: 'sun'
-                    },
-                    {
-                        date: new Date(Date.now() + 86400000), // 明天
-                        temp: 20,
-                        desc: '多云',
-                        icon: 'cloud-sun'
-                    },
-                    {
-                        date: new Date(Date.now() + 86400000 * 2), // 后天
-                        temp: 17,
-                        desc: '小雨',
-                        icon: 'cloud-rain'
+                forecast: Array.from({length: 5}, (_, i) => {
+                    const date = new Date();
+                    date.setDate(date.getDate() + i);
+                    
+                    const weatherTypes = ['晴', '多云', '阴', '小雨', '大雨'];
+                    const iconTypes = ['sun', 'cloud-sun', 'cloud', 'cloud-rain', 'cloud-showers-heavy'];
+                    const weatherIndex = Math.floor(Math.random() * 5);
+                    
+                    return {
+                        date: date,
+                        dayOfWeek: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][date.getDay()],
+                        tempHigh: Math.floor(Math.random() * 10) + 15, // 15-25度
+                        tempLow: Math.floor(Math.random() * 10) + 5, // 5-15度
+                        desc: weatherTypes[weatherIndex],
+                        icon: iconTypes[weatherIndex],
+                        precipitation: Math.random() * 100, // 0-100%降水概率
+                        humidity: Math.floor(Math.random() * 30) + 40 // 40-70%湿度
+                    };
+                }),
+                hourly: Array.from({length: 24}, (_, i) => {
+                    const hour = (new Date().getHours() + i) % 24;
+                    const hourStr = `${hour < 10 ? '0' + hour : hour}:00`;
+                    
+                    // 温度模拟：白天温度更高，晚上温度更低
+                    let tempOffset = 0;
+                    if (hour >= 10 && hour <= 16) { // 10am-4pm
+                        tempOffset = 3; // 较高温
+                    } else if (hour >= 0 && hour <= 5) { // 0am-5am
+                        tempOffset = -3; // 较低温
                     }
-                ],
-                hourly: [
-                    { time: '上午9时', temp: 15, icon: 'sun' },
-                    { time: '上午10时', temp: 16, icon: 'sun' },
-                    { time: '上午11时', temp: 17, icon: 'sun' },
-                    { time: '中午12时', temp: 18, icon: 'sun' },
-                    { time: '下午1时', temp: 19, icon: 'sun' },
-                    { time: '下午2时', temp: 20, icon: 'cloud-sun' },
-                    { time: '下午3时', temp: 20, icon: 'cloud-sun' },
-                    { time: '下午4时', temp: 19, icon: 'cloud-sun' },
-                    { time: '下午5时', temp: 18, icon: 'cloud-sun' },
-                    { time: '下午6时', temp: 17, icon: 'cloud' }
-                ]
+                    
+                    const weatherTypes = ['晴', '多云', '阴', '小雨', '大雨'];
+                    const iconTypes = ['sun', 'cloud-sun', 'cloud', 'cloud-rain', 'cloud-showers-heavy'];
+                    const weatherIndex = Math.floor(Math.random() * 5);
+                    
+                    return {
+                        time: hourStr,
+                        hour: hour,
+                        temp: Math.floor(Math.random() * 8) + 15 + tempOffset, // 基础温度15-23度加上时间偏移
+                        desc: weatherTypes[weatherIndex],
+                        icon: iconTypes[weatherIndex],
+                        windSpeed: Math.floor(Math.random() * 5) + 1, // 1-6级风
+                        precipitation: Math.floor(Math.random() * 100) // 0-100%降水概率
+                    };
+                }),
+                airQuality: {
+                    aqi: Math.floor(Math.random() * 100) + 30, // 30-130 AQI
+                    pm25: Math.floor(Math.random() * 70) + 10, // 10-80 PM2.5
+                    pm10: Math.floor(Math.random() * 100) + 20, // 20-120 PM10
+                    level: ['优', '良', '轻度污染'][Math.floor(Math.random() * 3)]
+                },
+                sunrise: '06:15',
+                sunset: '18:30',
+                // 生活指数
+                lifeIndex: {
+                    comfort: {level: ['舒适', '较舒适', '较不舒适'][Math.floor(Math.random() * 3)], desc: '白天温度适宜，风力不大'},
+                    carWash: {level: ['适宜', '较适宜', '不适宜'][Math.floor(Math.random() * 3)], desc: '天气较好，适合洗车'},
+                    dressing: {level: ['舒适', '较舒适', '较热'][Math.floor(Math.random() * 3)], desc: '建议穿轻薄衣物'},
+                    uvProtection: {level: ['弱', '中等', '强'][Math.floor(Math.random() * 3)], desc: '外出建议涂抹防晒霜'},
+                    sport: {level: ['适宜', '较适宜', '不适宜'][Math.floor(Math.random() * 3)], desc: '天气较好，适合户外运动'}
+                }
             };
             
             // 更新全局状态
             window.globalState.weatherData = mockWeatherData;
-            window.globalState.lastWeatherUpdate = new Date();
+            window.utils.storage.save('weatherData', mockWeatherData);
+            window.utils.storage.save('lastWeatherUpdate', now);
             
             // 更新界面
             updateWeatherUI(mockWeatherData);
@@ -266,20 +959,168 @@ function updateWeatherUI(weatherData) {
             <i class="fas fa-${getWeatherIcon(weatherData.current.icon)} text-gray-400"></i>
         `;
         
+        // 更新当前天气详情
+        const weatherDetailsElement = document.getElementById('weather-details');
+        if (weatherDetailsElement) {
+            weatherDetailsElement.innerHTML = `
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-temperature-low text-gray-400 mr-2"></i>
+                        <span>体感温度: ${weatherData.current.feelsLike || weatherData.current.temp}°C</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-tint text-blue-400 mr-2"></i>
+                        <span>湿度: ${weatherData.current.humidity}%</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-wind text-gray-400 mr-2"></i>
+                        <span>风力: ${weatherData.current.windSpeed}级 ${weatherData.current.windDirection || ''}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-sun text-yellow-400 mr-2"></i>
+                        <span>紫外线: ${weatherData.current.uv || '中等'}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 更新空气质量信息
+        const airQualityElement = document.getElementById('air-quality');
+        if (airQualityElement && weatherData.airQuality) {
+            let aqiClass = 'text-green-500';
+            if (weatherData.airQuality.aqi > 100) {
+                aqiClass = 'text-red-500';
+            } else if (weatherData.airQuality.aqi > 50) {
+                aqiClass = 'text-yellow-500';
+            }
+            
+            airQualityElement.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-500">空气质量</span>
+                    <span class="${aqiClass}">${weatherData.airQuality.level} (AQI: ${weatherData.airQuality.aqi})</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span>PM2.5: ${weatherData.airQuality.pm25}</span>
+                    <span>PM10: ${weatherData.airQuality.pm10}</span>
+                </div>
+            `;
+        }
+        
+        // 更新日出日落信息
+        const sunriseSunsetElement = document.getElementById('sunrise-sunset');
+        if (sunriseSunsetElement && weatherData.sunrise && weatherData.sunset) {
+            sunriseSunsetElement.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-sun text-yellow-400 mr-2"></i>
+                        <span>日出: ${weatherData.sunrise}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-moon text-blue-400 mr-2"></i>
+                        <span>日落: ${weatherData.sunset}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 更新生活指数
+        const lifeIndexElement = document.getElementById('life-index');
+        if (lifeIndexElement && weatherData.lifeIndex) {
+            let lifeIndexHTML = '<div class="grid grid-cols-2 gap-3 mt-2">';
+            
+            for (const [key, value] of Object.entries(weatherData.lifeIndex)) {
+                let indexName = '舒适度';
+                let iconClass = 'fa-smile';
+                
+                switch (key) {
+                    case 'comfort':
+                        indexName = '舒适度';
+                        iconClass = 'fa-smile';
+                        break;
+                    case 'carWash':
+                        indexName = '洗车';
+                        iconClass = 'fa-car';
+                        break;
+                    case 'dressing':
+                        indexName = '穿衣';
+                        iconClass = 'fa-tshirt';
+                        break;
+                    case 'uvProtection':
+                        indexName = '防晒';
+                        iconClass = 'fa-umbrella-beach';
+                        break;
+                    case 'sport':
+                        indexName = '运动';
+                        iconClass = 'fa-running';
+                        break;
+                }
+                
+                lifeIndexHTML += `
+                    <div class="p-2 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-1">
+                            <i class="fas ${iconClass} text-blue-500 mr-2"></i>
+                            <span class="font-medium">${indexName}</span>
+                        </div>
+                        <div class="text-sm text-gray-600">${value.level}</div>
+                        <div class="text-xs text-gray-500 mt-1">${value.desc}</div>
+                    </div>
+                `;
+            }
+            
+            lifeIndexHTML += '</div>';
+            lifeIndexElement.innerHTML = lifeIndexHTML;
+        }
+        
         // 更新小时预报
         const hourlyForecastContainer = document.getElementById('hourly-forecast');
-        hourlyForecastContainer.innerHTML = '';
+        if (hourlyForecastContainer && weatherData.hourly) {
+            hourlyForecastContainer.innerHTML = '';
+            
+            // 只显示接下来的10个小时
+            const nextHours = weatherData.hourly.slice(0, 10);
+            
+            nextHours.forEach(hour => {
+                const hourElement = document.createElement('div');
+                hourElement.className = 'px-2 text-center min-w-[80px]';
+                hourElement.innerHTML = `
+                    <div class="text-sm text-gray-500">${hour.time}</div>
+                    <div class="my-2"><i class="fas fa-${getWeatherIcon(hour.icon)} text-gray-400"></i></div>
+                    <div class="text-sm font-bold">${window.utils.formatTemp(hour.temp)}</div>
+                    ${hour.precipitation > 30 ? `<div class="text-xs text-blue-500">${Math.round(hour.precipitation)}%</div>` : ''}
+                `;
+                hourlyForecastContainer.appendChild(hourElement);
+            });
+        }
         
-        weatherData.hourly.forEach(hour => {
-            const hourElement = document.createElement('div');
-            hourElement.className = 'px-2 text-center min-w-[80px]';
-            hourElement.innerHTML = `
-                <div class="text-sm text-gray-500">${hour.time}</div>
-                <div class="my-2"><i class="fas fa-${getWeatherIcon(hour.icon)} text-gray-400"></i></div>
-                <div class="text-sm font-bold">${window.utils.formatTemp(hour.temp)}</div>
-            `;
-            hourlyForecastContainer.appendChild(hourElement);
-        });
+        // 更新天气预报
+        const dailyForecastContainer = document.getElementById('daily-forecast');
+        if (dailyForecastContainer && weatherData.forecast) {
+            let forecastHTML = '';
+            
+            weatherData.forecast.forEach((day, index) => {
+                const dateStr = index === 0 ? '今天' : day.dayOfWeek;
+                
+                forecastHTML += `
+                    <div class="flex items-center justify-between py-2 ${index !== 0 ? 'border-t border-gray-100' : ''}">
+                        <div class="w-20">
+                            <div class="font-medium">${dateStr}</div>
+                            <div class="text-xs text-gray-500">${day.date.getMonth() + 1}月${day.date.getDate()}日</div>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-${getWeatherIcon(day.icon)} text-gray-400 mr-3"></i>
+                            <span>${day.desc}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-red-500 font-medium">${day.tempHigh}°</span>
+                            <span class="mx-1 text-gray-300">|</span>
+                            <span class="text-blue-500">${day.tempLow}°</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            dailyForecastContainer.innerHTML = forecastHTML;
+        }
     } catch (error) {
         console.error('更新天气界面时出错:', error);
     }
