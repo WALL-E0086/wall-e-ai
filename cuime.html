@@ -3,252 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>柜me - 个人形象管理</title>
-    <!-- Tailwind CSS CDN -->
+    <title>柜me - 您的个人形象顾问</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 自定义样式 -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            background-color: #f8fafc;
-            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        :root {
+            --primary: #3B82F6;
+            --secondary: #6B7280;
+            --accent: #F59E0B;
+            --light: #F3F4F6;
+            --dark: #1F2937;
         }
         
-        .page-container {
-            max-width: 480px;
-            margin: 0 auto;
-            background-color: white;
-            min-height: 100vh;
-            position: relative;
-            padding-bottom: 72px; /* 底部导航高度 */
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
         
-        .nav-active {
-            color: var(--primary-color);
+        .card:hover {
+            transform: translateY(-5px);
         }
         
-        .outfit-card {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
+        .outfit-item {
             transition: all 0.3s ease;
         }
         
-        .outfit-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
+        .outfit-item:hover {
+            background-color: rgba(243, 244, 246, 0.8);
         }
         
-        .weather-card {
-            background: linear-gradient(135deg, #4f75e2, #9f98e8);
-            color: white;
-            border-radius: 20px;
+        .profile-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
         
-        .clothing-item {
+        .btn-primary {
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563EB;
+        }
+        
+        /* 添加一些动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        /* 真人模型样式 */
+        .model-container {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        
+        .model-placeholder {
             width: 100%;
-            aspect-ratio: 1;
-            background-size: cover;
-            background-position: center;
-            border-radius: 12px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
-        .progress-ring {
-            transform: rotate(-90deg);
+        .model-head {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #F8DDCB;
+            position: relative;
+            z-index: 2;
         }
         
-        .profile-section {
-            background-color: #f0f4f9;
-            border-radius: 16px;
+        .model-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -15px;
+            z-index: 1;
+        }
+        
+        .model-top {
+            width: 90px;
+            height: 100px;
+            background-color: #E5E7EB;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .model-bottom {
+            width: 80px;
+            height: 120px;
+            background-color: #9CA3AF;
+            border-radius: 0 0 10px 10px;
+            margin-top: -5px;
         }
     </style>
 </head>
-<body>
-    <div class="page-container">
-        <!-- 页面头部 -->
-        <header class="pt-6 px-5 pb-3">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold">柜me</h1>
-                <div class="flex items-center gap-3">
-                    <button id="refresh-weather" class="btn-hover-effect text-gray-600 hover:text-primary-color">
-                        <i class="fas fa-sync-alt text-lg"></i>
-                    </button>
-                    <button id="settings-btn" class="btn-hover-effect text-gray-600 hover:text-primary-color">
-                        <i class="fas fa-cog text-lg"></i>
-                    </button>
-                </div>
-            </div>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-900">柜me - 您的个人形象顾问</h1>
+            <p class="text-lg text-gray-600">根据天气和您的个人特点，为您提供贴心的穿搭建议</p>
         </header>
         
-        <!-- 主要内容区 -->
-        <main class="px-5 pb-20">
-            <!-- 天气卡片 -->
-            <div class="weather-card p-5 mb-6">
-                <div class="flex justify-between items-center mb-3">
-                    <div>
-                        <h2 class="text-lg font-medium" id="current-date">今天</h2>
-                        <p class="text-sm opacity-80" id="current-location">加载位置中...</p>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-3xl font-bold" id="current-temp">--°C</div>
-                        <div class="text-sm opacity-80" id="temp-range">-- / --°C</div>
-                    </div>
-                </div>
-                
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <i id="weather-icon" class="fas fa-cloud text-3xl mr-2"></i>
-                        <span id="weather-desc">加载中...</span>
-                    </div>
-                    <div class="text-sm">
-                        <div id="wind-info"><i class="fas fa-wind mr-1"></i> 风力加载中...</div>
-                        <div id="clothing-index"><i class="fas fa-tshirt mr-1"></i> 穿衣指数加载中...</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 穿搭推荐 -->
-            <div class="mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold">今日推荐穿搭</h2>
-                    <button id="refresh-outfit" class="text-sm text-primary-color flex items-center">
-                        <i class="fas fa-sync-alt mr-1"></i> 换一套
-                    </button>
-                </div>
-                
-                <div class="outfit-card bg-white p-3">
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">上衣</p>
-                            <div id="top-recommendation" class="clothing-item bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-tshirt text-3xl text-gray-300"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">下装</p>
-                            <div id="bottom-recommendation" class="clothing-item bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-socks text-3xl text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">外套</p>
-                            <div id="outerwear-recommendation" class="clothing-item bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-user-tie text-3xl text-gray-300"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">鞋子</p>
-                            <div id="shoes-recommendation" class="clothing-item bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-shoe-prints text-3xl text-gray-300"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">配饰</p>
-                            <div id="accessories-recommendation" class="clothing-item bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-glasses text-3xl text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-3 text-center">
-                        <button id="save-outfit" class="text-primary-color text-sm btn-hover-effect">
-                            <i class="fas fa-heart mr-1"></i> 保存这套穿搭
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 天气预报 -->
-            <div class="mb-6">
-                <h2 class="text-lg font-bold mb-4">未来天气</h2>
-                
-                <div class="bg-white rounded-xl p-4 shadow-sm">
-                    <div id="forecast-container" class="flex overflow-x-auto py-2">
-                        <!-- 预报日卡片将由JS动态生成 -->
-                        <div class="forecast-day-loading text-center px-4 min-w-[80px]">
-                            <div class="rounded-full w-10 h-10 bg-gray-200 mx-auto mb-2 pulse-animation"></div>
-                            <div class="h-4 w-16 bg-gray-200 rounded mx-auto mb-2 pulse-animation"></div>
-                            <div class="h-4 w-10 bg-gray-200 rounded mx-auto pulse-animation"></div>
-                        </div>
-                        <div class="forecast-day-loading text-center px-4 min-w-[80px]">
-                            <div class="rounded-full w-10 h-10 bg-gray-200 mx-auto mb-2 pulse-animation"></div>
-                            <div class="h-4 w-16 bg-gray-200 rounded mx-auto mb-2 pulse-animation"></div>
-                            <div class="h-4 w-10 bg-gray-200 rounded mx-auto pulse-animation"></div>
-                        </div>
-                        <div class="forecast-day-loading text-center px-4 min-w-[80px]">
-                            <div class="rounded-full w-10 h-10 bg-gray-200 mx-auto mb-2 pulse-animation"></div>
-                            <div class="h-4 w-16 bg-gray-200 rounded mx-auto mb-2 pulse-animation"></div>
-                            <div class="h-4 w-10 bg-gray-200 rounded mx-auto pulse-animation"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 用户信息 -->
-            <div class="mb-6">
-                <div class="profile-section p-4">
+        <div class="flex flex-wrap -mx-4">
+            <!-- 左侧 - 天气卡片和穿搭建议 -->
+            <div class="w-full md:w-2/3 px-4 mb-8">
+                <!-- 天气卡片 -->
+                <div class="card bg-white p-6 mb-8 animate-fadeIn">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold">我的信息</h2>
-                        <button id="edit-profile" class="text-sm text-primary-color">
-                            <i class="fas fa-edit mr-1"></i> 编辑
+                        <div>
+                            <h2 class="text-2xl font-bold" id="city-name">正在获取位置...</h2>
+                            <p class="text-gray-500" id="current-date">加载中...</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-4xl font-bold" id="today-temp">--°C</div>
+                            <div class="flex items-center justify-end" id="today-desc">
+                                <span class="mr-2">加载中...</span>
+                                <i class="fas fa-cloud text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex -mx-2 overflow-x-auto py-2" id="hourly-forecast">
+                        <!-- 小时天气预报将通过JS动态添加 -->
+                        <div class="px-2 text-center min-w-[80px]">
+                            <div class="text-sm text-gray-500">加载中...</div>
+                            <div class="my-2"><i class="fas fa-spinner fa-spin text-gray-400"></i></div>
+                            <div class="text-sm font-bold">--°</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 穿搭建议 -->
+                <div class="card bg-white p-6 animate-fadeIn">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">今日穿搭推荐</h2>
+                        <button id="refresh-outfit" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full flex items-center">
+                            <i class="fas fa-sync-alt mr-1"></i> 刷新
                         </button>
                     </div>
                     
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="rounded-full w-14 h-14 bg-gray-200 mr-3 overflow-hidden">
-                                <img id="user-avatar" src="https://via.placeholder.com/56" alt="用户头像" class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <h3 id="user-name" class="font-medium">未设置</h3>
-                                <div class="flex items-center mt-1">
-                                    <div class="relative w-32 h-2 bg-gray-200 rounded-full mr-2">
-                                        <div id="profile-completeness-bar" class="absolute top-0 left-0 h-full bg-primary-color rounded-full" style="width: 0%"></div>
+                    <div class="flex flex-wrap -mx-4">
+                        <!-- 模型展示 -->
+                        <div class="w-full md:w-1/3 px-4 mb-6 md:mb-0">
+                            <div class="model-container">
+                                <div class="model-placeholder" id="human-model">
+                                    <div class="model-head"></div>
+                                    <div class="model-body">
+                                        <div class="model-top" id="model-top"></div>
+                                        <div class="model-bottom" id="model-bottom"></div>
                                     </div>
-                                    <span id="profile-completeness" class="text-xs text-gray-500">0%</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="text-center">
-                            <div id="wardrobe-count" class="text-xl font-bold">0</div>
-                            <div class="text-xs text-gray-500">衣橱单品</div>
+                        <!-- 穿搭详情 -->
+                        <div class="w-full md:w-2/3 px-4">
+                            <p class="mb-4 text-gray-600">基于今天的天气状况和您的个人信息，我们推荐以下穿搭：</p>
+                            
+                            <div class="space-y-3">
+                                <!-- 上衣推荐 -->
+                                <div class="outfit-item flex items-center p-2 rounded-lg">
+                                    <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-tshirt text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">上衣推荐</div>
+                                        <div class="font-medium" id="top-recommendation">加载中...</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 下装推荐 -->
+                                <div class="outfit-item flex items-center p-2 rounded-lg">
+                                    <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-socks text-indigo-500"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">下装推荐</div>
+                                        <div class="font-medium" id="bottom-recommendation">加载中...</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 鞋子推荐 -->
+                                <div class="outfit-item flex items-center p-2 rounded-lg">
+                                    <div class="bg-purple-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-shoe-prints text-purple-500"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">鞋子推荐</div>
+                                        <div class="font-medium" id="shoes-recommendation">加载中...</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 外套推荐 -->
+                                <div class="outfit-item flex items-center p-2 rounded-lg">
+                                    <div class="bg-red-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-vest text-red-500"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">外套推荐</div>
+                                        <div class="font-medium" id="outerwear-recommendation">加载中...</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 配件推荐 -->
+                                <div class="outfit-item flex items-center p-2 rounded-lg">
+                                    <div class="bg-amber-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-glasses text-amber-500"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">配件推荐</div>
+                                        <div class="font-medium" id="accessories-recommendation">加载中...</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
-        
-        <!-- 底部导航 -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
-            <div class="max-w-md mx-auto flex justify-around">
-                <a href="#" class="bottom-nav-item active" data-page="home">
-                    <i class="fas fa-home icon"></i>
-                    <span>首页</span>
-                </a>
-                <a href="#" class="bottom-nav-item" data-page="wardrobe">
-                    <i class="fas fa-tshirt icon"></i>
-                    <span>衣橱</span>
-                </a>
-                <a href="#" class="bottom-nav-item" data-page="outfit">
-                    <i class="fas fa-user-tie icon"></i>
-                    <span>穿搭</span>
-                </a>
-                <a href="#" class="bottom-nav-item" data-page="profile">
-                    <i class="fas fa-user icon"></i>
-                    <span>我的</span>
-                </a>
+            
+            <!-- 右侧 - 个人信息和建议卡片 -->
+            <div class="w-full md:w-1/3 px-4">
+                <!-- 个人信息卡片 -->
+                <div class="card bg-white p-6 mb-8 animate-fadeIn">
+                    <h2 class="text-xl font-bold mb-4">个人信息</h2>
+                    
+                    <div id="profile-complete" class="hidden">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gray-200 rounded-full mr-4 flex items-center justify-center overflow-hidden" id="user-avatar">
+                                <i class="fas fa-user text-gray-400 text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-lg" id="user-name">访客</div>
+                                <div class="text-sm text-gray-500">
+                                    <span id="user-gender">未设置</span> · 
+                                    <span id="user-height">--</span>cm · 
+                                    <span id="user-weight">--</span>kg
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button id="edit-profile" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-edit mr-2"></i> 编辑信息
+                        </button>
+                    </div>
+                    
+                    <div id="profile-incomplete">
+                        <p class="text-gray-600 mb-4">完善您的个人信息，获取更准确的穿搭建议</p>
+                        <button id="complete-profile" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user-plus mr-2"></i> 填写个人信息
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 我的衣橱卡片 -->
+                <div class="card bg-white p-6 mb-8 animate-fadeIn">
+                    <h2 class="text-xl font-bold mb-4">我的衣橱</h2>
+                    <p class="text-gray-600 mb-4">添加您自己的衣物，获取更个性化的穿搭推荐</p>
+                    
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div class="bg-gray-100 p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-blue-500" id="tops-count">0</div>
+                            <div class="text-xs text-gray-500">上衣</div>
+                        </div>
+                        <div class="bg-gray-100 p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-indigo-500" id="bottoms-count">0</div>
+                            <div class="text-xs text-gray-500">下装</div>
+                        </div>
+                        <div class="bg-gray-100 p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-purple-500" id="shoes-count">0</div>
+                            <div class="text-xs text-gray-500">鞋子</div>
+                        </div>
+                    </div>
+                    
+                    <button id="go-to-wardrobe" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-door-open mr-2"></i> 进入我的衣橱
+                    </button>
+                </div>
+                
+                <!-- 生活建议卡片 -->
+                <div class="card bg-white p-6 animate-fadeIn">
+                    <h2 class="text-xl font-bold mb-4">今日生活建议</h2>
+                    
+                    <div class="space-y-3" id="weather-suggestions">
+                        <div class="p-2 border-l-4 border-blue-500 bg-blue-50 rounded-r-lg">
+                            <p class="text-blue-800">加载中...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 洗车建议 -->
+                    <div class="mt-4">
+                        <h3 class="font-medium text-gray-700 mb-2">适合洗车的日期</h3>
+                        <div class="space-y-2" id="car-wash-dates">
+                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                <span class="text-gray-600">加载中...</span>
+                                <i class="fas fa-spinner fa-spin text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </nav>
+        </div>
     </div>
     
-    <!-- 通知组件 -->
-    <div id="notification-container"></div>
+    <!-- 通知容器 -->
+    <div id="notification-container" class="fixed bottom-4 right-4 z-50"></div>
     
     <!-- 全局状态管理脚本 -->
     <script>
@@ -339,11 +406,7 @@
         };
     </script>
     
-    <!-- 引入功能模块脚本 -->
-    <script src="js/main.js"></script>
-    <script src="js/weather.js"></script>
-    <script src="js/outfit.js"></script>
-    <script src="js/profile.js"></script>
-    <script src="js/wardrobe.js"></script>
+    <!-- 主要功能脚本 -->
+    <script src="cuime.js"></script>
 </body>
-</html> 
+</html>
