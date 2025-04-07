@@ -697,40 +697,11 @@
                                                 </label>
                                                 <label style="display: flex; align-items: center;">
                                                     <input type="checkbox" name="health-condition" value="cholesterol">
-                                                    <span style="margin-left: 5px;">高胆固醇</span>
-                                                </label>
-                                                <label style="display: flex; align-items: center;">
-                                                    <input type="checkbox" name="health-condition" value="knee">
-                                                    <span style="margin-left: 5px;">膝盖问题</span>
-                                                </label>
-                                                <label style="display: flex; align-items: center;">
-                                                    <input type="checkbox" name="health-condition" value="gout">
-                                                    <span style="margin-left: 5px;">痛风</span>
+                                                    <span style="margin-left: 5px;">高血脂</span>
                                                 </label>
                                             </div>
                                         </div>
-                                        <button type="submit" class="sketch-button" style="width: 100%;">保存信息</button>
                                     </form>
-                                    
-                                    <div id="profile-recommendations" style="margin-top: 15px; border-top: 2px dashed var(--charcoal); padding-top: 15px;">
-                                        <h4 style="margin-top: 0;">个性化建议</h4>
-                                        <div class="health-recommendations">
-                                            <div class="recommendation-item">
-                                                <i class="fas fa-utensils" style="margin-right: 5px;"></i>
-                                                <span id="diet-recommendation">请先提供您的个人信息</span>
-                                            </div>
-                                            <div class="recommendation-item" style="margin-top: 10px;">
-                                                <i class="fas fa-walking" style="margin-right: 5px;"></i>
-                                                <span id="travel-recommendation">请先提供您的个人信息</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- 地理位置显示 -->
-                                <div class="location-display" id="location-display">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span id="current-location">定位中...</span>
                                 </div>
                             </div>
                         </div>
@@ -821,33 +792,98 @@
                 <!-- 全局状态管理脚本 -->
                 <script>
                     // 全局状态对象
-                    window.state = {
+                    window.globalState = {
                         userProfile: {
-                            height: 170,
-                            weight: 60,
-                            gender: 'female',
-                            healthConditions: []
+                            name: '',
+                            gender: '',
+                            height: '',
+                            weight: '',
+                            age: '',
+                            style: '',
+                            avatar: '',
+                            healthConditions: [],
+                            colorPreferences: []
                         },
                         weatherData: null,
-                        outfitRecommendations: {
-                            top: null,
-                            bottom: null,
-                            shoes: null,
-                            outerwear: null,
-                            accessories: null
-                        },
-                        faceData: null,
-                        wardrobe: {
+                        lastWeatherUpdate: null,
+                        wardrobeData: {
                             tops: [],
                             bottoms: [],
-                            shoes: [],
                             outerwear: [],
+                            shoes: [],
                             accessories: []
+                        },
+                        outfitRecommendations: {
+                            current: null,
+                            history: []
+                        }
+                    };
+
+                    // 工具函数
+                    window.utils = {
+                        // 格式化日期
+                        formatDate: function(date) {
+                            if (!date) date = new Date();
+                            if (typeof date === 'string') date = new Date(date);
+                            
+                            const year = date.getFullYear();
+                            const month = date.getMonth() + 1;
+                            const day = date.getDate();
+                            const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                            const weekDay = weekDays[date.getDay()];
+                            
+                            return `${month}月${day}日 ${weekDay}`;
+                        },
+                        
+                        // 格式化温度
+                        formatTemp: function(temp) {
+                            if (temp === undefined || temp === null) return '--';
+                            return Math.round(temp) + '°C';
+                        },
+                        
+                        // 本地存储操作
+                        storage: {
+                            // 保存数据到本地存储
+                            save: function(key, data) {
+                                try {
+                                    localStorage.setItem(key, JSON.stringify(data));
+                                    return true;
+                                } catch (e) {
+                                    console.error('保存到本地存储失败:', e);
+                                    return false;
+                                }
+                            },
+                            
+                            // 从本地存储读取数据
+                            load: function(key, defaultValue = null) {
+                                try {
+                                    const data = localStorage.getItem(key);
+                                    return data ? JSON.parse(data) : defaultValue;
+                                } catch (e) {
+                                    console.error('从本地存储读取失败:', e);
+                                    return defaultValue;
+                                }
+                            }
+                        },
+                        
+                        // 防抖函数
+                        debounce: function(func, wait) {
+                            let timeout;
+                            return function(...args) {
+                                const context = this;
+                                clearTimeout(timeout);
+                                timeout = setTimeout(() => func.apply(context, args), wait);
+                            };
                         }
                     };
                 </script>
                 
-                <!-- 加载cuime.js脚本 -->
+                <!-- 引入功能模块脚本 -->
+                <script src="js/main.js"></script>
+                <script src="js/weather.js"></script>
+                <script src="js/outfit.js"></script>
+                <script src="js/profile.js"></script>
+                <script src="js/wardrobe.js"></script>
                 <script src="cuime.js"></script>
             </section>
 
