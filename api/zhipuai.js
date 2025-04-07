@@ -4,11 +4,19 @@
 
 // API配置信息
 const ZHIPU_API_CONFIG = {
-    apiKey: "5c5dc8a5d6a8fbf4",
-    apiSecret: "ca7a5639b32d43d43f9529d57728e26b",
+    apiKey: "4d17d92edc6af9a49afb8c4cdd38ab85.qdqpXZUUmBNzfXRT",
+    apiSecret: "a59b1cf3f71ead2b2e2118b337acec85",
     baseUrl: "https://open.bigmodel.cn/api/paas/v4/chat/completions", // 智谱API端点
+    proxyUrl: "https://cors-anywhere.herokuapp.com/https://open.bigmodel.cn/api/paas/v4/chat/completions", // 备用代理URL
     model: "glm-4" // 默认使用GLM-4模型，可根据需要切换
 };
+
+/**
+ * 检测是否使用代理URL
+ * 如果直接访问失败，将使用代理URL
+ * @type {boolean}
+ */
+let useProxyUrl = false;
 
 /**
  * 生成API请求的JWT令牌
@@ -45,7 +53,6 @@ function generateAuthToken() {
         
         // 使用HMAC-SHA256算法计算签名
         // 注意：在浏览器环境中，我们需要使用Web Crypto API
-        // 这里我们使用一个自定义的HMAC-SHA256实现
         return new Promise((resolve, reject) => {
             try {
                 const encoder = new TextEncoder();
@@ -61,10 +68,14 @@ function generateAuthToken() {
                 ).then(key => {
                     return crypto.subtle.sign("HMAC", key, messageData);
                 }).then(signature => {
-                    const base64Signature = btoa(String.fromCharCode(...new Uint8Array(signature)))
-                        .replace(/\+/g, '-')
-                        .replace(/\//g, '_')
-                        .replace(/=/g, '');
+                    const base64Signature = btoa(
+                        Array.from(new Uint8Array(signature))
+                            .map(byte => String.fromCharCode(byte))
+                            .join('')
+                    )
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
                     
                     resolve(`${message}.${base64Signature}`);
                 }).catch(error => {
@@ -104,32 +115,63 @@ async function sendRequest(messages, options = {}) {
             stream: options.stream || false
         };
         
+        // 选择URL
+        const apiUrl = useProxyUrl ? ZHIPU_API_CONFIG.proxyUrl : ZHIPU_API_CONFIG.baseUrl;
+        
         console.log('智谱API请求参数:', JSON.stringify({
-            endpoint: ZHIPU_API_CONFIG.baseUrl,
+            endpoint: apiUrl,
+            useProxy: useProxyUrl,
             model: requestParams.model,
             messageCount: requestParams.messages.length,
             stream: requestParams.stream
         }));
         
+        // 打印完整的Authorization头信息以便调试
+        console.log('智谱API认证信息:', `Bearer ${token.substring(0, 20)}...`);
+        
         // 发送请求
-        const response = await fetch(ZHIPU_API_CONFIG.baseUrl, {
+        const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${token}`,
+                "X-Requested-With": "XMLHttpRequest" // 对某些CORS代理可能需要
             },
             body: JSON.stringify(requestParams)
         });
         
+        console.log('API响应状态码:', response.status);
+        
         // 处理响应
         if (!response.ok) {
-            const errorData = await response.json().catch(e => ({ error: { message: '无法解析错误响应' } }));
+            const errorText = await response.text();
+            console.error('API错误响应原始内容:', errorText);
+            
+            // 如果是跨域问题且未使用代理，尝试切换到代理URL
+            if (!useProxyUrl && (response.status === 0 || response.status === 403)) {
+                console.log('尝试切换到代理URL重试请求');
+                useProxyUrl = true;
+                return sendRequest(messages, options); // 递归调用，使用代理URL
+            }
+            
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch (e) {
+                errorData = { error: { message: '无法解析错误响应: ' + errorText.substring(0, 100) } };
+            }
+            
             const errorMessage = errorData.error?.message || response.statusText;
             console.error(`智谱API响应异常: 状态 ${response.status} ${response.statusText}, 错误: ${errorMessage}`);
             throw new Error(`API请求失败: ${errorMessage}`);
         }
         
         console.log(`智谱API响应成功: 状态 ${response.status}`);
+        
+        // 如果成功使用代理，记住这个设置
+        if (useProxyUrl) {
+            console.log('成功使用代理URL完成请求');
+        }
         
         // 如果是流式响应
         if (options.stream && response.body) {
