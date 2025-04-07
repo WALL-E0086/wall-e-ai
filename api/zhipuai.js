@@ -92,6 +92,7 @@ async function sendRequest(messages, options = {}) {
     try {
         // 生成认证令牌
         const token = await generateAuthToken();
+        console.log('智谱API认证令牌生成成功');
         
         // 构建请求参数
         const requestParams = {
@@ -102,6 +103,13 @@ async function sendRequest(messages, options = {}) {
             max_tokens: options.max_tokens || 1500,
             stream: options.stream || false
         };
+        
+        console.log('智谱API请求参数:', JSON.stringify({
+            endpoint: ZHIPU_API_CONFIG.baseUrl,
+            model: requestParams.model,
+            messageCount: requestParams.messages.length,
+            stream: requestParams.stream
+        }));
         
         // 发送请求
         const response = await fetch(ZHIPU_API_CONFIG.baseUrl, {
@@ -115,19 +123,27 @@ async function sendRequest(messages, options = {}) {
         
         // 处理响应
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(`API请求失败: ${error.error?.message || response.statusText}`);
+            const errorData = await response.json().catch(e => ({ error: { message: '无法解析错误响应' } }));
+            const errorMessage = errorData.error?.message || response.statusText;
+            console.error(`智谱API响应异常: 状态 ${response.status} ${response.statusText}, 错误: ${errorMessage}`);
+            throw new Error(`API请求失败: ${errorMessage}`);
         }
+        
+        console.log(`智谱API响应成功: 状态 ${response.status}`);
         
         // 如果是流式响应
         if (options.stream && response.body) {
+            console.log('返回流式响应体');
             return response.body;
         }
         
         // 非流式响应
-        return await response.json();
+        const jsonData = await response.json();
+        console.log('非流式响应成功解析');
+        return jsonData;
     } catch (error) {
-        console.error("智谱API请求失败:", error);
+        console.error("智谱API请求失败:", error.message);
+        console.error("错误详情:", error.stack);
         throw error;
     }
 }
@@ -214,7 +230,30 @@ function processStreamData(line, onData) {
  * @returns {Promise} API响应
  */
 async function chat(messages, options = {}) {
-    return await sendRequest(messages, options);
+    const maxRetries = options.maxRetries || 2;
+    let retryCount = 0;
+    let lastError = null;
+
+    while (retryCount <= maxRetries) {
+        try {
+            if (retryCount > 0) {
+                console.log(`尝试第 ${retryCount} 次重试智谱API请求...`);
+            }
+            return await sendRequest(messages, options);
+        } catch (error) {
+            lastError = error;
+            retryCount++;
+            
+            if (retryCount <= maxRetries) {
+                const delay = 1000 * retryCount; // 递增延迟
+                console.log(`智谱API请求失败，等待 ${delay}ms 后重试...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    }
+
+    console.error(`智谱API请求在 ${maxRetries} 次尝试后仍然失败`);
+    throw lastError;
 }
 
 /**
@@ -226,19 +265,72 @@ async function chat(messages, options = {}) {
  * @returns {Promise} API响应处理Promise
  */
 async function chatStream(messages, onData, onComplete, options = {}) {
-    try {
-        // 确保是流式请求
-        const streamOptions = { ...options, stream: true };
-        
-        // 发送请求并获取流
-        const stream = await sendRequest(messages, streamOptions);
-        
-        // 处理响应流
-        await handleStreamResponse(stream, onData, onComplete);
-    } catch (error) {
-        console.error("流式聊天请求失败:", error);
-        throw error;
+    const maxRetries = options.maxRetries || 2;
+    let retryCount = 0;
+    let lastError = null;
+
+    while (retryCount <= maxRetries) {
+        try {
+            // 确保是流式请求
+            const streamOptions = { ...options, stream: true };
+            
+            if (retryCount > 0) {
+                console.log(`尝试第 ${retryCount} 次重试流式API请求...`);
+                // 通知前端重试状态
+                if (onData) {
+                    onData({
+                        delta: { content: `\n[正在重新连接智谱AI，第${retryCount}次尝试...]\n` }
+                    });
+                }
+            }
+            
+            // 发送请求并获取流
+            const stream = await sendRequest(messages, streamOptions);
+            
+            // 处理响应流
+            await handleStreamResponse(stream, onData, onComplete);
+            return; // 成功完成
+        } catch (error) {
+            lastError = error;
+            retryCount++;
+            
+            // 向前端报告错误
+            if (onData) {
+                onData({
+                    delta: { content: `\n[连接智谱AI时遇到错误: ${error.message}]\n` }
+                });
+            }
+            
+            if (retryCount <= maxRetries) {
+                const delay = 1000 * retryCount; // 递增延迟
+                console.log(`流式API请求失败，等待 ${delay}ms 后重试...`);
+                
+                // 通知前端等待状态
+                if (onData) {
+                    onData({
+                        delta: { content: `\n[等待 ${delay/1000} 秒后重试...]\n` }
+                    });
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
     }
+
+    console.error(`流式智谱API请求在 ${maxRetries} 次尝试后仍然失败`);
+    
+    // 最终失败，通知前端
+    if (onData) {
+        onData({
+            delta: { content: `\n[智谱AI连接失败，将使用本地回复。错误: ${lastError.message}]\n` }
+        });
+    }
+    
+    if (onComplete) {
+        onComplete();
+    }
+    
+    throw lastError;
 }
 
 // 导出API接口
