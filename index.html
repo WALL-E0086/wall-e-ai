@@ -530,7 +530,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="flex-grow p-5 overflow-y-auto flex flex-col gap-5" id="chat-history">
+                    <div class="flex-grow p-5 overflow-y-auto flex flex-col gap-5" id="chat-messages">
                         <div class="max-w-[80%] flex flex-col self-start">
                             <div class="p-4 rounded-3xl bg-blue-500 text-white relative break-words">
                                 你好！*beep* 我是瓦力AI，很高兴为你服务。*whirr* 有什么我能帮到你的吗？
@@ -539,13 +539,13 @@
                     </div>
                     <div class="flex gap-2.5 p-5 bg-gray-50 border-t border-black/10 md:flex-row flex-col">
                         <div class="flex-1 flex gap-2">
-                            <input type="text" id="chat-input" placeholder="输入你的问题..." class="flex-1 p-4 border border-black/10 rounded-3xl text-base outline-none transition-all duration-300 focus:border-blue-500 focus:shadow focus:shadow-blue-100">
+                            <input type="text" id="user-input" placeholder="输入你的问题..." class="flex-1 p-4 border border-black/10 rounded-3xl text-base outline-none transition-all duration-300 focus:border-blue-500 focus:shadow focus:shadow-blue-100">
                             <button id="upload-file" class="w-12 h-12 border-none rounded-full bg-gray-50 text-gray-800 cursor-pointer transition-all duration-300 flex items-center justify-center relative overflow-hidden hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-300">
                                 <i class="fas fa-paperclip"></i>
                             </button>
                             <input type="file" id="file-input" accept=".doc,.docx,.pdf,.txt" class="hidden">
                         </div>
-                        <button id="send-button" class="md:w-12 md:h-12 w-full h-12 border-none rounded-full bg-blue-500 text-white cursor-pointer transition-all duration-300 flex items-center justify-center relative overflow-hidden hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-300">
+                        <button id="send-message" class="md:w-12 md:h-12 w-full h-12 border-none rounded-full bg-blue-500 text-white cursor-pointer transition-all duration-300 flex items-center justify-center relative overflow-hidden hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-300">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>

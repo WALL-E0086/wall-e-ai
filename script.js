@@ -69,15 +69,15 @@ function generateWallEResponse(userInput) {
 }
 
 // 显示思考状态
-function showThinking() {
+function showThinking(containerId = 'chat-messages') {
     const thinkingResponse = wallEResponses.thinking[Math.floor(Math.random() * wallEResponses.thinking.length)];
-    const thinkingMessage = addMessage(thinkingResponse, 'bot');
+    const thinkingMessage = addMessage(thinkingResponse, 'bot', containerId);
     return thinkingMessage;
 }
 
 // 添加消息到聊天界面
-function addMessage(content, type) {
-    const messages = document.getElementById('chat-messages');
+function addMessage(content, type, containerId = 'chat-messages') {
+    const messages = document.getElementById(containerId);
     const messageDiv = document.createElement('div');
     messageDiv.className = `max-w-[80%] flex flex-col ${type === 'user' ? 'self-end' : 'self-start'}`;
     
@@ -351,38 +351,17 @@ function initBlackholeEyes() {
 
 // 聊天功能初始化和交互
 function initChat() {
-    // 弹出式聊天界面
-    const startChatBtn = document.getElementById('start-chat');
-    const chatInterface = document.getElementById('chat-interface');
-    const closeChatBtn = document.getElementById('close-chat');
+    // 加载智谱API
+    loadZhipuAI();
+    
+    // 获取输入元素、发送按钮和聊天历史
     const userInput = document.getElementById('user-input');
-    const sendMessageBtn = document.getElementById('send-message');
+    const sendButton = document.getElementById('send-message');
+    const chatMessages = document.getElementById('chat-messages');
     
-    // 内嵌式聊天界面
-    const chatInput = document.getElementById('chat-input');
-    const sendButton = document.getElementById('send-button');
-    
-    // 弹出式聊天按钮点击事件
-    if (startChatBtn) {
-        startChatBtn.addEventListener('click', function() {
-            // 如果在首页点击聊天按钮，优先切换到聊天页面，而不是弹出聊天界面
-            const chatLink = document.getElementById('chat-link');
-            if (chatLink) {
-                chatLink.click();
-            }
-        });
-    }
-    
-    // 关闭聊天界面
-    if (closeChatBtn) {
-        closeChatBtn.addEventListener('click', function() {
-            chatInterface.classList.add('hidden');
-        });
-    }
-    
-    // 弹出式聊天界面发送消息
-    if (sendMessageBtn && userInput) {
-        sendMessageBtn.addEventListener('click', function() {
+    // 处理发送按钮点击事件
+    if (sendButton && userInput && chatMessages) {
+        sendButton.addEventListener('click', function() {
             const message = userInput.value.trim();
             if (message) {
                 sendChatMessage(message, 'chat-messages');
@@ -390,89 +369,189 @@ function initChat() {
             }
         });
         
-        userInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const message = userInput.value.trim();
-                if (message) {
-                    sendChatMessage(message, 'chat-messages');
-                    userInput.value = '';
-                }
+        // 处理输入框回车事件
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendButton.click();
             }
         });
     }
     
-    // 内嵌式聊天界面发送消息
-    if (sendButton && chatInput) {
-        sendButton.addEventListener('click', function() {
-            const message = chatInput.value.trim();
-            if (message) {
-                sendChatMessage(message, 'chat-history');
-                chatInput.value = '';
-            }
-        });
+    // 加载聊天历史
+    loadChatHistory();
+}
+
+// 加载智谱API
+function loadZhipuAI() {
+    try {
+        // 检查是否已加载
+        if (window.zhipuAI) {
+            console.log('智谱API已加载');
+            return;
+        }
         
-        chatInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const message = chatInput.value.trim();
-                if (message) {
-                    sendChatMessage(message, 'chat-history');
-                    chatInput.value = '';
-                }
-            }
-        });
+        // 创建脚本元素
+        const script = document.createElement('script');
+        script.src = 'api/zhipuai.js';
+        script.async = true;
+        
+        // 加载成功回调
+        script.onload = function() {
+            console.log('智谱API加载成功');
+            // 可以在这里添加其他初始化逻辑
+        };
+        
+        // 加载失败回调
+        script.onerror = function() {
+            console.error('智谱API加载失败');
+        };
+        
+        // 添加到文档
+        document.head.appendChild(script);
+    } catch (error) {
+        console.error('加载智谱API时出错:', error);
+    }
+}
+
+// 加载聊天历史
+function loadChatHistory() {
+    try {
+        const chatHistory = JSON.parse(localStorage.getItem('walleAIChatHistory') || '[]');
+        const chatMessages = document.getElementById('chat-messages');
+        
+        if (chatMessages && chatHistory.length > 0) {
+            // 只显示最近的10条消息
+            const recentMessages = chatHistory.slice(-10);
+            
+            recentMessages.forEach(item => {
+                addMessage(item.user, 'user');
+                addMessage(item.bot, 'bot');
+            });
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    } catch (error) {
+        console.error('加载聊天历史失败:', error);
     }
 }
 
 // 发送聊天消息
-function sendChatMessage(message, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
+function sendChatMessage(message, containerId = 'chat-messages') {
+    if (!message.trim()) return;
     
-    // 创建用户消息元素
-    const userMessageDiv = document.createElement('div');
-    userMessageDiv.className = 'max-w-[80%] flex flex-col self-end';
+    // 添加用户消息
+    addMessage(message, 'user', containerId);
     
-    const userMessageContent = document.createElement('div');
-    userMessageContent.className = 'p-4 rounded-3xl bg-gray-800 text-white relative break-words';
-    userMessageContent.style.animation = 'messageAppear 0.3s ease-out';
-    userMessageContent.textContent = message;
+    // 显示思考中状态
+    const thinkingMessage = showThinking(containerId);
     
-    userMessageDiv.appendChild(userMessageContent);
-    container.appendChild(userMessageDiv);
-    
-    // 滚动到底部
-    container.scrollTop = container.scrollHeight;
-    
-    // 模拟机器人思考时间
-    setTimeout(() => {
-        // 创建机器人消息元素
-        const botMessageDiv = document.createElement('div');
-        botMessageDiv.className = 'max-w-[80%] flex flex-col self-start';
-        
-        const botMessageContent = document.createElement('div');
-        botMessageContent.className = 'p-4 rounded-3xl bg-blue-500 text-white relative break-words';
-        botMessageContent.style.animation = 'messageAppear 0.3s ease-out';
-        
-        // 生成随机回复
-        const botResponses = [
-            "*beep* 我正在分析您的问题... *whirr* 根据我的数据，我认为...",
-            "这是个很好的问题！*click* 让我来帮您解答...",
-            "*whirr* 正在处理... 我发现了一些相关信息：",
-            "有趣的提问！*beep* 从我的角度来看...",
-            "*click-click* 解析完成。我的回答是...",
-            "*beep* 我的数据库中有相关记录。*whirr* 以下是我的分析...",
-            "让我思考一下... *processing* 我认为最佳答案是..."
+    // 检查智谱API是否可用
+    if (window.zhipuAI) {
+        // 准备消息格式
+        const messages = [
+            { role: "system", content: "你是瓦力AI初号机，一个有趣、有个性的AI助手。你需要在回复中添加一些电子音效，如*beep*、*whirr*、*click*等，来模拟机器人的声音。你的语气应该友好、有趣、且略带科技感。" },
+            { role: "user", content: message }
         ];
         
-        const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-        botMessageContent.textContent = randomResponse;
-        
-        botMessageDiv.appendChild(botMessageContent);
-        container.appendChild(botMessageDiv);
-        
-        // 滚动到底部
+        // 调用智谱API
+        window.zhipuAI.chatStream(
+            messages,
+            function onData(data) {
+                // 处理流式返回的数据
+                if (data.delta && data.delta.content) {
+                    // 更新思考中消息的内容
+                    const currentContent = thinkingMessage.querySelector('div').textContent;
+                    // 替换掉初始的"思考中"文本
+                    if (currentContent.includes('思考') || currentContent.includes('whirr') || currentContent.includes('处理')) {
+                        thinkingMessage.querySelector('div').textContent = data.delta.content;
+                    } else {
+                        // 追加新内容
+                        thinkingMessage.querySelector('div').textContent = currentContent + data.delta.content;
+                    }
+                    
+                    // 滚动到底部
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }
+            },
+            function onComplete() {
+                // 所有数据接收完成的处理
+                console.log('智谱API响应完成');
+                
+                // 确保回复中包含电子音效
+                const finalResponse = thinkingMessage.querySelector('div').textContent;
+                if (!electronicSounds.some(sound => finalResponse.includes(sound))) {
+                    // 如果没有电子音效，添加一个
+                    const enhancedResponse = addElectronicSound(finalResponse);
+                    thinkingMessage.querySelector('div').textContent = enhancedResponse;
+                }
+                
+                // 滚动到底部
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                }
+                
+                // 保存对话内容
+                saveChatHistory(message, thinkingMessage.querySelector('div').textContent);
+            },
+            {
+                temperature: 0.7,
+                top_p: 0.9,
+                max_tokens: 800
+            }
+        ).catch(error => {
+            console.error('智谱API调用失败:', error);
+            // 失败时回退到本地回复
+            handleLocalResponse(message, thinkingMessage, containerId);
+        });
+    } else {
+        // 智谱API不可用时使用本地回复
+        handleLocalResponse(message, thinkingMessage, containerId);
+    }
+}
+
+// 处理本地回复（当API不可用时）
+function handleLocalResponse(message, thinkingMessage, containerId) {
+    // 使用本地生成的回复
+    const response = generateWallEResponse(message);
+    
+    // 更新思考中消息的内容
+    thinkingMessage.querySelector('div').textContent = response;
+    
+    // 滚动到底部
+    const container = document.getElementById(containerId);
+    if (container) {
         container.scrollTop = container.scrollHeight;
-    }, 1000);
+    }
+    
+    // 保存对话内容
+    saveChatHistory(message, response);
+}
+
+// 保存聊天历史记录
+function saveChatHistory(userMessage, botResponse) {
+    try {
+        const chatHistory = JSON.parse(localStorage.getItem('walleAIChatHistory') || '[]');
+        chatHistory.push({
+            user: userMessage,
+            bot: botResponse,
+            timestamp: new Date().toISOString()
+        });
+        
+        // 只保留最近的50条对话
+        if (chatHistory.length > 50) {
+            chatHistory.shift();
+        }
+        
+        localStorage.setItem('walleAIChatHistory', JSON.stringify(chatHistory));
+    } catch (error) {
+        console.error('保存聊天历史失败:', error);
+    }
 }
 
 // 添加用户输入框占位符自动切换功能
@@ -1270,38 +1349,94 @@ function showToast(message, type = 'info') {
 
 // 初始化应用
 function init() {
-    console.log("初始化瓦力AI应用...");
+    console.log("初始化应用...");
     
-    // 初始化侧边栏和导航
+    // 初始化侧边栏
     initSidebar();
-    initNavigation();
     
-    // 设置导航处理兼容性标志 - 允许wake-up-transition.js检测是否需要接管导航
-    window.customNavigationActive = true;
-    
-    // 初始化黑洞眼睛动画
+    // 初始化黑洞眼睛
     initBlackholeEyes();
     
     // 初始化聊天功能
     initChat();
     
-    // 初始化柜me页面功能
+    // 初始化柜me功能
     initCuime();
     
-    // 加载上次的偏好设置
-    loadPreferences();
+    // 添加聊天清空功能
+    const clearChatBtn = document.getElementById('clear-chat');
+    if (clearChatBtn) {
+        clearChatBtn.addEventListener('click', function() {
+            // 清空聊天界面，只保留初始欢迎消息
+            const chatMessages = document.getElementById('chat-messages');
+            if (chatMessages) {
+                chatMessages.innerHTML = `
+                    <div class="max-w-[80%] flex flex-col self-start">
+                        <div class="p-4 rounded-3xl bg-blue-500 text-white relative break-words">
+                            你好！*beep* 我是瓦力AI，很高兴为你服务。*whirr* 有什么我能帮到你的吗？
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 清空本地存储的聊天历史
+            localStorage.removeItem('walleAIChatHistory');
+            
+            // 显示通知
+            showToast('聊天记录已清空', 'success');
+        });
+    }
     
-    // 初始化黑洞动画（不直接调用，由黑洞脚本自行初始化）
+    // 添加聊天保存功能
+    const saveChatBtn = document.getElementById('save-chat');
+    if (saveChatBtn) {
+        saveChatBtn.addEventListener('click', function() {
+            try {
+                // 获取所有聊天记录
+                const chatHistory = JSON.parse(localStorage.getItem('walleAIChatHistory') || '[]');
+                
+                if (chatHistory.length === 0) {
+                    showToast('没有可保存的聊天记录', 'warning');
+                    return;
+                }
+                
+                // 生成文本内容
+                let textContent = "瓦力AI对话记录\n";
+                textContent += "保存时间: " + new Date().toLocaleString() + "\n\n";
+                
+                chatHistory.forEach((item, index) => {
+                    textContent += `用户: ${item.user}\n`;
+                    textContent += `瓦力AI: ${item.bot}\n\n`;
+                });
+                
+                // 创建下载链接
+                const blob = new Blob([textContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const date = new Date();
+                const dateStr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+                a.href = url;
+                a.download = `瓦力AI对话记录_${dateStr}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                
+                // 清理临时对象
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                // 显示通知
+                showToast('聊天记录已保存', 'success');
+            } catch (error) {
+                console.error('保存聊天记录失败:', error);
+                showToast('保存聊天记录失败', 'error');
+            }
+        });
+    }
     
-    // 默认导航到首页
-    navigateTo('home');
-    
-    console.log("应用初始化完成!");
-    
-    // 显示欢迎消息
-    setTimeout(function() {
-        showToast("欢迎使用瓦力AI助手！", "success");
-    }, 500);
+    // 导航事件监听
+    document.addEventListener('navigated', function(e) {
+        console.log('导航到:', e.detail.target);
+    });
 }
 
 // 页面初始化
