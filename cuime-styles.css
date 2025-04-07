@@ -1,0 +1,870 @@
+/**
+ * 柜me - 个人形象顾问
+ * 样式文件
+ */
+
+/* 手绘风格变量定义 */
+:root {
+    --cuime-primary: #6b90fc;
+    --cuime-secondary: #ff9d9d;
+    --cuime-dark: #333;
+    --cuime-light: #f5f5f5;
+    --cuime-success: #86e29b;
+    --cuime-warning: #ffd280;
+    --cuime-error: #ff8080;
+    --cuime-cloud: #f0f8ff;
+    --cuime-border-radius: 16px;
+    --cuime-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 基础布局 */
+.cuime-container {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto auto 1fr;
+    grid-gap: 20px;
+    height: calc(100vh - 40px);
+}
+
+/* 标题区域 */
+.cuime-header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.cuime-title {
+    font-size: 2.5rem;
+    color: var(--cuime-primary);
+    text-shadow: 2px 2px 0 var(--cuime-light),
+                 3px 3px 0 var(--cuime-dark);
+    margin: 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.cuime-title::before {
+    content: "👔";
+    position: absolute;
+    left: -15px;
+    top: 0;
+    font-size: 2rem;
+    transform: rotate(-10deg);
+}
+
+/* 位置和天气区域 */
+.location-weather {
+    grid-column: 1;
+    grid-row: 2;
+    background-color: white;
+    border-radius: var(--cuime-border-radius);
+    box-shadow: var(--cuime-shadow);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--cuime-primary);
+}
+
+.location-weather::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px dashed var(--cuime-secondary);
+    border-radius: var(--cuime-border-radius);
+    pointer-events: none;
+}
+
+.weather-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    border-bottom: 2px dashed var(--cuime-primary);
+    padding-bottom: 10px;
+}
+
+#current-location {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--cuime-dark);
+}
+
+/* 云朵样式 */
+.weather-cloud {
+    width: 100px;
+    height: 60px;
+    background-color: var(--cuime-cloud);
+    border-radius: 50px;
+    position: relative;
+    margin-right: 20px;
+    transition: all 0.3s ease;
+}
+
+.weather-cloud::before,
+.weather-cloud::after {
+    content: '';
+    position: absolute;
+    background-color: var(--cuime-cloud);
+    border-radius: 50%;
+}
+
+.weather-cloud::before {
+    width: 50px;
+    height: 50px;
+    top: -20px;
+    left: 10px;
+}
+
+.weather-cloud::after {
+    width: 30px;
+    height: 30px;
+    top: -10px;
+    right: 15px;
+}
+
+/* 云朵表情 */
+.weather-cloud .cloud-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.weather-cloud .eyes {
+    position: relative;
+    top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.weather-cloud .eye {
+    width: 8px;
+    height: 12px;
+    background-color: var(--cuime-dark);
+    border-radius: 50%;
+}
+
+.weather-cloud .mouth {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 10px;
+    border-bottom: 3px solid var(--cuime-dark);
+    border-radius: 0 0 10px 10px;
+}
+
+/* 愉快的云 */
+.weather-cloud .mouth.happy {
+    border-radius: 0 0 10px 10px;
+    border-top: none;
+    border-bottom: 3px solid var(--cuime-dark);
+}
+
+/* 悲伤的云 */
+.weather-cloud.sad .mouth {
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+    border-top: 3px solid var(--cuime-dark);
+    bottom: 15px;
+}
+
+/* 下雨的云 */
+.weather-cloud.rain::after {
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    left: 30px;
+    width: 3px;
+    height: 10px;
+    background-color: #98d0e1;
+    border-radius: 5px;
+    animation: rainDrop 1.5s infinite;
+}
+
+.weather-cloud.rain::before {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50px;
+    width: 3px;
+    height: 7px;
+    background-color: #98d0e1;
+    border-radius: 5px;
+    animation: rainDrop 1.2s infinite 0.3s;
+}
+
+@keyframes rainDrop {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+}
+
+.current-temp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+#today-temp {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--cuime-primary);
+    margin-right: 10px;
+}
+
+#today-desc {
+    font-size: 1.5rem;
+    color: var(--cuime-dark);
+}
+
+/* UV指示器 */
+.uv-indicator {
+    display: flex;
+    justify-content: space-around;
+    margin: 15px 0;
+    background-color: var(--cuime-light);
+    border-radius: 20px;
+    padding: 10px;
+    position: relative;
+}
+
+.uv-indicator::before {
+    content: "UV指数";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    color: var(--cuime-dark);
+}
+
+.uv-light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ccc;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.uv-light::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0.3;
+}
+
+.uv-light.active {
+    box-shadow: 0 0 10px currentColor;
+}
+
+#uv-low {
+    color: var(--cuime-success);
+}
+
+#uv-low.active {
+    background-color: var(--cuime-success);
+}
+
+#uv-medium {
+    color: var(--cuime-warning);
+}
+
+#uv-medium.active {
+    background-color: var(--cuime-warning);
+}
+
+#uv-high {
+    color: var(--cuime-error);
+}
+
+#uv-high.active {
+    background-color: var(--cuime-error);
+}
+
+/* 天气建议 */
+.weather-suggestions {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    position: relative;
+}
+
+.weather-suggestions::before {
+    content: "今日建议";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: white;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    color: var(--cuime-primary);
+}
+
+/* 天气预报 */
+.forecast {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.forecast-day {
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    padding: 10px;
+}
+
+.forecast-title {
+    font-weight: bold;
+    color: var(--cuime-primary);
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.forecast-content {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* 洗车日期建议区域 */
+.car-wash-section {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    position: relative;
+}
+
+.car-wash-section::before {
+    content: "洗车推荐日期";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: white;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    color: var(--cuime-primary);
+}
+
+/* 穿搭推荐区域 */
+.outfit-recommendation {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    background-color: white;
+    border-radius: var(--cuime-border-radius);
+    box-shadow: var(--cuime-shadow);
+    padding: 20px;
+    position: relative;
+    border: 2px solid var(--cuime-secondary);
+}
+
+.outfit-recommendation::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px dashed var(--cuime-primary);
+    border-radius: var(--cuime-border-radius);
+    pointer-events: none;
+}
+
+.outfit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.outfit-title {
+    font-size: 1.5rem;
+    color: var(--cuime-secondary);
+    margin: 0;
+}
+
+.refresh-btn {
+    background-color: var(--cuime-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--cuime-shadow);
+}
+
+.refresh-btn:hover {
+    transform: scale(1.1);
+}
+
+.refresh-btn.spin {
+    animation: spin 1s linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.outfit-display {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    margin-bottom: 20px;
+}
+
+.outfit-item {
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    padding: 15px;
+    text-align: center;
+    position: relative;
+}
+
+.outfit-item-title {
+    font-size: 1rem;
+    color: var(--cuime-primary);
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.outfit-item-content {
+    font-size: 1.2rem;
+    color: var(--cuime-dark);
+    position: relative;
+    z-index: 1;
+}
+
+/* 手绘效果装饰 */
+.outfit-item::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border: 2px dashed rgba(0, 0, 0, 0.1);
+    border-radius: var(--cuime-border-radius);
+    pointer-events: none;
+}
+
+.outfit-suggestion {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--cuime-dark);
+    position: relative;
+}
+
+.outfit-suggestion::before {
+    content: "💡";
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+}
+
+/* 衣柜管理区域 */
+.wardrobe-management {
+    grid-column: 1;
+    grid-row: 3;
+    background-color: white;
+    border-radius: var(--cuime-border-radius);
+    box-shadow: var(--cuime-shadow);
+    padding: 20px;
+    position: relative;
+    border: 2px solid var(--cuime-primary);
+}
+
+.wardrobe-management::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px dashed var(--cuime-secondary);
+    border-radius: var(--cuime-border-radius);
+    pointer-events: none;
+}
+
+.wardrobe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.wardrobe-title {
+    font-size: 1.3rem;
+    color: var(--cuime-primary);
+    margin: 0;
+}
+
+.upload-btn {
+    background-color: var(--cuime-secondary);
+    color: white;
+    border: none;
+    border-radius: var(--cuime-border-radius);
+    padding: 8px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--cuime-shadow);
+    font-family: inherit;
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+}
+
+.wardrobe-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.wardrobe-stat {
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    padding: 10px;
+    text-align: center;
+}
+
+.stat-title {
+    font-size: 0.9rem;
+    color: var(--cuime-dark);
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--cuime-primary);
+}
+
+.clothing-preview-container {
+    margin-top: 15px;
+}
+
+.clothing-preview-card {
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.clothing-preview-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: var(--cuime-border-radius);
+}
+
+.clothing-form {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.clothing-form input,
+.clothing-form select {
+    padding: 8px;
+    border-radius: var(--cuime-border-radius);
+    border: 1px solid var(--cuime-primary);
+    font-family: inherit;
+}
+
+#save-clothing-btn {
+    grid-column: 1 / -1;
+    background-color: var(--cuime-primary);
+    color: white;
+    border: none;
+    border-radius: var(--cuime-border-radius);
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: inherit;
+}
+
+/* 用户资料区域 */
+.user-profile-toggle {
+    background-color: var(--cuime-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: var(--cuime-shadow);
+}
+
+.user-profile-toggle::after {
+    content: "👤";
+    font-size: 1.2rem;
+}
+
+.user-profile-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 300px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.user-profile-panel.active {
+    right: 0;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--cuime-primary);
+    padding-bottom: 10px;
+}
+
+.profile-title {
+    font-size: 1.5rem;
+    color: var(--cuime-primary);
+    margin: 0;
+}
+
+.close-profile {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--cuime-dark);
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: var(--cuime-dark);
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px;
+    border-radius: var(--cuime-border-radius);
+    border: 1px solid var(--cuime-primary);
+    font-family: inherit;
+}
+
+.health-conditions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.health-condition {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.selfie-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.selfie-upload {
+    background-color: var(--cuime-secondary);
+    color: white;
+    border: none;
+    border-radius: var(--cuime-border-radius);
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+}
+
+.selfie-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 10px auto;
+    display: none;
+    border: 3px solid var(--cuime-primary);
+}
+
+.face-analysis {
+    background-color: var(--cuime-light);
+    border-radius: var(--cuime-border-radius);
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.analysis-header {
+    font-size: 1.1rem;
+    color: var(--cuime-primary);
+    margin-bottom: 10px;
+}
+
+.analysis-results {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.analysis-label {
+    font-size: 0.9rem;
+    color: var(--cuime-dark);
+}
+
+.analysis-value {
+    font-size: 1rem;
+    color: var(--cuime-secondary);
+    font-weight: bold;
+}
+
+.face-suggestions {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--cuime-dark);
+}
+
+.save-profile {
+    background-color: var(--cuime-primary);
+    color: white;
+    border: none;
+    border-radius: var(--cuime-border-radius);
+    padding: 12px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+/* 悬浮提示 */
+#cuime-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: var(--cuime-primary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: var(--cuime-border-radius);
+    z-index: 2000;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#cuime-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* 响应式样式 */
+@media (max-width: 768px) {
+    .cuime-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        height: auto;
+    }
+    
+    .location-weather,
+    .outfit-recommendation,
+    .wardrobe-management {
+        grid-column: 1;
+    }
+    
+    .location-weather {
+        grid-row: 2;
+    }
+    
+    .outfit-recommendation {
+        grid-row: 3;
+    }
+    
+    .wardrobe-management {
+        grid-row: 4;
+    }
+}
+
+/* 隐藏文件输入框 */
+#selfie-input, #clothes-input {
+    display: none;
+} 

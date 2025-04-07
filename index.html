@@ -404,7 +404,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#cuime" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="cuime-section">
+                            <a href="#cabinet-me" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-500 transition-all duration-300" data-section="cabinet-me">
                                 <i class="fas fa-tshirt w-5 text-center"></i>
                                 <span class="ml-3">柜me</span>
                                 <span class="ml-auto px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">新功能</span>
@@ -551,126 +551,198 @@
             </section>
 
             <!-- 柜me部分 -->
-            <section id="cuime-section" class="min-h-screen p-5 hidden">
-                <h2 class="text-2xl font-bold mb-6">柜me - 您的个人形象顾问</h2>
-                <p class="text-gray-600 mb-6">根据天气和您的个人特点，为您提供贴心的穿搭建议</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- 天气信息卡片 -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-semibold text-blue-600">
-                                <i class="fas fa-cloud-sun mr-2"></i>今日天气
-                            </h3>
-                            <button id="refresh-weather" class="text-blue-500 hover:text-blue-700 transition-all">
-                                <i class="fas fa-sync-alt"></i>
+            <section id="cabinet-me" class="side-section">
+                <div class="cuime-container">
+                    <!-- 标题区域 -->
+                    <header class="cuime-header">
+                        <h1 class="cuime-title">柜me 形象顾问</h1>
+                        <button id="user-profile-toggle" class="user-profile-toggle" aria-label="用户信息"></button>
+                    </header>
+                    
+                    <!-- 位置和天气区域 -->
+                    <div class="location-weather">
+                        <div class="weather-header">
+                            <div id="current-location">位置获取中...</div>
+                            <div class="weather-cloud">
+                                <div class="cloud-face">
+                                    <div class="eyes">
+                                        <div class="eye"></div>
+                                        <div class="eye"></div>
+                                    </div>
+                                    <div class="mouth happy"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="current-temp">
+                            <span id="today-temp">--°C</span>
+                            <span id="today-desc">获取中...</span>
+                        </div>
+                        
+                        <div class="uv-indicator">
+                            <div id="uv-low" class="uv-light"></div>
+                            <div id="uv-medium" class="uv-light"></div>
+                            <div id="uv-high" class="uv-light"></div>
+                        </div>
+                        
+                        <div id="weather-suggestions" class="weather-suggestions">
+                            天气数据加载中...
+                        </div>
+                        
+                        <div class="forecast">
+                            <div class="forecast-day">
+                                <div id="tomorrow-title" class="forecast-title">明天</div>
+                                <div id="tomorrow-forecast" class="forecast-content">数据加载中...</div>
+                            </div>
+                            <div class="forecast-day">
+                                <div id="day-after-title" class="forecast-title">后天</div>
+                                <div id="day-after-forecast" class="forecast-content">数据加载中...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="car-wash-section">
+                            <div id="car-wash-dates">数据加载中...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 穿搭推荐区域 -->
+                    <div class="outfit-recommendation">
+                        <div class="outfit-header">
+                            <h2 class="outfit-title">今日穿搭推荐</h2>
+                            <button id="refresh-outfit" class="refresh-btn" aria-label="刷新穿搭">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"></path>
+                                </svg>
                             </button>
                         </div>
                         
-                        <div id="weather-container" class="flex flex-col items-center">
-                            <div class="text-center mb-4">
-                                <div id="loading-weather" class="animate-spin text-blue-500 text-2xl">
-                                    <i class="fas fa-circle-notch"></i>
-                                </div>
-                                <div id="weather-icon" class="text-5xl mb-2 hidden">
-                                    <i class="fas fa-cloud"></i>
-                                </div>
-                                <div id="weather-temp" class="text-4xl font-bold hidden">--°C</div>
-                                <div id="weather-desc" class="text-gray-600 hidden">获取中...</div>
+                        <div class="outfit-display">
+                            <div class="outfit-item">
+                                <h3 class="outfit-item-title">上装</h3>
+                                <div id="outfit-top" class="outfit-item-content">加载中...</div>
                             </div>
-                            
-                            <div id="weather-details" class="grid grid-cols-2 gap-4 w-full hidden">
-                                <div class="flex items-center">
-                                    <i class="fas fa-tint text-blue-500 mr-2"></i>
-                                    <div>
-                                        <div class="text-sm text-gray-500">湿度</div>
-                                        <div id="weather-humidity" class="font-medium">--%</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-wind text-blue-500 mr-2"></i>
-                                    <div>
-                                        <div class="text-sm text-gray-500">风速</div>
-                                        <div id="weather-wind" class="font-medium">--km/h</div>
-                                    </div>
-                                </div>
+                            <div class="outfit-item">
+                                <h3 class="outfit-item-title">下装</h3>
+                                <div id="outfit-bottom" class="outfit-item-content">加载中...</div>
+                            </div>
+                            <div class="outfit-item">
+                                <h3 class="outfit-item-title">鞋子</h3>
+                                <div id="outfit-shoes" class="outfit-item-content">加载中...</div>
+                            </div>
+                            <div class="outfit-item">
+                                <h3 class="outfit-item-title">外套</h3>
+                                <div id="outfit-outerwear" class="outfit-item-content">加载中...</div>
                             </div>
                         </div>
+                        
+                        <div class="outfit-item">
+                            <h3 class="outfit-item-title">配件</h3>
+                            <div id="outfit-accessories" class="outfit-item-content">加载中...</div>
+                        </div>
+                        
+                        <div id="outfit-suggestion" class="outfit-suggestion">
+                            根据今日天气为您生成穿搭建议...
+                        </div>
                     </div>
-
-                    <!-- 穿搭建议卡片 -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <h3 class="text-xl font-semibold text-blue-600 mb-4">
-                            <i class="fas fa-tshirt mr-2"></i>今日穿搭建议
-                        </h3>
-                        <div id="outfit-suggestion" class="space-y-4">
-                            <p class="text-gray-500 text-center" id="outfit-loading">正在根据天气生成穿搭建议...</p>
-                            <div id="outfit-content" class="hidden">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-temperature-high text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm text-gray-500">温度建议</div>
-                                        <div id="temperature-advice" class="font-medium">--</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center mb-3">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-umbrella text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm text-gray-500">降水建议</div>
-                                        <div id="precipitation-advice" class="font-medium">--</div>
-                                    </div>
-                                </div>
-                                <div class="p-4 bg-gray-50 rounded-lg">
-                                    <h4 class="font-medium mb-2 text-gray-700">穿搭推荐</h4>
-                                    <p id="outfit-recommendation" class="text-gray-600">--</p>
-                                </div>
+                    
+                    <!-- 衣柜管理区域 -->
+                    <div class="wardrobe-management">
+                        <div class="wardrobe-header">
+                            <h2 class="wardrobe-title">我的衣柜</h2>
+                            <button id="clothes-upload" class="upload-btn">
+                                添加衣物
+                                <input type="file" id="clothes-input" accept="image/*" multiple>
+                            </button>
+                        </div>
+                        
+                        <div class="wardrobe-stats">
+                            <div class="wardrobe-stat">
+                                <div class="stat-title">上装</div>
+                                <div id="tops-count" class="stat-value">0</div>
                             </div>
+                            <div class="wardrobe-stat">
+                                <div class="stat-title">下装</div>
+                                <div id="bottoms-count" class="stat-value">0</div>
+                            </div>
+                            <div class="wardrobe-stat">
+                                <div class="stat-title">鞋子</div>
+                                <div id="shoes-count" class="stat-value">0</div>
+                            </div>
+                        </div>
+                        
+                        <div id="clothing-preview-container" class="clothing-preview-container">
+                            <!-- 衣物预览和表单将通过JavaScript动态添加 -->
                         </div>
                     </div>
                 </div>
                 
-                <!-- 个人偏好设置 -->
-                <div class="mt-6 bg-white rounded-xl shadow-md p-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-4">
-                        <i class="fas fa-sliders-h mr-2"></i>个人偏好设置
-                    </h3>
-                    <form id="preferences-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-gray-700 mb-2" for="city">城市</label>
-                            <div class="relative">
-                                <input type="text" id="city" placeholder="输入城市名称" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="">
-                                <small class="text-gray-500 mt-1 block">请输入准确的中国城市名称，如: 北京、上海、广州</small>
-                            </div>
+                <!-- 用户资料面板 -->
+                <div id="user-profile-panel" class="user-profile-panel">
+                    <div class="profile-header">
+                        <h2 class="profile-title">个人资料</h2>
+                        <button class="close-profile" id="close-profile">&times;</button>
+                    </div>
+                    
+                    <form id="user-profile-form" class="profile-form">
+                        <div class="form-group">
+                            <label for="user-height">身高 (cm)</label>
+                            <input type="number" id="user-height" placeholder="例如: 170">
                         </div>
-                        <div>
-                            <label class="block text-gray-700 mb-2" for="style-preference">穿衣风格偏好</label>
-                            <select id="style-preference" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="casual">休闲风格</option>
-                                <option value="formal">正式风格</option>
-                                <option value="sporty">运动风格</option>
-                                <option value="minimalist">简约风格</option>
+                        
+                        <div class="form-group">
+                            <label for="user-weight">体重 (kg)</label>
+                            <input type="number" id="user-weight" placeholder="例如: 60">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="user-gender">性别</label>
+                            <select id="user-gender">
+                                <option value="female">女</option>
+                                <option value="male">男</option>
+                                <option value="other">其他</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-gray-700 mb-2">冷热感知</label>
-                            <div class="flex items-center space-x-2">
-                                <input type="radio" id="cold-sensitive" name="temperature-sensitivity" value="cold" class="form-radio text-blue-500">
-                                <label for="cold-sensitive">怕冷</label>
-                                <input type="radio" id="normal-sensitive" name="temperature-sensitivity" value="normal" class="form-radio text-blue-500" checked>
-                                <label for="normal-sensitive">适中</label>
-                                <input type="radio" id="hot-sensitive" name="temperature-sensitivity" value="hot" class="form-radio text-blue-500">
-                                <label for="hot-sensitive">怕热</label>
+                        
+                        <div class="form-group">
+                            <label>健康状况</label>
+                            <div class="health-conditions">
+                                <div class="health-condition">
+                                    <input type="checkbox" id="health-pregnant" class="health-checkbox" value="pregnant">
+                                    <label for="health-pregnant">怀孕</label>
+                                </div>
+                                <div class="health-condition">
+                                    <input type="checkbox" id="health-cold" class="health-checkbox" value="cold">
+                                    <label for="health-cold">易感冒</label>
+                                </div>
+                                <div class="health-condition">
+                                    <input type="checkbox" id="health-allergy" class="health-checkbox" value="allergy">
+                                    <label for="health-allergy">过敏</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="md:flex md:items-end">
-                            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
-                                <i class="fas fa-save mr-2"></i>保存偏好
-                            </button>
+                        
+                        <div class="selfie-section">
+                            <button type="button" id="selfie-upload" class="selfie-upload">上传自拍</button>
+                            <input type="file" id="selfie-input" accept="image/*">
+                            <img id="selfie-preview" class="selfie-preview" alt="自拍预览">
+                            
+                            <div class="face-analysis">
+                                <h3 class="analysis-header">面部分析</h3>
+                                <div class="analysis-results">
+                                    <span class="analysis-label">脸型:</span>
+                                    <span id="face-shape-result" class="analysis-value">未分析</span>
+                                    
+                                    <span class="analysis-label">肤色:</span>
+                                    <span id="skin-tone-result" class="analysis-value">未分析</span>
+                                </div>
+                                
+                                <div id="face-style-suggestions" class="face-suggestions">
+                                    上传自拍后获取个性化推荐
+                                </div>
+                            </div>
                         </div>
+                        
+                        <button type="submit" class="save-profile">保存资料</button>
                     </form>
                 </div>
             </section>
